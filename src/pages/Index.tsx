@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { TrendingUp, TrendingDown, Wallet, ChevronLeft, ChevronRight } from "lucide-react";
+import { TrendingUp, TrendingDown, Wallet, ChevronLeft, ChevronRight, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { format, startOfMonth, endOfMonth, isWithinInterval, addMonths, subMonths } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { SummaryCard } from "@/components/SummaryCard";
@@ -7,12 +7,14 @@ import { TransactionList } from "@/components/TransactionList";
 import { AddTransactionDialog } from "@/components/AddTransactionDialog";
 import { CategoryChart } from "@/components/CategoryChart";
 import { MonthlyChart } from "@/components/MonthlyChart";
+import { FinanceCalendar } from "@/components/FinanceCalendar";
 import { INITIAL_TRANSACTIONS, Transaction } from "@/lib/finance-data";
 import { Button } from "@/components/ui/button";
 
 const Index = () => {
   const [transactions, setTransactions] = useState<Transaction[]>(INITIAL_TRANSACTIONS);
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
 
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
@@ -28,6 +30,7 @@ const Index = () => {
   const totalIncome = filtered.filter((t) => t.type === "income").reduce((s, t) => s + t.amount, 0);
   const totalExpense = filtered.filter((t) => t.type === "expense").reduce((s, t) => s + t.amount, 0);
   const balance = totalIncome - totalExpense;
+  const transactionCount = filtered.length;
 
   const fmt = (v: number) => `R$ ${v.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
 
@@ -41,49 +44,66 @@ const Index = () => {
 
   return (
     <div className="w-full">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
         {/* Page header */}
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Painel Principal</h1>
           <AddTransactionDialog onAdd={handleAdd} />
         </div>
+
         {/* Month selector */}
         <div className="flex items-center justify-center gap-3">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setCurrentMonth((m) => subMonths(m, 1))}
-          >
+          <Button variant="ghost" size="icon" onClick={() => setCurrentMonth((m) => subMonths(m, 1))}>
             <ChevronLeft className="h-4 w-4" />
           </Button>
           <h2 className="text-lg font-semibold min-w-[160px] text-center capitalize">
             {format(currentMonth, "MMMM yyyy", { locale: ptBR })}
           </h2>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setCurrentMonth((m) => addMonths(m, 1))}
-          >
+          <Button variant="ghost" size="icon" onClick={() => setCurrentMonth((m) => addMonths(m, 1))}>
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
 
         {/* Summary cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <SummaryCard title="Receitas" value={fmt(totalIncome)} icon={TrendingUp} variant="income" />
           <SummaryCard title="Despesas" value={fmt(totalExpense)} icon={TrendingDown} variant="expense" />
           <SummaryCard title="Saldo" value={fmt(balance)} icon={Wallet} variant="balance" />
+          <div className="bg-card rounded-xl p-5 card-shadow flex flex-col justify-between">
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-muted-foreground font-medium">Transações</p>
+              <div className="p-2 rounded-lg bg-primary/10">
+                <ArrowUpRight className="h-4 w-4 text-primary" />
+              </div>
+            </div>
+            <p className="text-2xl font-bold mt-2">{transactionCount}</p>
+            <p className="text-xs text-muted-foreground mt-1">neste mês</p>
+          </div>
         </div>
 
-        {/* Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-card rounded-xl p-5 card-shadow">
-            <h3 className="text-base font-semibold mb-4">Despesas por Categoria</h3>
-            <CategoryChart transactions={filtered} />
+        {/* Main grid: Charts + Calendar */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left: Charts */}
+          <div className="lg:col-span-2 space-y-6">
+            <div className="bg-card rounded-xl p-5 card-shadow">
+              <h3 className="text-base font-semibold mb-4">Evolução Mensal</h3>
+              <MonthlyChart transactions={transactions} />
+            </div>
+            <div className="bg-card rounded-xl p-5 card-shadow">
+              <h3 className="text-base font-semibold mb-4">Despesas por Categoria</h3>
+              <CategoryChart transactions={filtered} />
+            </div>
           </div>
+
+          {/* Right: Calendar */}
           <div className="bg-card rounded-xl p-5 card-shadow">
-            <h3 className="text-base font-semibold mb-4">Evolução Mensal</h3>
-            <MonthlyChart transactions={transactions} />
+            <h3 className="text-base font-semibold mb-4">Calendário</h3>
+            <FinanceCalendar
+              transactions={filtered}
+              selectedDate={selectedDate}
+              onSelectDate={setSelectedDate}
+              currentMonth={currentMonth}
+            />
           </div>
         </div>
 

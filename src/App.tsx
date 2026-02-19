@@ -9,6 +9,7 @@ import Goals from "./pages/Goals";
 import Accounts from "./pages/Accounts";
 import Reports from "./pages/Reports";
 import SettingsPage from "./pages/Settings";
+import ProfilePage from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/contas" element={<Accounts />} />
             <Route path="/relatorios" element={<Reports />} />
             <Route path="/configuracoes" element={<SettingsPage />} />
+            <Route path="/perfil" element={<ProfilePage />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

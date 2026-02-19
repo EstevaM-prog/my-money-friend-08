@@ -5,6 +5,7 @@ import {
   FileBarChart,
   Settings,
   Wallet,
+  User,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -20,10 +21,11 @@ import {
 } from "@/components/ui/sidebar";
 
 const menuItems = [
-  { title: "Dashboard", url: "/", icon: LayoutDashboard },
+  { title: "Painel", url: "/", icon: LayoutDashboard },
   { title: "Metas", url: "/metas", icon: Target },
   { title: "Contas", url: "/contas", icon: CreditCard },
   { title: "Relatórios", url: "/relatorios", icon: FileBarChart },
+  { title: "Perfil", url: "/perfil", icon: User },
   { title: "Configurações", url: "/configuracoes", icon: Settings },
 ];
 
