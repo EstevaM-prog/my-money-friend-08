@@ -1,7 +1,8 @@
-import { useState, useMemo } from "react";
-import { TrendingUp, TrendingDown, Wallet, ChevronLeft, ChevronRight, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { useState, useMemo, useEffect } from "react";
+import { TrendingUp, TrendingDown, Wallet, ChevronLeft, ChevronRight, ArrowUpRight } from "lucide-react";
 import { format, startOfMonth, endOfMonth, isWithinInterval, addMonths, subMonths } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { useSearchParams } from "react-router-dom";
 import { SummaryCard } from "@/components/SummaryCard";
 import { TransactionList } from "@/components/TransactionList";
 import { AddTransactionDialog } from "@/components/AddTransactionDialog";
@@ -15,6 +16,16 @@ const Index = () => {
   const [transactions, setTransactions] = useState<Transaction[]>(INITIAL_TRANSACTIONS);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Open dialog when navigated with ?new=1
+  useEffect(() => {
+    if (searchParams.get("new") === "1") {
+      setDialogOpen(true);
+      setSearchParams({}, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
@@ -48,7 +59,7 @@ const Index = () => {
         {/* Page header */}
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold tracking-tight">Painel Principal</h1>
-          <AddTransactionDialog onAdd={handleAdd} />
+          <AddTransactionDialog onAdd={handleAdd} open={dialogOpen} onOpenChange={setDialogOpen} />
         </div>
 
         {/* Month selector */}
@@ -83,7 +94,6 @@ const Index = () => {
 
         {/* Main grid: Charts + Calendar */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left: Charts */}
           <div className="lg:col-span-2 space-y-6">
             <div className="bg-card rounded-xl p-5 card-shadow">
               <h3 className="text-base font-semibold mb-4">Evolução Mensal</h3>
@@ -94,8 +104,6 @@ const Index = () => {
               <CategoryChart transactions={filtered} />
             </div>
           </div>
-
-          {/* Right: Calendar */}
           <div className="bg-card rounded-xl p-5 card-shadow">
             <h3 className="text-base font-semibold mb-4">Calendário</h3>
             <FinanceCalendar
@@ -109,9 +117,7 @@ const Index = () => {
 
         {/* Transaction list */}
         <div className="bg-card rounded-xl p-5 card-shadow">
-          <h3 className="text-base font-semibold mb-4">
-            Transações ({filtered.length})
-          </h3>
+          <h3 className="text-base font-semibold mb-4">Transações ({filtered.length})</h3>
           <TransactionList transactions={filtered} onDelete={handleDelete} />
         </div>
       </div>
