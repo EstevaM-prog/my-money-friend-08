@@ -27,10 +27,16 @@ import {
 
 interface AddTransactionDialogProps {
   onAdd: (t: Omit<Transaction, "id">) => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-export function AddTransactionDialog({ onAdd }: AddTransactionDialogProps) {
-  const [open, setOpen] = useState(false);
+export function AddTransactionDialog({ onAdd, open: controlledOpen, onOpenChange }: AddTransactionDialogProps) {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = isControlled ? (onOpenChange ?? (() => {})) : setInternalOpen;
+
   const [type, setType] = useState<TransactionType>("expense");
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
@@ -90,39 +96,21 @@ export function AddTransactionDialog({ onAdd }: AddTransactionDialogProps) {
 
           <div className="space-y-2">
             <Label>Descrição</Label>
-            <Input
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Ex: Supermercado"
-              maxLength={100}
-              required
-            />
+            <Input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Ex: Supermercado" maxLength={100} required />
           </div>
 
           <div className="space-y-2">
             <Label>Valor (R$)</Label>
-            <Input
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="0,00"
-              min="0.01"
-              step="0.01"
-              required
-            />
+            <Input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0,00" min="0.01" step="0.01" required />
           </div>
 
           <div className="space-y-2">
             <Label>Categoria</Label>
             <Select value={category} onValueChange={(v) => setCategory(v as Category)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione" />
-              </SelectTrigger>
+              <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
               <SelectContent>
                 {categories.map((c) => (
-                  <SelectItem key={c} value={c}>
-                    {c}
-                  </SelectItem>
+                  <SelectItem key={c} value={c}>{c}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -130,12 +118,7 @@ export function AddTransactionDialog({ onAdd }: AddTransactionDialogProps) {
 
           <div className="space-y-2">
             <Label>Data</Label>
-            <Input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              required
-            />
+            <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
           </div>
 
           <Button type="submit" className="w-full gradient-primary text-primary-foreground font-semibold hover:opacity-90">

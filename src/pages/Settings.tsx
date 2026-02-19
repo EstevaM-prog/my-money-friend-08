@@ -1,7 +1,6 @@
-import { useState } from "react";
-import { Settings as SettingsIcon, User, Palette, Bell, Shield } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Settings as SettingsIcon, Palette, Bell, Shield, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
@@ -16,13 +15,20 @@ import { useToast } from "@/hooks/use-toast";
 
 export default function SettingsPage() {
   const { toast } = useToast();
-  const [name, setName] = useState("João Silva");
-  const [email, setEmail] = useState("joao@email.com");
   const [currency, setCurrency] = useState("BRL");
   const [notifications, setNotifications] = useState(true);
   const [weeklyReport, setWeeklyReport] = useState(true);
   const [budgetAlerts, setBudgetAlerts] = useState(true);
   const [twoFactor, setTwoFactor] = useState(false);
+  const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains("dark"));
+
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [isDark]);
 
   function handleSave() {
     toast({
@@ -40,30 +46,23 @@ export default function SettingsPage() {
         <h1 className="text-2xl font-bold tracking-tight">Configurações</h1>
       </div>
 
-      {/* Profile */}
-      <section className="bg-card rounded-xl p-6 card-shadow space-y-4">
-        <div className="flex items-center gap-2 mb-2">
-          <User className="h-5 w-5 text-primary" />
-          <h2 className="text-lg font-semibold">Perfil</h2>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label>Nome</Label>
-            <Input value={name} onChange={(e) => setName(e.target.value)} />
-          </div>
-          <div className="space-y-2">
-            <Label>Email</Label>
-            <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-          </div>
-        </div>
-      </section>
-
-      {/* Preferences */}
+      {/* Appearance */}
       <section className="bg-card rounded-xl p-6 card-shadow space-y-4">
         <div className="flex items-center gap-2 mb-2">
           <Palette className="h-5 w-5 text-primary" />
-          <h2 className="text-lg font-semibold">Preferências</h2>
+          <h2 className="text-lg font-semibold">Aparência</h2>
         </div>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            {isDark ? <Moon className="h-5 w-5 text-primary" /> : <Sun className="h-5 w-5 text-warning" />}
+            <div>
+              <p className="font-medium text-sm">Tema {isDark ? "Escuro" : "Claro"}</p>
+              <p className="text-xs text-muted-foreground">Altere a aparência do sistema</p>
+            </div>
+          </div>
+          <Switch checked={isDark} onCheckedChange={setIsDark} />
+        </div>
+        <Separator />
         <div className="space-y-2">
           <Label>Moeda</Label>
           <Select value={currency} onValueChange={setCurrency}>

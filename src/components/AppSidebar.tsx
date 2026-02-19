@@ -5,7 +5,7 @@ import {
   FileBarChart,
   Settings,
   Wallet,
-  User,
+  Plus,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -18,18 +18,22 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarHeader,
+  SidebarFooter,
 } from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 const menuItems = [
   { title: "Painel", url: "/", icon: LayoutDashboard },
   { title: "Metas", url: "/metas", icon: Target },
   { title: "Contas", url: "/contas", icon: CreditCard },
   { title: "Relatórios", url: "/relatorios", icon: FileBarChart },
-  { title: "Perfil", url: "/perfil", icon: User },
   { title: "Configurações", url: "/configuracoes", icon: Settings },
 ];
 
 export function AppSidebar() {
+  const navigate = useNavigate();
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="p-4">
@@ -66,6 +70,15 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter className="p-3">
+        <Button
+          onClick={() => navigate("/?new=1")}
+          className="w-full gap-2 gradient-primary border-0 text-primary-foreground font-semibold shadow-md hover:opacity-90 transition-opacity group-data-[collapsible=icon]:p-2"
+        >
+          <Plus className="h-4 w-4 shrink-0" />
+          <span className="group-data-[collapsible=icon]:hidden">Nova Transação</span>
+        </Button>
+      </SidebarFooter>
     </Sidebar>
   );
 }
