@@ -1,19 +1,30 @@
+import { useState, useEffect } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { User, Settings, LogOut } from "lucide-react";
+import { getSession, logout } from "@/lib/auth";
 
 export function AppLayout() {
-  const username = "João Silva";
-  const email = "joao@email.com";
-  const avatarUrl = "";
+  const navigate = useNavigate();
+  const [user, setUser] = useState(() => getSession());
+
+  // Keep user state in sync (e.g. after register/login)
+  useEffect(() => {
+    setUser(getSession());
+  }, []);
+
+  const username = user?.name ?? "Usuário";
+  const email = user?.email ?? "";
+  const avatarUrl = user?.avatarUrl ?? "";
 
   const initials = username
     .split(" ")
@@ -21,6 +32,11 @@ export function AppLayout() {
     .join("")
     .toUpperCase()
     .slice(0, 2);
+
+  function handleLogout() {
+    logout();
+    navigate("/login");
+  }
 
   return (
     <SidebarProvider>
@@ -41,7 +57,12 @@ export function AppLayout() {
                   </Avatar>
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuContent align="end" className="w-52">
+                <div className="px-3 py-2 space-y-0.5">
+                  <p className="text-sm font-semibold truncate">{username}</p>
+                  <p className="text-xs text-muted-foreground truncate">{email}</p>
+                </div>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                   <Link to="/perfil" className="flex items-center gap-2 cursor-pointer">
                     <User className="h-4 w-4" /> Meu Perfil
@@ -51,6 +72,13 @@ export function AppLayout() {
                   <Link to="/configuracoes" className="flex items-center gap-2 cursor-pointer">
                     <Settings className="h-4 w-4" /> Configurações
                   </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10"
+                >
+                  <LogOut className="h-4 w-4" /> Sair
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
