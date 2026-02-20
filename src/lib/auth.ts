@@ -8,6 +8,9 @@ export interface User {
 
 const USERS_KEY = "financaspro_users";
 const SESSION_KEY = "financaspro_session";
+const SESSION_EXPIRY_KEY = "financaspro_session_expiry";
+
+const REMEMBER_DAYS = 7;
 
 function getUsers(): (User & { password: string })[] {
   try {
@@ -30,27 +33,61 @@ export function register(name: string, email: string, password: string): User {
   };
   localStorage.setItem(USERS_KEY, JSON.stringify([...users, user]));
   const { password: _, ...publicUser } = user;
-  localStorage.setItem(SESSION_KEY, JSON.stringify(publicUser));
+  // Register always keeps session for 7 days
+  saveSession(publicUser, true);
   return publicUser;
 }
 
-export function login(email: string, password: string): User {
+export function login(email: string, password: string, remember = false): User {
   const users = getUsers();
   const user = users.find((u) => u.email === email && u.password === password);
   if (!user) throw new Error("E-mail ou senha incorretos.");
   const { password: _, ...publicUser } = user;
-  localStorage.setItem(SESSION_KEY, JSON.stringify(publicUser));
+  saveSession(publicUser, remember);
   return publicUser;
+}
+
+function saveSession(user: User, remember: boolean) {
+  localStorage.setItem(SESSION_KEY, JSON.stringify(user));
+  if (remember) {
+    const expiry = Date.now() + REMEMBER_DAYS * 24 * 60 * 60 * 1000;
+    localStorage.setItem(SESSION_EXPIRY_KEY, String(expiry));
+  } else {
+    // Session-only: expires when tab is closed (use sessionStorage expiry marker)
+    localStorage.removeItem(SESSION_EXPIRY_KEY);
+    sessionStorage.setItem(SESSION_KEY, "active");
+  }
 }
 
 export function logout() {
   localStorage.removeItem(SESSION_KEY);
+  localStorage.removeItem(SESSION_EXPIRY_KEY);
+  sessionStorage.removeItem(SESSION_KEY);
 }
 
 export function getSession(): User | null {
   try {
     const raw = localStorage.getItem(SESSION_KEY);
-    return raw ? JSON.parse(raw) : null;
+    if (!raw) return null;
+
+    const expiry = localStorage.getItem(SESSION_EXPIRY_KEY);
+
+    if (expiry) {
+      // Persistent session: check expiry
+      if (Date.now() > Number(expiry)) {
+        logout();
+        return null;
+      }
+    } else {
+      // Session-only: check if tab is still active
+      const sessionActive = sessionStorage.getItem(SESSION_KEY);
+      if (!sessionActive) {
+        localStorage.removeItem(SESSION_KEY);
+        return null;
+      }
+    }
+
+    return JSON.parse(raw);
   } catch {
     return null;
   }

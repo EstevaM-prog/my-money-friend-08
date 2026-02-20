@@ -15,6 +15,7 @@ import NotFound from "./pages/NotFound";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Support from "./pages/Support";
 
 const queryClient = new QueryClient();
 
@@ -58,6 +59,7 @@ const App = () => (
               </PublicOnlyRoute>
             }
           />
+          <Route path="/suporte" element={<Support />} />
 
           {/* Private routes */}
           <Route

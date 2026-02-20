@@ -10,6 +10,7 @@ export default function Register() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ name: "", email: "", password: "", confirm: "" });
   const [showPass, setShowPass] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -48,7 +49,7 @@ export default function Register() {
       <div className="w-full max-w-md space-y-8">
         {/* Logo */}
         <div className="text-center space-y-3">
-          <Link to="/" className="inline-flex items-center gap-2.5">
+          <Link to="/apresentacao" className="inline-flex items-center gap-2.5">
             <div className="p-2 rounded-xl gradient-primary">
               <Wallet className="h-6 w-6 text-primary-foreground" />
             </div>
@@ -112,15 +113,25 @@ export default function Register() {
 
             <div className="space-y-1.5">
               <Label htmlFor="confirm">Confirmar senha</Label>
-              <Input
-                id="confirm"
-                name="confirm"
-                type={showPass ? "text" : "password"}
-                placeholder="Repita a senha"
-                value={form.confirm}
-                onChange={handleChange}
-                autoComplete="new-password"
-              />
+              <div className="relative">
+                <Input
+                  id="confirm"
+                  name="confirm"
+                  type={showConfirm ? "text" : "password"}
+                  placeholder="Repita a senha"
+                  value={form.confirm}
+                  onChange={handleChange}
+                  autoComplete="new-password"
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirm((s) => !s)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
             </div>
 
             {error && (
