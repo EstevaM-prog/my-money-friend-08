@@ -147,8 +147,15 @@ export default function Landing() {
         </section>
       </main>
 
-      <footer className="border-t py-6 px-4 text-center text-sm text-muted-foreground">
-        © {new Date().getFullYear()} FinançasPro. Todos os direitos reservados.
+      <footer className="border-t py-6 px-4">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-muted-foreground">
+          <span>© {new Date().getFullYear()} FinançasPro. Todos os direitos reservados.</span>
+          <div className="flex items-center gap-4">
+            <Link to="/suporte" className="hover:text-primary transition-colors">Suporte</Link>
+            <Link to="/login" className="hover:text-primary transition-colors">Login</Link>
+            <Link to="/cadastro" className="hover:text-primary transition-colors">Cadastro</Link>
+          </div>
+        </div>
       </footer>
     </div>
   );

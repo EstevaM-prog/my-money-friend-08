@@ -4,12 +4,14 @@ import { Wallet, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { login } from "@/lib/auth";
 
 export default function Login() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: "", password: "" });
   const [showPass, setShowPass] = useState(false);
+  const [remember, setRemember] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -26,7 +28,7 @@ export default function Login() {
     }
     setLoading(true);
     try {
-      login(form.email, form.password);
+      login(form.email, form.password, remember);
       navigate("/");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Erro ao entrar.");
@@ -40,7 +42,7 @@ export default function Login() {
       <div className="w-full max-w-md space-y-8">
         {/* Logo */}
         <div className="text-center space-y-3">
-          <Link to="/" className="inline-flex items-center gap-2.5">
+          <Link to="/apresentacao" className="inline-flex items-center gap-2.5">
             <div className="p-2 rounded-xl gradient-primary">
               <Wallet className="h-6 w-6 text-primary-foreground" />
             </div>
@@ -90,6 +92,18 @@ export default function Login() {
               </div>
             </div>
 
+            {/* Remember me */}
+            <div className="flex items-center gap-2.5">
+              <Checkbox
+                id="remember"
+                checked={remember}
+                onCheckedChange={(v) => setRemember(!!v)}
+              />
+              <Label htmlFor="remember" className="text-sm font-normal cursor-pointer select-none">
+                Lembrar minha conta por 7 dias
+              </Label>
+            </div>
+
             {error && (
               <p className="text-sm text-destructive bg-destructive/10 rounded-lg px-3 py-2">{error}</p>
             )}
@@ -103,12 +117,20 @@ export default function Login() {
             </Button>
           </form>
 
-          <p className="text-center text-sm text-muted-foreground">
-            Não tem conta?{" "}
-            <Link to="/cadastro" className="text-primary font-medium hover:underline">
-              Criar conta grátis
-            </Link>
-          </p>
+          <div className="space-y-3 text-center text-sm text-muted-foreground">
+            <p>
+              Não tem conta?{" "}
+              <Link to="/cadastro" className="text-primary font-medium hover:underline">
+                Criar conta grátis
+              </Link>
+            </p>
+            <p>
+              Precisa de ajuda?{" "}
+              <Link to="/suporte" className="text-primary font-medium hover:underline">
+                Falar com suporte
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>

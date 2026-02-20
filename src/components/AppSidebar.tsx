@@ -6,6 +6,7 @@ import {
   Settings,
   Wallet,
   Plus,
+  LifeBuoy,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -29,6 +30,7 @@ const menuItems = [
   { title: "Contas", url: "/contas", icon: CreditCard },
   { title: "Relatórios", url: "/relatorios", icon: FileBarChart },
   { title: "Configurações", url: "/configuracoes", icon: Settings },
+  { title: "Suporte", url: "/suporte", icon: LifeBuoy },
 ];
 
 export function AppSidebar() {
