@@ -11,6 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useLocalStorage } from "@/hooks/use-local-storage";
 
 interface Goal {
   id: string;
@@ -32,7 +33,7 @@ const INITIAL_GOALS: Goal[] = [
 const fmt = (v: number) => `R$ ${v.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
 
 export default function Goals() {
-  const [goals, setGoals] = useState<Goal[]>(INITIAL_GOALS);
+  const [goals, setGoals] = useLocalStorage<Goal[]>("financaspro_goals", INITIAL_GOALS);
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [target, setTarget] = useState("");
@@ -75,21 +76,21 @@ export default function Goals() {
   const totalCurrent = goals.reduce((s, g) => s + g.current, 0);
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="max-w-5xl mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
+      <div className="flex items-center justify-between gap-2 flex-wrap">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-xl gradient-primary">
             <Target className="h-5 w-5 text-primary-foreground" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight">Metas Financeiras</h1>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Metas Financeiras</h1>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button className="gap-2 gradient-primary border-0 text-primary-foreground font-semibold">
-              <Plus className="h-4 w-4" /> Nova Meta
+            <Button className="gap-2 gradient-primary border-0 text-primary-foreground font-semibold text-sm">
+              <Plus className="h-4 w-4" /> <span className="hidden sm:inline">Nova Meta</span><span className="sm:hidden">Nova</span>
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-md">
+          <DialogContent className="sm:max-w-md max-w-[calc(100vw-2rem)]">
             <DialogHeader>
               <DialogTitle>Adicionar Meta</DialogTitle>
             </DialogHeader>
@@ -117,47 +118,47 @@ export default function Goals() {
       </div>
 
       {/* Summary */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-card rounded-xl p-5 card-shadow">
-          <p className="text-sm text-muted-foreground font-medium">Total de Metas</p>
-          <p className="text-2xl font-bold mt-1">{goals.length}</p>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+        <div className="bg-card rounded-xl p-4 sm:p-5 card-shadow">
+          <p className="text-xs sm:text-sm text-muted-foreground font-medium">Total de Metas</p>
+          <p className="text-xl sm:text-2xl font-bold mt-1">{goals.length}</p>
         </div>
-        <div className="bg-card rounded-xl p-5 card-shadow">
-          <p className="text-sm text-muted-foreground font-medium">Total Economizado</p>
-          <p className="text-2xl font-bold mt-1 text-primary">{fmt(totalCurrent)}</p>
+        <div className="bg-card rounded-xl p-4 sm:p-5 card-shadow">
+          <p className="text-xs sm:text-sm text-muted-foreground font-medium">Total Economizado</p>
+          <p className="text-xl sm:text-2xl font-bold mt-1 text-primary">{fmt(totalCurrent)}</p>
         </div>
-        <div className="bg-card rounded-xl p-5 card-shadow">
-          <p className="text-sm text-muted-foreground font-medium">Total Alvo</p>
-          <p className="text-2xl font-bold mt-1">{fmt(totalTarget)}</p>
+        <div className="bg-card rounded-xl p-4 sm:p-5 card-shadow">
+          <p className="text-xs sm:text-sm text-muted-foreground font-medium">Total Alvo</p>
+          <p className="text-xl sm:text-2xl font-bold mt-1">{fmt(totalTarget)}</p>
         </div>
       </div>
 
       {/* Goals grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
         {goals.map((goal) => {
           const pct = Math.round((goal.current / goal.target) * 100);
           return (
-            <div key={goal.id} className="bg-card rounded-xl p-5 card-shadow space-y-4">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3 className="font-semibold text-lg">{goal.name}</h3>
-                  <p className="text-sm text-muted-foreground">
+            <div key={goal.id} className="bg-card rounded-xl p-4 sm:p-5 card-shadow space-y-3 sm:space-y-4">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <h3 className="font-semibold text-base sm:text-lg truncate">{goal.name}</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     Prazo: {new Date(goal.deadline).toLocaleDateString("pt-BR")}
                   </p>
                 </div>
-                <Button variant="ghost" size="icon" onClick={() => handleDelete(goal.id)} className="text-muted-foreground hover:text-destructive">
+                <Button variant="ghost" size="icon" onClick={() => handleDelete(goal.id)} className="text-muted-foreground hover:text-destructive shrink-0">
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
               <div>
-                <div className="flex justify-between text-sm mb-2">
+                <div className="flex justify-between text-xs sm:text-sm mb-2">
                   <span className="font-medium">{fmt(goal.current)}</span>
                   <span className="text-muted-foreground">{fmt(goal.target)}</span>
                 </div>
-                <Progress value={pct} className="h-3" />
+                <Progress value={pct} className="h-2.5 sm:h-3" />
                 <p className="text-xs text-muted-foreground mt-1">{pct}% concluído</p>
               </div>
-              <Button variant="outline" size="sm" className="gap-2" onClick={() => handleAddValue(goal.id)}>
+              <Button variant="outline" size="sm" className="gap-2 text-xs sm:text-sm" onClick={() => handleAddValue(goal.id)}>
                 <TrendingUp className="h-3.5 w-3.5" /> Adicionar valor
               </Button>
             </div>

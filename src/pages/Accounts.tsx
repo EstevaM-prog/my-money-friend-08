@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useLocalStorage } from "@/hooks/use-local-storage";
 
 type AccountType = "checking" | "savings" | "credit" | "investment";
 
@@ -62,7 +63,7 @@ const INITIAL_ACCOUNTS: Account[] = [
 const fmt = (v: number) => `R$ ${v.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
 
 export default function Accounts() {
-  const [accounts, setAccounts] = useState<Account[]>(INITIAL_ACCOUNTS);
+  const [accounts, setAccounts] = useLocalStorage<Account[]>("financaspro_accounts", INITIAL_ACCOUNTS);
   const [showBalances, setShowBalances] = useState(true);
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
@@ -92,13 +93,13 @@ export default function Accounts() {
   const totalDebt = accounts.filter((a) => a.balance < 0).reduce((s, a) => s + a.balance, 0);
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="max-w-5xl mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
+      <div className="flex items-center justify-between gap-2 flex-wrap">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-xl gradient-primary">
             <Building2 className="h-5 w-5 text-primary-foreground" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight">Contas e Cartões</h1>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Contas e Cartões</h1>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="icon" onClick={() => setShowBalances(!showBalances)}>
@@ -106,11 +107,11 @@ export default function Accounts() {
           </Button>
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <Button className="gap-2 gradient-primary border-0 text-primary-foreground font-semibold">
-                <Plus className="h-4 w-4" /> Nova Conta
+              <Button className="gap-2 gradient-primary border-0 text-primary-foreground font-semibold text-sm">
+                <Plus className="h-4 w-4" /> <span className="hidden sm:inline">Nova Conta</span><span className="sm:hidden">Nova</span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="sm:max-w-md max-w-[calc(100vw-2rem)]">
               <DialogHeader>
                 <DialogTitle>Adicionar Conta</DialogTitle>
               </DialogHeader>
@@ -146,53 +147,53 @@ export default function Accounts() {
       </div>
 
       {/* Summary */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-card rounded-xl p-5 card-shadow">
-          <p className="text-sm text-muted-foreground font-medium">Patrimônio Total</p>
-          <p className="text-2xl font-bold mt-1 text-primary">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+        <div className="bg-card rounded-xl p-4 sm:p-5 card-shadow">
+          <p className="text-xs sm:text-sm text-muted-foreground font-medium">Patrimônio Total</p>
+          <p className="text-xl sm:text-2xl font-bold mt-1 text-primary">
             {showBalances ? fmt(totalPositive + totalDebt) : "••••••"}
           </p>
         </div>
-        <div className="bg-card rounded-xl p-5 card-shadow">
-          <p className="text-sm text-muted-foreground font-medium">Saldo Positivo</p>
-          <p className="text-2xl font-bold mt-1 text-primary">
+        <div className="bg-card rounded-xl p-4 sm:p-5 card-shadow">
+          <p className="text-xs sm:text-sm text-muted-foreground font-medium">Saldo Positivo</p>
+          <p className="text-xl sm:text-2xl font-bold mt-1 text-primary">
             {showBalances ? fmt(totalPositive) : "••••••"}
           </p>
         </div>
-        <div className="bg-card rounded-xl p-5 card-shadow">
-          <p className="text-sm text-muted-foreground font-medium">Dívidas</p>
-          <p className="text-2xl font-bold mt-1 text-destructive">
+        <div className="bg-card rounded-xl p-4 sm:p-5 card-shadow">
+          <p className="text-xs sm:text-sm text-muted-foreground font-medium">Dívidas</p>
+          <p className="text-xl sm:text-2xl font-bold mt-1 text-destructive">
             {showBalances ? fmt(Math.abs(totalDebt)) : "••••••"}
           </p>
         </div>
       </div>
 
       {/* Account cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
         {accounts.map((account) => (
-          <div key={account.id} className={`rounded-xl p-5 text-primary-foreground bg-gradient-to-br ${account.color} relative overflow-hidden`}>
-            <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-white/5 -translate-y-8 translate-x-8" />
-            <div className="flex justify-between items-start relative z-10">
-              <div>
-                <p className="text-sm opacity-80">{account.institution}</p>
-                <h3 className="text-lg font-bold mt-1">{account.name}</h3>
-                <Badge className={`mt-2 ${TYPE_COLORS[account.type]} border-0`}>
+          <div key={account.id} className={`rounded-xl p-4 sm:p-5 text-primary-foreground bg-gradient-to-br ${account.color} relative overflow-hidden`}>
+            <div className="absolute top-0 right-0 w-24 sm:w-32 h-24 sm:h-32 rounded-full bg-white/5 -translate-y-8 translate-x-8" />
+            <div className="flex justify-between items-start relative z-10 gap-2">
+              <div className="min-w-0">
+                <p className="text-xs sm:text-sm opacity-80 truncate">{account.institution}</p>
+                <h3 className="text-base sm:text-lg font-bold mt-1 truncate">{account.name}</h3>
+                <Badge className={`mt-2 ${TYPE_COLORS[account.type]} border-0 text-xs`}>
                   {TYPE_LABELS[account.type]}
                 </Badge>
               </div>
-              <div className="flex items-center gap-1">
-                <CreditCard className="h-8 w-8 opacity-60" />
+              <div className="flex items-center gap-1 shrink-0">
+                <CreditCard className="h-6 w-6 sm:h-8 sm:w-8 opacity-60" />
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-primary-foreground/70 hover:text-primary-foreground hover:bg-white/10"
+                  className="text-primary-foreground/70 hover:text-primary-foreground hover:bg-white/10 h-8 w-8"
                   onClick={() => setAccounts((prev) => prev.filter((a) => a.id !== account.id))}
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
             </div>
-            <p className="text-2xl font-bold mt-4 relative z-10">
+            <p className="text-xl sm:text-2xl font-bold mt-3 sm:mt-4 relative z-10">
               {showBalances ? fmt(account.balance) : "R$ ••••••"}
             </p>
           </div>

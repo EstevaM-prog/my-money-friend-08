@@ -6,18 +6,33 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
+import { useLocalStorage } from "@/hooks/use-local-storage";
+import { getSession } from "@/lib/auth";
+
+interface ProfileData {
+  username: string;
+  email: string;
+  phone: string;
+  avatarUrl: string;
+}
 
 export default function ProfilePage() {
   const { toast } = useToast();
-  const [avatarUrl, setAvatarUrl] = useState("");
-  const [username, setUsername] = useState("João Silva");
-  const [email, setEmail] = useState("joao@email.com");
-  const [phone, setPhone] = useState("(11) 99999-0000");
+  const session = getSession();
+
+  const [profile, setProfile] = useLocalStorage<ProfileData>("financaspro_profile", {
+    username: session?.name ?? "Usuário",
+    email: session?.email ?? "usuario@email.com",
+    phone: "(11) 99999-0000",
+    avatarUrl: "",
+  });
+
   const [password, setPassword] = useState("••••••••");
   const [showPassword, setShowPassword] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [editData, setEditData] = useState(profile);
 
-  const initials = username
+  const initials = profile.username
     .split(" ")
     .map((n) => n[0])
     .join("")
@@ -27,12 +42,23 @@ export default function ProfilePage() {
   function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (file) {
-      const url = URL.createObjectURL(file);
-      setAvatarUrl(url);
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = reader.result as string;
+        setProfile((prev) => ({ ...prev, avatarUrl: dataUrl }));
+        setEditData((prev) => ({ ...prev, avatarUrl: dataUrl }));
+      };
+      reader.readAsDataURL(file);
     }
   }
 
+  function startEditing() {
+    setEditData(profile);
+    setIsEditing(true);
+  }
+
   function handleSave() {
+    setProfile(editData);
     setIsEditing(false);
     toast({
       title: "Perfil atualizado",
@@ -41,21 +67,21 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+    <div className="max-w-2xl mx-auto px-3 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
       {/* Header */}
       <div className="flex items-center gap-3">
         <div className="p-2 rounded-xl gradient-primary">
           <UserIcon className="h-5 w-5 text-primary-foreground" />
         </div>
-        <h1 className="text-2xl font-bold tracking-tight">Meu Perfil</h1>
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Meu Perfil</h1>
       </div>
 
       {/* Avatar Section */}
-      <div className="bg-card rounded-xl p-8 card-shadow flex flex-col items-center gap-5">
+      <div className="bg-card rounded-xl p-6 sm:p-8 card-shadow flex flex-col items-center gap-4 sm:gap-5">
         <div className="relative group">
-          <Avatar className="h-28 w-28 text-3xl border-4 border-primary/20">
-            <AvatarImage src={avatarUrl} alt={username} />
-            <AvatarFallback className="bg-primary/10 text-primary text-3xl font-bold">
+          <Avatar className="h-24 w-24 sm:h-28 sm:w-28 text-2xl sm:text-3xl border-4 border-primary/20">
+            <AvatarImage src={profile.avatarUrl} alt={profile.username} />
+            <AvatarFallback className="bg-primary/10 text-primary text-2xl sm:text-3xl font-bold">
               {initials}
             </AvatarFallback>
           </Avatar>
@@ -74,17 +100,17 @@ export default function ProfilePage() {
           </label>
         </div>
         <div className="text-center">
-          <h2 className="text-xl font-bold">{username}</h2>
-          <p className="text-sm text-muted-foreground">{email}</p>
+          <h2 className="text-lg sm:text-xl font-bold">{profile.username}</h2>
+          <p className="text-sm text-muted-foreground">{profile.email}</p>
         </div>
       </div>
 
       {/* Info Section */}
-      <div className="bg-card rounded-xl p-6 card-shadow space-y-6">
+      <div className="bg-card rounded-xl p-5 sm:p-6 card-shadow space-y-5 sm:space-y-6">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold">Informações Pessoais</h3>
+          <h3 className="text-base sm:text-lg font-semibold">Informações Pessoais</h3>
           {!isEditing ? (
-            <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
+            <Button variant="outline" size="sm" onClick={startEditing}>
               Editar
             </Button>
           ) : (
@@ -96,46 +122,46 @@ export default function ProfilePage() {
 
         <Separator />
 
-        <div className="grid gap-5">
+        <div className="grid gap-4 sm:gap-5">
           {/* Username */}
           <div className="space-y-2">
-            <Label className="flex items-center gap-2 text-muted-foreground">
+            <Label className="flex items-center gap-2 text-muted-foreground text-xs sm:text-sm">
               <UserIcon className="h-4 w-4" /> Nome de usuário
             </Label>
             {isEditing ? (
-              <Input value={username} onChange={(e) => setUsername(e.target.value)} />
+              <Input value={editData.username} onChange={(e) => setEditData({ ...editData, username: e.target.value })} />
             ) : (
-              <p className="text-sm font-medium pl-1">{username}</p>
+              <p className="text-sm font-medium pl-1">{profile.username}</p>
             )}
           </div>
 
           {/* Email */}
           <div className="space-y-2">
-            <Label className="flex items-center gap-2 text-muted-foreground">
+            <Label className="flex items-center gap-2 text-muted-foreground text-xs sm:text-sm">
               <Mail className="h-4 w-4" /> Email
             </Label>
             {isEditing ? (
-              <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+              <Input type="email" value={editData.email} onChange={(e) => setEditData({ ...editData, email: e.target.value })} />
             ) : (
-              <p className="text-sm font-medium pl-1">{email}</p>
+              <p className="text-sm font-medium pl-1">{profile.email}</p>
             )}
           </div>
 
           {/* Phone */}
           <div className="space-y-2">
-            <Label className="flex items-center gap-2 text-muted-foreground">
+            <Label className="flex items-center gap-2 text-muted-foreground text-xs sm:text-sm">
               <Phone className="h-4 w-4" /> Telefone
             </Label>
             {isEditing ? (
-              <Input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
+              <Input type="tel" value={editData.phone} onChange={(e) => setEditData({ ...editData, phone: e.target.value })} />
             ) : (
-              <p className="text-sm font-medium pl-1">{phone}</p>
+              <p className="text-sm font-medium pl-1">{profile.phone}</p>
             )}
           </div>
 
           {/* Password */}
           <div className="space-y-2">
-            <Label className="flex items-center gap-2 text-muted-foreground">
+            <Label className="flex items-center gap-2 text-muted-foreground text-xs sm:text-sm">
               <Eye className="h-4 w-4" /> Senha
             </Label>
             {isEditing ? (
