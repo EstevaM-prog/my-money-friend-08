@@ -12,14 +12,26 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { useLocalStorage } from "@/hooks/use-local-storage";
+
+interface SettingsData {
+  currency: string;
+  notifications: boolean;
+  weeklyReport: boolean;
+  budgetAlerts: boolean;
+  twoFactor: boolean;
+}
 
 export default function SettingsPage() {
   const { toast } = useToast();
-  const [currency, setCurrency] = useState("BRL");
-  const [notifications, setNotifications] = useState(true);
-  const [weeklyReport, setWeeklyReport] = useState(true);
-  const [budgetAlerts, setBudgetAlerts] = useState(true);
-  const [twoFactor, setTwoFactor] = useState(false);
+  const [settings, setSettings] = useLocalStorage<SettingsData>("financaspro_settings", {
+    currency: "BRL",
+    notifications: true,
+    weeklyReport: true,
+    budgetAlerts: true,
+    twoFactor: false,
+  });
+
   const [isDark, setIsDark] = useState(() => {
     const saved = localStorage.getItem("theme");
     if (saved) return saved === "dark";
@@ -31,6 +43,9 @@ export default function SettingsPage() {
     localStorage.setItem("theme", isDark ? "dark" : "light");
   }, [isDark]);
 
+  const update = (partial: Partial<SettingsData>) =>
+    setSettings((prev) => ({ ...prev, ...partial }));
+
   function handleSave() {
     toast({
       title: "Configurações salvas",
@@ -39,26 +54,26 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 space-y-8">
+    <div className="max-w-3xl mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-6 sm:space-y-8">
       <div className="flex items-center gap-3">
         <div className="p-2 rounded-xl gradient-primary">
           <SettingsIcon className="h-5 w-5 text-primary-foreground" />
         </div>
-        <h1 className="text-2xl font-bold tracking-tight">Configurações</h1>
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Configurações</h1>
       </div>
 
       {/* Appearance */}
-      <section className="bg-card rounded-xl p-6 card-shadow space-y-4">
+      <section className="bg-card rounded-xl p-5 sm:p-6 card-shadow space-y-4">
         <div className="flex items-center gap-2 mb-2">
           <Palette className="h-5 w-5 text-primary" />
-          <h2 className="text-lg font-semibold">Aparência</h2>
+          <h2 className="text-base sm:text-lg font-semibold">Aparência</h2>
         </div>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {isDark ? <Moon className="h-5 w-5 text-primary" /> : <Sun className="h-5 w-5 text-warning" />}
-            <div>
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            {isDark ? <Moon className="h-5 w-5 text-primary shrink-0" /> : <Sun className="h-5 w-5 text-warning shrink-0" />}
+            <div className="min-w-0">
               <p className="font-medium text-sm">Tema {isDark ? "Escuro" : "Claro"}</p>
-              <p className="text-xs text-muted-foreground">Altere a aparência do sistema</p>
+              <p className="text-xs text-muted-foreground hidden sm:block">Altere a aparência do sistema</p>
             </div>
           </div>
           <Switch checked={isDark} onCheckedChange={setIsDark} />
@@ -66,8 +81,8 @@ export default function SettingsPage() {
         <Separator />
         <div className="space-y-2">
           <Label>Moeda</Label>
-          <Select value={currency} onValueChange={setCurrency}>
-            <SelectTrigger className="w-[200px]"><SelectValue /></SelectTrigger>
+          <Select value={settings.currency} onValueChange={(v) => update({ currency: v })}>
+            <SelectTrigger className="w-full sm:w-[200px]"><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="BRL">R$ - Real Brasileiro</SelectItem>
               <SelectItem value="USD">$ - Dólar Americano</SelectItem>
@@ -78,50 +93,50 @@ export default function SettingsPage() {
       </section>
 
       {/* Notifications */}
-      <section className="bg-card rounded-xl p-6 card-shadow space-y-4">
+      <section className="bg-card rounded-xl p-5 sm:p-6 card-shadow space-y-4">
         <div className="flex items-center gap-2 mb-2">
           <Bell className="h-5 w-5 text-primary" />
-          <h2 className="text-lg font-semibold">Notificações</h2>
+          <h2 className="text-base sm:text-lg font-semibold">Notificações</h2>
         </div>
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
               <p className="font-medium text-sm">Notificações por email</p>
-              <p className="text-xs text-muted-foreground">Receba alertas e atualizações</p>
+              <p className="text-xs text-muted-foreground hidden sm:block">Receba alertas e atualizações</p>
             </div>
-            <Switch checked={notifications} onCheckedChange={setNotifications} />
+            <Switch checked={settings.notifications} onCheckedChange={(v) => update({ notifications: v })} />
           </div>
           <Separator />
-          <div className="flex items-center justify-between">
-            <div>
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
               <p className="font-medium text-sm">Relatório semanal</p>
-              <p className="text-xs text-muted-foreground">Resumo das finanças por email</p>
+              <p className="text-xs text-muted-foreground hidden sm:block">Resumo das finanças por email</p>
             </div>
-            <Switch checked={weeklyReport} onCheckedChange={setWeeklyReport} />
+            <Switch checked={settings.weeklyReport} onCheckedChange={(v) => update({ weeklyReport: v })} />
           </div>
           <Separator />
-          <div className="flex items-center justify-between">
-            <div>
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
               <p className="font-medium text-sm">Alertas de orçamento</p>
-              <p className="text-xs text-muted-foreground">Aviso quando ultrapassar limites</p>
+              <p className="text-xs text-muted-foreground hidden sm:block">Aviso quando ultrapassar limites</p>
             </div>
-            <Switch checked={budgetAlerts} onCheckedChange={setBudgetAlerts} />
+            <Switch checked={settings.budgetAlerts} onCheckedChange={(v) => update({ budgetAlerts: v })} />
           </div>
         </div>
       </section>
 
       {/* Security */}
-      <section className="bg-card rounded-xl p-6 card-shadow space-y-4">
+      <section className="bg-card rounded-xl p-5 sm:p-6 card-shadow space-y-4">
         <div className="flex items-center gap-2 mb-2">
           <Shield className="h-5 w-5 text-primary" />
-          <h2 className="text-lg font-semibold">Segurança</h2>
+          <h2 className="text-base sm:text-lg font-semibold">Segurança</h2>
         </div>
-        <div className="flex items-center justify-between">
-          <div>
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
             <p className="font-medium text-sm">Autenticação de dois fatores</p>
-            <p className="text-xs text-muted-foreground">Maior segurança para sua conta</p>
+            <p className="text-xs text-muted-foreground hidden sm:block">Maior segurança para sua conta</p>
           </div>
-          <Switch checked={twoFactor} onCheckedChange={setTwoFactor} />
+          <Switch checked={settings.twoFactor} onCheckedChange={(v) => update({ twoFactor: v })} />
         </div>
       </section>
 
