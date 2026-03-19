@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
+import { cn } from "@/lib/utils";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
+import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { Outlet, Link, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -12,8 +14,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { User, Settings, LogOut } from "lucide-react";
 import { getSession, logout } from "@/lib/auth";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export function AppLayout() {
+  const isMobile = useIsMobile();
   const navigate = useNavigate();
   const [user, setUser] = useState(() => getSession());
 
@@ -41,10 +45,15 @@ export function AppLayout() {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
-        <AppSidebar />
+        {/* Sidebar only on desktop */}
+        {!isMobile && <AppSidebar />}
         <div className="flex-1 flex flex-col min-w-0">
           <header className="h-14 flex items-center justify-between border-b bg-card/80 backdrop-blur-sm sticky top-0 z-10 px-4">
-            <SidebarTrigger />
+            {!isMobile ? <SidebarTrigger /> : <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-lg gradient-primary">
+                <span className="text-primary-foreground text-xs font-bold">FP</span>
+              </div>
+            </div>}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-2.5 hover:opacity-80 transition-opacity outline-none">
@@ -83,10 +92,12 @@ export function AppLayout() {
               </DropdownMenuContent>
             </DropdownMenu>
           </header>
-          <main className="flex-1">
+          <main className={cn("flex-1", isMobile && "pb-20")}>
             <Outlet />
           </main>
         </div>
+        {/* Bottom nav only on mobile */}
+        {isMobile && <MobileBottomNav />}
       </div>
     </SidebarProvider>
   );
