@@ -24,11 +24,7 @@ interface Goal {
 
 const COLORS = ["hsl(160 84% 39%)", "hsl(217 91% 60%)", "hsl(38 92% 50%)", "hsl(280 65% 60%)", "hsl(0 72% 51%)"];
 
-const INITIAL_GOALS: Goal[] = [
-  { id: "1", name: "Fundo de emergência", target: 30000, current: 18500, deadline: "2026-12-31", color: COLORS[0] },
-  { id: "2", name: "Viagem Europa", target: 15000, current: 4200, deadline: "2027-06-01", color: COLORS[1] },
-  { id: "3", name: "Carro novo", target: 80000, current: 22000, deadline: "2028-01-01", color: COLORS[2] },
-];
+const INITIAL_GOALS: Goal[] = [];
 
 const fmt = (v: number) => `R$ ${v.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
 

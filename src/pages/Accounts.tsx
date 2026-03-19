@@ -53,12 +53,7 @@ const CARD_COLORS = [
   "from-muted-foreground to-muted-foreground/70",
 ];
 
-const INITIAL_ACCOUNTS: Account[] = [
-  { id: "1", name: "Nubank", type: "checking", balance: 4580.32, institution: "Nu Pagamentos", color: CARD_COLORS[0] },
-  { id: "2", name: "Itaú Poupança", type: "savings", balance: 12300.00, institution: "Itaú Unibanco", color: CARD_COLORS[1] },
-  { id: "3", name: "Visa Platinum", type: "credit", balance: -2150.80, institution: "Bradesco", color: CARD_COLORS[2] },
-  { id: "4", name: "XP Investimentos", type: "investment", balance: 35420.15, institution: "XP Inc", color: CARD_COLORS[3] },
-];
+const INITIAL_ACCOUNTS: Account[] = [];
 
 const fmt = (v: number) => `R$ ${v.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
 
