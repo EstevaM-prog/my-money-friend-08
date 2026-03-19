@@ -16,6 +16,7 @@ import { getSession, logout } from "@/lib/auth";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 export function AppLayout() {
+  const isMobile = useIsMobile();
   const navigate = useNavigate();
   const [user, setUser] = useState(() => getSession());
 
