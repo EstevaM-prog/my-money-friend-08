@@ -55,23 +55,4 @@ function makeId() {
   return String(idCounter++);
 }
 
-export const INITIAL_TRANSACTIONS: Transaction[] = [
-  { id: makeId(), description: "Salário mensal", amount: 8500, type: "income", category: "Salário", date: randomDate(currentMonth, currentYear) },
-  { id: makeId(), description: "Projeto freelance", amount: 2200, type: "income", category: "Freelance", date: randomDate(currentMonth, currentYear) },
-  { id: makeId(), description: "Dividendos", amount: 340, type: "income", category: "Investimentos", date: randomDate(currentMonth, currentYear) },
-  { id: makeId(), description: "Supermercado", amount: 820, type: "expense", category: "Alimentação", date: randomDate(currentMonth, currentYear) },
-  { id: makeId(), description: "Restaurante", amount: 215, type: "expense", category: "Alimentação", date: randomDate(currentMonth, currentYear) },
-  { id: makeId(), description: "Uber / 99", amount: 180, type: "expense", category: "Transporte", date: randomDate(currentMonth, currentYear) },
-  { id: makeId(), description: "Gasolina", amount: 350, type: "expense", category: "Transporte", date: randomDate(currentMonth, currentYear) },
-  { id: makeId(), description: "Aluguel", amount: 2200, type: "expense", category: "Moradia", date: randomDate(currentMonth, currentYear) },
-  { id: makeId(), description: "Condomínio", amount: 580, type: "expense", category: "Moradia", date: randomDate(currentMonth, currentYear) },
-  { id: makeId(), description: "Plano de saúde", amount: 450, type: "expense", category: "Saúde", date: randomDate(currentMonth, currentYear) },
-  { id: makeId(), description: "Curso online", amount: 120, type: "expense", category: "Educação", date: randomDate(currentMonth, currentYear) },
-  { id: makeId(), description: "Cinema", amount: 65, type: "expense", category: "Lazer", date: randomDate(currentMonth, currentYear) },
-  { id: makeId(), description: "Roupas", amount: 380, type: "expense", category: "Compras", date: randomDate(currentMonth, currentYear) },
-  // Previous month
-  { id: makeId(), description: "Salário mensal", amount: 8500, type: "income", category: "Salário", date: randomDate(currentMonth - 1, currentYear) },
-  { id: makeId(), description: "Supermercado", amount: 750, type: "expense", category: "Alimentação", date: randomDate(currentMonth - 1, currentYear) },
-  { id: makeId(), description: "Aluguel", amount: 2200, type: "expense", category: "Moradia", date: randomDate(currentMonth - 1, currentYear) },
-  { id: makeId(), description: "Transporte", amount: 420, type: "expense", category: "Transporte", date: randomDate(currentMonth - 1, currentYear) },
-];
+export const INITIAL_TRANSACTIONS: Transaction[] = [];
