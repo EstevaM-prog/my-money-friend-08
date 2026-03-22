@@ -24,7 +24,7 @@ interface SettingsData {
 
 export default function SettingsPage() {
   const { toast } = useToast();
-  const [settings, setSettings] = useLocalStorage<SettingsData>("financaspro_settings", {
+  const [settings, setSettings] = useLocalStorage<SettingsData>("mymoneyfriend_settings", {
     currency: "BRL",
     notifications: true,
     weeklyReport: true,

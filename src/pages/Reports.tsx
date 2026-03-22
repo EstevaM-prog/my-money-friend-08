@@ -31,8 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useLocalStorage } from "@/hooks/use-local-storage";
-import { INITIAL_TRANSACTIONS } from "@/lib/finance-data";
+import { useFinance } from "@/hooks/use-finance";
 
 type Period = "1" | "3" | "6" | "12";
 
@@ -40,7 +39,7 @@ const fmt = (v: number) => `R$ ${v.toLocaleString("pt-BR", { minimumFractionDigi
 
 export default function Reports() {
   const [period, setPeriod] = useState<Period>("3");
-  const [transactions] = useLocalStorage<Transaction[]>("financaspro_transactions", INITIAL_TRANSACTIONS);
+  const { transactions } = useFinance();
 
   const now = new Date();
   const months = parseInt(period);
@@ -88,9 +87,9 @@ export default function Reports() {
   }, [filtered, months]);
 
   function handleExport() {
-    const csvRows = ["Descrição,Tipo,Categoria,Valor,Data"];
+    const csvRows = ["Descrição,Tipo,Categoria,Forma de Pagamento,Valor,Data"];
     filtered.forEach((t) => {
-      csvRows.push(`"${t.description}",${t.type},${t.category},${t.amount},${format(new Date(t.date), "dd/MM/yyyy")}`);
+      csvRows.push(`"${t.description}",${t.type},${t.category},${t.paymentMethod},${t.amount},${format(new Date(t.date), "dd/MM/yyyy")}`);
     });
     const blob = new Blob([csvRows.join("\n")], { type: "text/csv" });
     const url = URL.createObjectURL(blob);

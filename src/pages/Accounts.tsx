@@ -18,23 +18,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useLocalStorage } from "@/hooks/use-local-storage";
+import { Account, AccountType } from "@/lib/finance-data";
+import { useFinance } from "@/hooks/use-finance";
+import { usePrivacy } from "@/hooks/use-privacy";
 
-type AccountType = "checking" | "savings" | "credit" | "investment";
 
-interface Account {
-  id: string;
-  name: string;
-  type: AccountType;
-  balance: number;
-  institution: string;
-  color: string;
-}
 
 const TYPE_LABELS: Record<AccountType, string> = {
   checking: "Conta Corrente",
   savings: "Poupança",
   credit: "Cartão de Crédito",
+  debit: "Cartão de Débito",
   investment: "Investimento",
 };
 
@@ -42,6 +36,7 @@ const TYPE_COLORS: Record<AccountType, string> = {
   checking: "bg-primary/10 text-primary",
   savings: "bg-accent text-accent-foreground",
   credit: "bg-destructive/10 text-destructive",
+  debit: "bg-blue-500/10 text-blue-600",
   investment: "bg-balance/10 text-balance",
 };
 
@@ -58,8 +53,8 @@ const INITIAL_ACCOUNTS: Account[] = [];
 const fmt = (v: number) => `R$ ${v.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
 
 export default function Accounts() {
-  const [accounts, setAccounts] = useLocalStorage<Account[]>("financaspro_accounts", INITIAL_ACCOUNTS);
-  const [showBalances, setShowBalances] = useState(true);
+  const { accounts, setAccounts } = useFinance();
+  const { isPrivate } = usePrivacy();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [type, setType] = useState<AccountType>("checking");
@@ -97,9 +92,6 @@ export default function Accounts() {
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Contas e Cartões</h1>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="icon" onClick={() => setShowBalances(!showBalances)}>
-            {showBalances ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-          </Button>
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
               <Button className="gap-2 gradient-primary border-0 text-primary-foreground font-semibold text-sm">
@@ -144,21 +136,21 @@ export default function Accounts() {
       {/* Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         <div className="bg-card rounded-xl p-4 sm:p-5 card-shadow">
-          <p className="text-xs sm:text-sm text-muted-foreground font-medium">Patrimônio Total</p>
-          <p className="text-xl sm:text-2xl font-bold mt-1 text-primary">
-            {showBalances ? fmt(totalPositive + totalDebt) : "••••••"}
+          <p className="text-sm text-muted-foreground font-medium mb-1">Saldo Positivo</p>
+          <p className="text-2xl sm:text-3xl font-bold text-income tracking-tight">
+            {isPrivate ? "R$ •••••" : fmt(totalPositive)}
           </p>
         </div>
-        <div className="bg-card rounded-xl p-4 sm:p-5 card-shadow">
-          <p className="text-xs sm:text-sm text-muted-foreground font-medium">Saldo Positivo</p>
-          <p className="text-xl sm:text-2xl font-bold mt-1 text-primary">
-            {showBalances ? fmt(totalPositive) : "••••••"}
+        <div className="bg-card rounded-xl p-4 sm:p-5 card-shadow flex flex-col justify-center">
+          <p className="text-sm text-muted-foreground font-medium mb-1">Faturas/Dívidas</p>
+          <p className="text-2xl sm:text-3xl font-bold text-destructive tracking-tight">
+            {isPrivate ? "R$ •••••" : fmt(totalDebt)}
           </p>
         </div>
-        <div className="bg-card rounded-xl p-4 sm:p-5 card-shadow">
-          <p className="text-xs sm:text-sm text-muted-foreground font-medium">Dívidas</p>
-          <p className="text-xl sm:text-2xl font-bold mt-1 text-destructive">
-            {showBalances ? fmt(Math.abs(totalDebt)) : "••••••"}
+        <div className="bg-card rounded-xl p-4 sm:p-5 card-shadow flex flex-col justify-center">
+          <p className="text-sm text-muted-foreground font-medium mb-1">Total</p>
+          <p className="text-2xl sm:text-3xl font-bold text-balance tracking-tight">
+            {isPrivate ? "R$ •••••" : fmt(totalPositive + totalDebt)}
           </p>
         </div>
       </div>
@@ -188,9 +180,9 @@ export default function Accounts() {
                 </Button>
               </div>
             </div>
-            <p className="text-xl sm:text-2xl font-bold mt-3 sm:mt-4 relative z-10">
-              {showBalances ? fmt(account.balance) : "R$ ••••••"}
-            </p>
+              <p className="text-2xl sm:text-3xl font-bold tracking-tight mb-4 sm:mb-6 leading-none">
+                {isPrivate ? "R$ •••••" : fmt(Math.abs(account.balance))}
+              </p>
           </div>
         ))}
       </div>

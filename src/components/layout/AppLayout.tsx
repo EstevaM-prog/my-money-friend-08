@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/AppSidebar";
-import { MobileBottomNav } from "@/components/MobileBottomNav";
+import { AppSidebar } from "./AppSidebar";
+import { MobileBottomNav } from "./MobileBottomNav";
 import { Outlet, Link, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -12,13 +12,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { User, Settings, LogOut } from "lucide-react";
+import { User, Settings, LogOut, Eye, EyeOff, Wallet } from "lucide-react";
 import { getSession, logout } from "@/lib/auth";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { usePrivacy } from "@/hooks/use-privacy";
 
 export function AppLayout() {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
+  const { isPrivate, togglePrivacy } = usePrivacy();
   const [user, setUser] = useState(() => getSession());
 
   // Keep user state in sync (e.g. after register/login)
@@ -44,18 +46,29 @@ export function AppLayout() {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full">
+      <div className="min-h-[100dvh] flex w-full">
         {/* Sidebar only on desktop */}
         {!isMobile && <AppSidebar />}
         <div className="flex-1 flex flex-col min-w-0">
           <header className="h-14 flex items-center justify-between border-b bg-card/80 backdrop-blur-sm sticky top-0 z-10 px-4">
             {!isMobile ? <SidebarTrigger /> : <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg gradient-primary">
-                <span className="text-primary-foreground text-xs font-bold">FP</span>
+              <div className="p-1.5 rounded-lg gradient-primary rotate-3 shadow-sm shadow-primary/20">
+                <Wallet className="h-4 w-4 text-primary-foreground" />
               </div>
+              <span className="font-bold tracking-tight">
+                Cash<span className="text-primary font-extrabold italic">Flow</span>
+              </span>
             </div>}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={togglePrivacy}
+                className="p-2 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors outline-none"
+                title={isPrivate ? "Mostrar valores" : "Esconder valores"}
+              >
+                {isPrivate ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              </button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-2.5 hover:opacity-80 transition-opacity outline-none">
                   <span className="text-sm font-medium hidden sm:block">{username}</span>
                   <Avatar className="h-8 w-8 border-2 border-primary/20">
@@ -90,7 +103,8 @@ export function AppLayout() {
                   <LogOut className="h-4 w-4" /> Sair
                 </DropdownMenuItem>
               </DropdownMenuContent>
-            </DropdownMenu>
+              </DropdownMenu>
+            </div>
           </header>
           <main className={cn("flex-1", isMobile && "pb-20")}>
             <Outlet />

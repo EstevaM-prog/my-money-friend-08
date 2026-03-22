@@ -6,9 +6,9 @@ export interface User {
   avatarUrl?: string;
 }
 
-const USERS_KEY = "financaspro_users";
-const SESSION_KEY = "financaspro_session";
-const SESSION_EXPIRY_KEY = "financaspro_session_expiry";
+const USERS_KEY = "mymoneyfriend_users";
+const SESSION_KEY = "mymoneyfriend_session";
+const SESSION_EXPIRY_KEY = "mymoneyfriend_session_expiry";
 
 const REMEMBER_DAYS = 7;
 

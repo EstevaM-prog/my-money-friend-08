@@ -1,21 +1,38 @@
 export type TransactionType = "income" | "expense";
 
-export type Category =
-  | "Salário"
-  | "Freelance"
-  | "Investimentos"
-  | "Alimentação"
-  | "Transporte"
-  | "Moradia"
-  | "Saúde"
-  | "Educação"
-  | "Lazer"
-  | "Compras"
-  | "Outros";
+export type Category = string;
+
+export interface CustomCategoryDef {
+  id: string;
+  name: string;
+  icon: string;
+  color: string;
+  type: TransactionType;
+}
 
 export const INCOME_CATEGORIES: Category[] = ["Salário", "Freelance", "Investimentos", "Outros"];
 export const EXPENSE_CATEGORIES: Category[] = [
   "Alimentação", "Transporte", "Moradia", "Saúde", "Educação", "Lazer", "Compras", "Outros",
+];
+
+export type AccountType = "checking" | "savings" | "credit" | "investment" | "debit";
+
+export interface Account {
+  id: string;
+  name: string;
+  type: AccountType;
+  balance: number;
+  institution: string;
+  color: string;
+}
+
+export type PaymentMethod = string;
+
+export const DEFAULT_PAYMENT_METHODS = [
+  "Dinheiro",
+  "PIX",
+  "Transferência",
+  "Cartão de Débito",
 ];
 
 export interface Transaction {
@@ -24,7 +41,37 @@ export interface Transaction {
   amount: number;
   type: TransactionType;
   category: Category;
+  paymentMethod?: PaymentMethod;
+  accountId?: string;
+  email_notification_active?: boolean;
+  notification_scheduled_at?: string; // ISO string when scheduled
   date: string; // ISO string
+  virtualRange?: string; 
+  groupedIds?: string[];
+}
+
+export interface Goal {
+  id: string;
+  name: string;
+  target: number;
+  current: number;
+  deadline: string;
+  color: string;
+}
+
+export interface BudgetRule {
+  id: string;
+  label: string;       // e.g. "Necessidades"
+  category: Category;  // matches EXPENSE_CATEGORIES or custom
+  percentage: number;  // 0-100
+  color: string;       // hex
+}
+
+export interface CardCeiling {
+  accountId: string;   // credit card account id
+  limit: number;       // spending ceiling in R$
+  alertAt: number;     // 0-100, e.g. 80 = notify at 80%
+  notifyEnabled: boolean;
 }
 
 export const CATEGORY_COLORS: Record<string, string> = {

@@ -59,20 +59,22 @@ export function CategoryChart({ transactions }: CategoryChartProps) {
           </PieChart>
         </ResponsiveContainer>
       </div>
-      <div className="flex-1 space-y-2 w-full">
+      <div className="flex-1 space-y-2 min-w-0 w-full">
         {data.map((d) => (
-          <div key={d.name} className="flex items-center gap-2">
+          <div key={d.name} className="flex items-center gap-2 w-full">
             <span
               className="w-3 h-3 rounded-full shrink-0"
               style={{ backgroundColor: CATEGORY_COLORS[d.name] || "#6b7280" }}
             />
-            <span className="text-sm text-card-foreground flex-1">{d.name}</span>
-            <span className="text-sm font-medium text-muted-foreground tabular-nums">
-              {((d.value / total) * 100).toFixed(0)}%
-            </span>
-            <span className="text-sm font-semibold text-card-foreground tabular-nums">
-              R$ {d.value.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-            </span>
+            <span className="text-sm text-card-foreground flex-1 min-w-0 truncate pr-2" title={d.name}>{d.name}</span>
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="text-sm font-medium text-muted-foreground tabular-nums w-9 text-right">
+                {((d.value / total) * 100).toFixed(0)}%
+              </span>
+              <span className="text-sm font-semibold text-card-foreground tabular-nums text-right whitespace-nowrap">
+                R$ {d.value.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+              </span>
+            </div>
           </div>
         ))}
       </div>

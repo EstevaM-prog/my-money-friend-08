@@ -14,7 +14,6 @@ const navItems = [
   { title: "Metas", url: "/metas", icon: Target },
   { title: "Contas", url: "/contas", icon: CreditCard },
   { title: "Relatórios", url: "/relatorios", icon: FileBarChart },
-  { title: "Config", url: "/configuracoes", icon: Settings },
 ];
 
 export function MobileBottomNav() {

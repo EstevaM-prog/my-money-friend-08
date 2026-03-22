@@ -11,16 +11,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useLocalStorage } from "@/hooks/use-local-storage";
-
-interface Goal {
-  id: string;
-  name: string;
-  target: number;
-  current: number;
-  deadline: string;
-  color: string;
-}
+import { useFinance } from "@/hooks/use-finance";
+import { Goal } from "@/lib/finance-data";
 
 const COLORS = ["hsl(160 84% 39%)", "hsl(217 91% 60%)", "hsl(38 92% 50%)", "hsl(280 65% 60%)", "hsl(0 72% 51%)"];
 
@@ -29,7 +21,7 @@ const INITIAL_GOALS: Goal[] = [];
 const fmt = (v: number) => `R$ ${v.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
 
 export default function Goals() {
-  const [goals, setGoals] = useLocalStorage<Goal[]>("financaspro_goals", INITIAL_GOALS);
+  const { goals, addGoal, deleteGoal, updateGoalCurrent } = useFinance();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [target, setTarget] = useState("");
@@ -39,33 +31,25 @@ export default function Goals() {
   function handleAdd(e: React.FormEvent) {
     e.preventDefault();
     if (!name || !target || !deadline) return;
-    setGoals((prev) => [
-      ...prev,
-      {
-        id: String(Date.now()),
-        name,
-        target: parseFloat(target),
-        current: parseFloat(current || "0"),
-        deadline,
-        color: COLORS[prev.length % COLORS.length],
-      },
-    ]);
+    addGoal({
+      name,
+      target: parseFloat(target),
+      current: parseFloat(current || "0"),
+      deadline,
+      color: COLORS[goals.length % COLORS.length],
+    });
     setName(""); setTarget(""); setCurrent(""); setDeadline("");
     setOpen(false);
   }
 
   function handleDelete(id: string) {
-    setGoals((prev) => prev.filter((g) => g.id !== id));
+    deleteGoal(id);
   }
 
   function handleAddValue(id: string) {
     const value = prompt("Quanto deseja adicionar? (R$)");
     if (!value || isNaN(Number(value))) return;
-    setGoals((prev) =>
-      prev.map((g) =>
-        g.id === id ? { ...g, current: Math.min(g.current + Number(value), g.target) } : g
-      )
-    );
+    updateGoalCurrent(id, Number(value));
   }
 
   const totalTarget = goals.reduce((s, g) => s + g.target, 0);
