@@ -38,10 +38,16 @@ export function register(name: string, email: string, password: string): User {
   return publicUser;
 }
 
-export function login(email: string, password: string, remember = false): User {
+export function login(emailOrUsername: string, password: string, remember = false): User {
   const users = getUsers();
-  const user = users.find((u) => u.email === email && u.password === password);
-  if (!user) throw new Error("E-mail ou senha incorretos.");
+  const identifier = emailOrUsername.trim().toLowerCase();
+  const user = users.find(
+    (u) =>
+      (u.email.toLowerCase() === identifier ||
+        u.name.toLowerCase() === identifier) &&
+      u.password === password
+  );
+  if (!user) throw new Error("Usuário/e-mail ou senha incorretos.");
   const { password: _, ...publicUser } = user;
   saveSession(publicUser, remember);
   return publicUser;
