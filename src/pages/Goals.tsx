@@ -89,77 +89,112 @@ export default function Goals() {
         }}>
           <DialogTrigger asChild>
             <Button 
-              className="h-11 px-6 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-black shadow-lg shadow-indigo-500/20 gap-2 transition-all active:scale-95 border-0"
+              className="h-10 px-5 gap-2 bg-white/10 hover:bg-white/20 text-white font-bold tracking-wide rounded-xl border border-white/20 backdrop-blur-md shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all hover:scale-105 active:scale-95"
             >
-              <Plus className="h-5 w-5" /> Iniciar Projeto
+              <Plus className="h-4 w-4" /> Iniciar Projeto
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-md rounded-[2rem] bg-card/95 backdrop-blur-xl border border-border/50 shadow-2xl p-6 sm:p-8">
-            <DialogHeader className="mb-6">
-              <DialogTitle className="text-2xl font-black font-outfit tracking-tight">Novo Objetivo</DialogTitle>
-              <p className="text-sm text-muted-foreground font-medium">Até onde você quer chegar? Defina o norte.</p>
-            </DialogHeader>
-            <form onSubmit={handleAdd} className="space-y-5">
-              
-              <div className="space-y-2">
-                <Label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Códinome do Projeto</Label>
-                <Input 
-                  value={name} 
-                  onChange={(e) => setName(e.target.value)} 
-                  placeholder="Ex: Viagem para o Japão, Macbook M4..." 
-                  required 
-                  className="h-12 bg-background/50 border-border/50 rounded-xl focus:ring-indigo-500 text-base font-semibold"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
+          <DialogContent className="sm:max-w-[425px] bg-[#080810]/95 backdrop-blur-3xl border border-white/10 rounded-3xl p-0 overflow-hidden shadow-2xl">
+            <div className="absolute inset-0 opacity-20 blur-[100px] pointer-events-none transition-colors duration-500 bg-indigo-500" />
+            <div className="p-6 relative z-10">
+              <DialogHeader className="mb-6">
+                <DialogTitle className="text-2xl font-black text-white text-center flex items-center justify-center gap-2">
+                  <Target className="h-6 w-6 text-white/50" />
+                  Novo Objetivo
+                </DialogTitle>
+                <p className="text-xs text-white/50 font-medium text-center mt-1">Até onde você quer chegar? Defina o norte.</p>
+              </DialogHeader>
+              <form onSubmit={handleAdd} className="space-y-5">
+                
                 <div className="space-y-2">
-                  <Label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Alvo Ouro (R$)</Label>
-                  <Input 
-                    type="number" 
-                    value={target} 
-                    onChange={(e) => setTarget(e.target.value)} 
-                    min="1" 
-                    step="0.01" 
-                    placeholder="20000"
-                    required 
-                    className="h-12 bg-background/50 border-border/50 rounded-xl focus:ring-indigo-500 text-base font-semibold"
-                  />
+                  <Label className="text-white/50 text-xs font-bold uppercase tracking-widest pl-1">Códinome do Projeto</Label>
+                  <div className="relative group">
+                    <Target className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
+                    <Input 
+                      value={name} 
+                      onChange={(e) => setName(e.target.value)} 
+                      placeholder="Ex: Viagem para o Japão..." 
+                      maxLength={100}
+                      required 
+                      className="h-12 pl-11 bg-white/[0.02] border border-white/10 rounded-2xl text-white text-sm font-semibold focus:border-white/30 focus:bg-white/[0.05] transition-all"
+                    />
+                  </div>
                 </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-white/50 text-xs font-bold uppercase tracking-widest pl-1">Alvo Ouro</Label>
+                    <div className="relative group">
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-indigo-500">R$</span>
+                      <Input 
+                        type="number" 
+                        value={target} 
+                        onChange={(e) => setTarget(e.target.value)} 
+                        min="1" 
+                        step="0.01" 
+                        placeholder="0.00"
+                        required 
+                        className="h-14 pl-12 text-xl font-black bg-white/[0.02] border border-white/10 rounded-2xl text-white transition-all focus:border-indigo-500/50 focus:ring-indigo-500/20"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-white/50 text-xs font-bold uppercase tracking-widest pl-1">Já Guardado</Label>
+                    <div className="relative group">
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-emerald-500">R$</span>
+                      <Input 
+                        type="number" 
+                        value={current} 
+                        onChange={(e) => setCurrent(e.target.value)} 
+                        min="0" 
+                        step="0.01" 
+                        placeholder="0.00"
+                        className="h-14 pl-12 text-xl font-black bg-white/[0.02] border border-white/10 rounded-2xl text-white transition-all focus:border-emerald-500/50 focus:ring-emerald-500/20"
+                      />
+                    </div>
+                  </div>
+                </div>
+
                 <div className="space-y-2">
-                  <Label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Já Guardado</Label>
-                  <Input 
-                    type="number" 
-                    value={current} 
-                    onChange={(e) => setCurrent(e.target.value)} 
-                    min="0" 
-                    step="0.01" 
-                    placeholder="0"
-                    className="h-12 bg-background/50 border-border/50 rounded-xl focus:ring-indigo-500 text-base font-semibold"
-                  />
+                  <Label className="text-white/50 text-xs font-bold uppercase tracking-widest pl-1">Data de Conquista</Label>
+                  <div className="relative flex items-center group">
+                    <Flag className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
+                    <Input 
+                      type="date" 
+                      value={deadline} 
+                      onChange={(e) => setDeadline(e.target.value)} 
+                      required 
+                      className="h-12 pl-11 pr-4 bg-white/[0.02] border border-white/10 rounded-2xl text-white font-semibold uppercase tracking-widest text-xs focus:border-white/30 [&::-webkit-calendar-picker-indicator]:invert-[1] [&::-webkit-calendar-picker-indicator]:opacity-50"
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <div className="space-y-2">
-                <Label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Data de Conquista</Label>
-                <div className="relative">
-                  <Input 
-                    type="date" 
-                    value={deadline} 
-                    onChange={(e) => setDeadline(e.target.value)} 
-                    required 
-                    className="h-12 bg-background/50 border-border/50 rounded-xl focus:ring-indigo-500 text-base font-semibold [&::-webkit-calendar-picker-indicator]:opacity-50 [&::-webkit-calendar-picker-indicator]:hover:opacity-100"
-                  />
-                </div>
-              </div>
+                {/* Progress Visualizer */}
+                {Number(target) > 0 && (
+                  <div className="bg-white/[0.02] border border-white/[0.05] rounded-3xl p-4 space-y-2">
+                    <div className="flex justify-between items-end">
+                       <Label className="text-[10px] text-white/50 font-bold uppercase tracking-widest">Progresso Inicial Simulado</Label>
+                       <span className="text-xs font-bold text-white">
+                         {Math.min(100, (Number(current) / Number(target)) * 100 || 0).toFixed(1)}%
+                       </span>
+                    </div>
+                    <div className="w-full bg-white/5 h-1.5 rounded-full overflow-hidden">
+                       <div 
+                         className="h-full bg-indigo-500 rounded-full transition-all duration-500" 
+                         style={{ width: `${Math.min(100, (Number(current) / Number(target)) * 100 || 0)}%` }} 
+                       />
+                    </div>
+                  </div>
+                )}
 
-              <Button 
-                type="submit" 
-                className="w-full h-12 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-black uppercase tracking-widest text-xs shadow-lg shadow-indigo-500/20 transition-all border-0 mt-4"
-              >
-                Travar Objetivo
-              </Button>
-            </form>
+                <Button 
+                  type="submit" 
+                  className="w-full h-14 rounded-2xl text-white font-black text-base shadow-xl transition-all transform active:scale-[0.98] bg-indigo-600 hover:bg-indigo-500 shadow-[0_0_20px_rgba(79,70,229,0.3)] mt-2"
+                >
+                  Confirmar Objetivo
+                </Button>
+              </form>
+            </div>
           </DialogContent>
         </Dialog>
       </div>

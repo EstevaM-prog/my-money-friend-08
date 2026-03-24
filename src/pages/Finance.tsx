@@ -148,42 +148,59 @@ export default function Finance() {
                     <Plus className="h-4 w-4" /> Add Renda Fixa
                  </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-md rounded-[2rem] bg-card/95 backdrop-blur-xl border border-border/50 shadow-2xl p-6 sm:p-8">
-                 <DialogHeader className="mb-4">
-                   <DialogTitle className="text-2xl font-black font-outfit">Novo Título Pós/Pré</DialogTitle>
+              <DialogContent className="sm:max-w-[425px] bg-[#080810]/95 backdrop-blur-3xl border border-white/10 rounded-3xl p-0 overflow-hidden shadow-2xl">
+                <div className="absolute inset-0 opacity-20 blur-[100px] pointer-events-none transition-colors duration-500 bg-indigo-500" />
+                <div className="p-6 relative z-10">
+                 <DialogHeader className="mb-6">
+                   <DialogTitle className="text-2xl font-black text-white text-center flex items-center justify-center gap-2">
+                     <Landmark className="h-6 w-6 text-white/50" />
+                     Novo Título Pós/Pré
+                   </DialogTitle>
                  </DialogHeader>
-                 <form onSubmit={handleAddFixed} className="space-y-4">
-                    <div className="space-y-1.5">
-                      <Label className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">Nome do Título</Label>
-                      <Input value={fName} onChange={e => setFName(e.target.value)} placeholder="Ex: CDB Banco Inter" required className="h-12 bg-background/50 rounded-xl font-semibold" />
+                 <form onSubmit={handleAddFixed} className="space-y-5">
+                    <div className="space-y-2">
+                      <Label className="text-white/50 text-xs font-bold uppercase tracking-widest pl-1">Nome do Título</Label>
+                      <div className="relative group">
+                        <Landmark className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
+                        <Input value={fName} onChange={e => setFName(e.target.value)} placeholder="Ex: CDB Banco Inter..." required className="h-12 pl-11 bg-white/[0.02] border border-white/10 rounded-2xl text-white text-sm font-semibold focus:border-white/30 focus:bg-white/[0.05] transition-all" />
+                      </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-1.5">
-                        <Label className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">Classe</Label>
+                      <div className="space-y-2">
+                        <Label className="text-white/50 text-xs font-bold uppercase tracking-widest pl-1">Classe</Label>
                         <Select value={fType} onValueChange={(v: any) => setFType(v)}>
-                          <SelectTrigger className="h-12 bg-background/50 rounded-xl font-semibold"><SelectValue /></SelectTrigger>
-                          <SelectContent className="rounded-xl">
-                            {["CDB", "Tesouro Direto", "LCI", "LCA", "Debêntures"].map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                          <SelectTrigger className="h-14 bg-white/[0.02] border border-white/10 rounded-2xl text-white font-semibold focus:ring-1 focus:border-indigo-500/50">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="bg-[#0A0B10] border-white/10 text-white rounded-xl shadow-xl">
+                            {["CDB", "Tesouro Direto", "LCI", "LCA", "Debêntures"].map(t => <SelectItem key={t} value={t} className="focus:bg-white/10 rounded-lg cursor-pointer">{t}</SelectItem>)}
                           </SelectContent>
                         </Select>
                       </div>
-                      <div className="space-y-1.5">
-                        <Label className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">Alocação (R$)</Label>
-                        <Input type="number" step="0.01" value={fAmount} onChange={e => setFAmount(e.target.value)} required className="h-12 bg-background/50 rounded-xl font-semibold" />
+                      <div className="space-y-2">
+                        <Label className="text-white/50 text-xs font-bold uppercase tracking-widest pl-1">Alocação (R$)</Label>
+                        <div className="relative group">
+                          <span className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-indigo-500">R$</span>
+                          <Input type="number" step="0.01" value={fAmount} onChange={e => setFAmount(e.target.value)} required placeholder="0.00" className="h-14 pl-12 pr-4 text-xl font-black bg-white/[0.02] border border-white/10 rounded-2xl text-white transition-all focus:border-indigo-500/50 focus:ring-indigo-500/20" />
+                        </div>
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-1.5">
-                        <Label className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">Taxa</Label>
-                        <Input value={fRate} onChange={e => setFRate(e.target.value)} placeholder="Ex: 110% CDI" required className="h-12 bg-background/50 rounded-xl font-semibold" />
+                      <div className="space-y-2">
+                        <Label className="text-white/50 text-xs font-bold uppercase tracking-widest pl-1">Taxa</Label>
+                        <div className="relative group">
+                          <TrendingUp className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
+                          <Input value={fRate} onChange={e => setFRate(e.target.value)} placeholder="Ex: 110% CDI" required className="h-12 pl-11 pr-4 bg-white/[0.02] border border-white/10 rounded-2xl text-white text-sm font-semibold focus:border-white/30 focus:bg-white/[0.05] transition-all" />
+                        </div>
                       </div>
-                      <div className="space-y-1.5">
-                        <Label className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">Vencimento</Label>
-                        <Input type="date" value={fDeadline} onChange={e => setFDeadline(e.target.value)} required className="h-12 bg-background/50 rounded-xl font-semibold [&::-webkit-calendar-picker-indicator]:opacity-50" />
+                      <div className="space-y-2">
+                        <Label className="text-white/50 text-xs font-bold uppercase tracking-widest pl-1">Vencimento</Label>
+                        <Input type="date" value={fDeadline} onChange={e => setFDeadline(e.target.value)} required className="h-12 px-4 bg-white/[0.02] border border-white/10 rounded-2xl text-white text-xs tracking-widest uppercase font-semibold focus:border-white/30 focus:bg-white/[0.05] transition-all [&::-webkit-calendar-picker-indicator]:invert-[1] [&::-webkit-calendar-picker-indicator]:opacity-50" />
                       </div>
                     </div>
-                    <Button type="submit" className="w-full h-12 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-black uppercase tracking-widest text-xs mt-4">Registrar Título</Button>
+                    <Button type="submit" className="w-full h-14 rounded-2xl text-white font-black text-base shadow-[0_0_20px_rgba(79,70,229,0.3)] transition-all transform active:scale-[0.98] bg-indigo-600 hover:bg-indigo-500 mt-2">Registrar Título</Button>
                  </form>
+                </div>
               </DialogContent>
             </Dialog>
 
@@ -193,42 +210,62 @@ export default function Finance() {
                     <Plus className="h-4 w-4" /> Add Renda Variável
                  </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-md rounded-[2rem] bg-card/95 backdrop-blur-xl border border-border/50 shadow-2xl p-6 sm:p-8">
-                 <DialogHeader className="mb-4">
-                   <DialogTitle className="text-2xl font-black font-outfit">Nova Posição Variável</DialogTitle>
+              <DialogContent className="sm:max-w-[425px] bg-[#080810]/95 backdrop-blur-3xl border border-white/10 rounded-3xl p-0 overflow-hidden shadow-2xl">
+                <div className="absolute inset-0 opacity-20 blur-[100px] pointer-events-none transition-colors duration-500 bg-emerald-500" />
+                <div className="p-6 relative z-10">
+                 <DialogHeader className="mb-6">
+                   <DialogTitle className="text-2xl font-black text-white text-center flex items-center justify-center gap-2">
+                     <CandlestickChart className="h-6 w-6 text-white/50" />
+                     Nova Posição Variável
+                   </DialogTitle>
                  </DialogHeader>
-                 <form onSubmit={handleAddVariable} className="space-y-4">
+                 <form onSubmit={handleAddVariable} className="space-y-5">
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-1.5">
-                        <Label className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">Ativo (Ticker)</Label>
-                        <Input value={vTicker} onChange={e => setVTicker(e.target.value)} placeholder="Ex: BOVA11" required className="h-12 bg-background/50 rounded-xl font-bold uppercase" />
+                      <div className="space-y-2">
+                        <Label className="text-white/50 text-xs font-bold uppercase tracking-widest pl-1">Ativo (Busca)</Label>
+                        <div className="relative group">
+                          <CandlestickChart className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
+                          <Input list="tickers-list" value={vTicker} onChange={e => setVTicker(e.target.value.toUpperCase())} placeholder="Ex: BOVA11" required className="h-12 pl-11 pr-4 bg-white/[0.02] border border-white/10 rounded-2xl text-white font-bold uppercase placeholder:text-white/30 focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30 transition-all focus:bg-white/[0.05]" />
+                          <datalist id="tickers-list">
+                            {["BOVA11", "SMAL11", "IVVB11", "HASH11", "PETR4", "VALE3", "ITUB4", "BBDC4", "BBAS3", "ELET3", "WEGE3", "RENT3", "ABEV3", "B3SA3", "SUZB3", "MXRF11", "HGLG11", "KNRI11", "IRDM11", "XPLG11"].map(t => <option key={t} value={t} />)}
+                          </datalist>
+                        </div>
                       </div>
-                      <div className="space-y-1.5">
-                        <Label className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">Modalidade</Label>
+                      <div className="space-y-2">
+                        <Label className="text-white/50 text-xs font-bold uppercase tracking-widest pl-1">Modalidade</Label>
                         <Select value={vType} onValueChange={(v: any) => setVType(v)}>
-                          <SelectTrigger className="h-12 bg-background/50 rounded-xl font-semibold"><SelectValue /></SelectTrigger>
-                          <SelectContent className="rounded-xl">
-                            {["Ações", "FIIs", "ETFs"].map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                          <SelectTrigger className="h-12 bg-white/[0.02] border border-white/10 rounded-2xl text-white font-semibold focus:ring-1 focus:border-emerald-500/50">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="bg-[#0A0B10] border-white/10 text-white rounded-xl shadow-xl">
+                            {["Ações", "FIIs", "ETFs"].map(t => <SelectItem key={t} value={t} className="focus:bg-white/10 rounded-lg cursor-pointer">{t}</SelectItem>)}
                           </SelectContent>
                         </Select>
                       </div>
                     </div>
-                    <div className="space-y-1.5">
-                      <Label className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">Quantidade</Label>
-                      <Input type="number" value={vQuantity} onChange={e => setVQuantity(e.target.value)} required className="h-12 bg-background/50 rounded-xl font-semibold" />
+                    <div className="space-y-2">
+                      <Label className="text-white/50 text-xs font-bold uppercase tracking-widest pl-1">Quantidade</Label>
+                      <Input type="number" placeholder="100" value={vQuantity} onChange={e => setVQuantity(e.target.value)} required className="h-12 px-4 bg-white/[0.02] border border-white/10 rounded-2xl text-white font-semibold focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30 transition-all focus:bg-white/[0.05]" />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-1.5">
-                        <Label className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">Preço Médio (R$)</Label>
-                        <Input type="number" step="0.01" value={vAvgPrice} onChange={e => setVAvgPrice(e.target.value)} required className="h-12 bg-background/50 rounded-xl font-semibold" />
+                      <div className="space-y-2">
+                        <Label className="text-white/50 text-xs font-bold uppercase tracking-widest pl-1">Preço Médio</Label>
+                        <div className="relative group">
+                          <span className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-emerald-500">R$</span>
+                          <Input type="number" step="0.01" placeholder="0.00" value={vAvgPrice} onChange={e => setVAvgPrice(e.target.value)} required className="h-14 pl-12 pr-4 text-xl font-black bg-white/[0.02] border border-white/10 rounded-2xl text-white transition-all focus:border-emerald-500/50 focus:ring-emerald-500/20" />
+                        </div>
                       </div>
-                      <div className="space-y-1.5">
-                        <Label className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">Cotação Atual (R$)</Label>
-                        <Input type="number" step="0.01" value={vCurrentPrice} onChange={e => setVCurrentPrice(e.target.value)} required className="h-12 bg-background/50 rounded-xl font-semibold" />
+                      <div className="space-y-2">
+                        <Label className="text-white/50 text-xs font-bold uppercase tracking-widest pl-1">Cotação Atual</Label>
+                        <div className="relative group">
+                          <span className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-emerald-500">R$</span>
+                          <Input type="number" step="0.01" placeholder="0.00" value={vCurrentPrice} onChange={e => setVCurrentPrice(e.target.value)} required className="h-14 pl-12 pr-4 text-xl font-black bg-white/[0.02] border border-white/10 rounded-2xl text-white transition-all focus:border-emerald-500/50 focus:ring-emerald-500/20" />
+                        </div>
                       </div>
                     </div>
-                    <Button type="submit" className="w-full h-12 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black uppercase tracking-widest text-xs mt-4">Comprar/Registrar</Button>
+                    <Button type="submit" className="w-full h-14 rounded-2xl text-white font-black text-base transition-all transform active:scale-[0.98] bg-emerald-500 hover:bg-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.3)] mt-2 border-0">Comprar/Registrar</Button>
                  </form>
+                </div>
               </DialogContent>
             </Dialog>
           </div>

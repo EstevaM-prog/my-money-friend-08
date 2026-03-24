@@ -67,14 +67,14 @@ export default function Accounts() {
   const { isPrivate } = usePrivacy();
   const [open, setOpen] = useState(false);
   
-  // Form State
   const [name, setName] = useState("");
   const [type, setType] = useState<AccountType>("checking");
   const [balance, setBalance] = useState("");
   const [institution, setInstitution] = useState("");
+  const [color, setColor] = useState(PREMIUM_CARD_GRADIENTS[0]);
 
   const resetForm = () => {
-    setName(""); setBalance(""); setInstitution(""); setType("checking");
+    setName(""); setBalance(""); setInstitution(""); setType("checking"); setColor(PREMIUM_CARD_GRADIENTS[0]);
   };
 
   function handleAdd(e: React.FormEvent) {
@@ -88,7 +88,7 @@ export default function Accounts() {
         type,
         balance: parseFloat(balance || "0"),
         institution,
-        color: PREMIUM_CARD_GRADIENTS[prev.length % PREMIUM_CARD_GRADIENTS.length],
+        color,
       },
     ]);
     resetForm();
@@ -129,75 +129,108 @@ export default function Accounts() {
         >
           <DialogTrigger asChild>
             <Button 
-              className="h-11 px-6 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-black shadow-lg shadow-indigo-500/20 gap-2 transition-all active:scale-95 border-0"
+              className="h-10 px-5 gap-2 bg-white/10 hover:bg-white/20 text-white font-bold tracking-wide rounded-xl border border-white/20 backdrop-blur-md shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all hover:scale-105 active:scale-95"
             >
-              <Plus className="h-5 w-5" /> Adicionar Conta
+              <Plus className="h-4 w-4" /> Adicionar Conta
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-md rounded-[2rem] bg-card/95 backdrop-blur-xl border border-border/50 shadow-2xl p-6 sm:p-8">
-            <DialogHeader className="mb-6">
-              <DialogTitle className="text-2xl font-black font-outfit tracking-tight">Vincular Instituição</DialogTitle>
-              <p className="text-sm text-muted-foreground font-medium">Cadastre um novo banco, carteira ou cartão para monitoramento.</p>
-            </DialogHeader>
-            <form onSubmit={handleAdd} className="space-y-5">
-              
-              <div className="space-y-2">
-                <Label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Apelido da Conta</Label>
-                <Input 
-                  value={name} 
-                  onChange={(e) => setName(e.target.value)} 
-                  placeholder="Ex: Nubank Principal, Reserva C6..." 
-                  required 
-                  className="h-12 bg-background/50 border-border/50 rounded-xl focus:ring-indigo-500 text-base font-semibold"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
+          <DialogContent className="sm:max-w-[425px] bg-[#080810]/95 backdrop-blur-3xl border border-white/10 rounded-3xl p-0 overflow-hidden shadow-2xl">
+            <div className="absolute inset-0 opacity-20 blur-[100px] pointer-events-none transition-colors duration-500 bg-indigo-500" />
+            <div className="p-6 relative z-10">
+              <DialogHeader className="mb-6">
+                <DialogTitle className="text-2xl font-black text-white text-center flex items-center justify-center gap-2">
+                  <Wallet className="h-6 w-6 text-white/50" />
+                  Vincular Instituição
+                </DialogTitle>
+                <p className="text-xs text-white/50 font-medium text-center mt-1">Cadastre um novo banco, carteira ou cartão para monitoramento.</p>
+              </DialogHeader>
+              <form onSubmit={handleAdd} className="space-y-5">
+                
                 <div className="space-y-2">
-                  <Label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Instituição / Banco</Label>
-                  <Input 
-                    value={institution} 
-                    onChange={(e) => setInstitution(e.target.value)} 
-                    placeholder="Ex: Nu Pagamentos" 
-                    required 
-                    className="h-12 bg-background/50 border-border/50 rounded-xl focus:ring-indigo-500 text-base font-semibold"
-                  />
+                  <Label className="text-white/50 text-xs font-bold uppercase tracking-widest pl-1">Apelido da Conta</Label>
+                  <div className="relative group">
+                    <Wallet className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
+                    <Input 
+                      value={name} 
+                      onChange={(e) => setName(e.target.value)} 
+                      placeholder="Ex: Nubank Principal..." 
+                      maxLength={100}
+                      required 
+                      className="h-12 pl-11 bg-white/[0.02] border border-white/10 rounded-2xl text-white text-sm font-semibold focus:border-white/30 focus:bg-white/[0.05] transition-all"
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Saldo ou Fatura</Label>
-                  <Input 
-                    type="number" 
-                    value={balance} 
-                    onChange={(e) => setBalance(e.target.value)} 
-                    step="0.01" 
-                    placeholder="R$ 0,00"
-                    className="h-12 bg-background/50 border-border/50 rounded-xl focus:ring-indigo-500 text-base font-semibold"
-                  />
-                  <p className="text-[10px] text-muted-foreground font-medium">Use (-) para dívidas de cartão</p>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-white/50 text-xs font-bold uppercase tracking-widest pl-1">Instituição</Label>
+                    <div className="relative group">
+                      <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
+                      <Input 
+                        value={institution} 
+                        onChange={(e) => setInstitution(e.target.value)} 
+                        placeholder="Ex: Nu Pagamentos" 
+                        required 
+                        className="h-14 pl-11 pr-4 bg-white/[0.02] border border-white/10 rounded-2xl text-white font-semibold placeholder:text-white/30 focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all focus:bg-white/[0.04]"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-white/50 text-xs font-bold uppercase tracking-widest pl-1">Saldo ou Fatura</Label>
+                    <div className="relative group">
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-indigo-500">R$</span>
+                      <Input 
+                        type="number" 
+                        value={balance} 
+                        onChange={(e) => setBalance(e.target.value)} 
+                        step="0.01" 
+                        placeholder="0.00"
+                        className="h-14 pl-12 pr-4 text-xl font-black bg-white/[0.02] border border-white/10 rounded-2xl text-white transition-all focus:border-indigo-500/50 focus:ring-indigo-500/20"
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
 
-              <div className="space-y-2">
-                <Label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Modalidade Mapeada</Label>
-                <Select value={type} onValueChange={(v) => setType(v as AccountType)}>
-                  <SelectTrigger className="h-12 bg-background/50 border-border/50 rounded-xl font-semibold">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="rounded-xl border-border/50 shadow-xl">
-                    {Object.entries(TYPE_LABELS).map(([k, v]) => (
-                      <SelectItem key={k} value={k} className="font-medium">{v}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-white/50 text-xs font-bold uppercase tracking-widest pl-1">Modalidade</Label>
+                    <Select value={type} onValueChange={(v) => setType(v as AccountType)}>
+                      <SelectTrigger className="h-12 bg-white/[0.02] border border-white/10 rounded-xl text-white font-semibold focus:ring-1 focus:border-white/30 truncate">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-[#0A0B10] border-white/10 text-white rounded-xl">
+                        {Object.entries(TYPE_LABELS).map(([k, v]) => (
+                          <SelectItem key={k} value={k} className="focus:bg-white/10 rounded-lg cursor-pointer">
+                            {v}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-              <Button 
-                type="submit" 
-                className="w-full h-12 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-black uppercase tracking-widest text-xs shadow-lg shadow-indigo-500/20 transition-all border-0 mt-4"
-              >
-                Efetivar Vínculo
-              </Button>
-            </form>
+                  <div className="space-y-2">
+                    <Label className="text-white/50 text-xs font-bold uppercase tracking-widest pl-1">Cor Base</Label>
+                    <div className="flex flex-wrap gap-2 p-2 bg-white/[0.02] border border-white/10 rounded-xl justify-center">
+                      {PREMIUM_CARD_GRADIENTS.map((g) => (
+                        <button
+                          type="button"
+                          key={g}
+                          onClick={() => setColor(g)}
+                          className={cn("w-6 h-6 rounded-md border-2 transition-all bg-gradient-to-br shadow-inner", g, color === g ? "border-white scale-110 shadow-[0_0_10px_rgba(255,255,255,0.3)]" : "border-transparent opacity-50 hover:opacity-100")}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <Button 
+                  type="submit" 
+                  className="w-full h-14 rounded-2xl text-white font-black text-base shadow-xl transition-all transform active:scale-[0.98] bg-indigo-600 hover:bg-indigo-500 shadow-[0_0_20px_rgba(79,70,229,0.3)] mt-2"
+                >
+                  Efetivar Vínculo
+                </Button>
+              </form>
+            </div>
           </DialogContent>
         </Dialog>
       </div>

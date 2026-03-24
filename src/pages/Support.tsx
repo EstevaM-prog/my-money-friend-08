@@ -12,7 +12,10 @@ import {
   Send,
   HelpCircle,
   Sparkles as SparklesIcon,
-  ArrowRight
+  ArrowRight,
+  User,
+  FileText,
+  MessageSquare
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -292,67 +295,79 @@ export default function Support() {
                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                               <div className="space-y-2">
                                 <Label htmlFor="name" className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-1">Nome</Label>
-                                <Input
-                                  id="name"
-                                  name="name"
-                                  placeholder="Como se chama?"
-                                  value={form.name}
-                                  onChange={handleChange}
-                                  className="h-12 bg-white/[0.03] border-white/[0.08] focus:border-purple-500/50 rounded-xl"
-                                  required
-                                />
+                                <div className="relative group">
+                                  <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/30 group-focus-within:text-purple-400 transition-colors" />
+                                  <Input
+                                    id="name"
+                                    name="name"
+                                    placeholder="Como se chama?"
+                                    value={form.name}
+                                    onChange={handleChange}
+                                    className="h-14 pl-12 pr-4 bg-white/[0.03] border border-white/[0.08] focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/30 rounded-2xl text-white font-semibold placeholder:text-white/20 transition-all focus:bg-white/[0.05]"
+                                    required
+                                  />
+                                </div>
                               </div>
                               <div className="space-y-2">
                                 <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-1">E-mail</Label>
-                                <Input
-                                  id="email"
-                                  name="email"
-                                  type="email"
-                                  placeholder="seu@exemplo.com"
-                                  value={form.email}
-                                  onChange={handleChange}
-                                  className="h-12 bg-white/[0.03] border-white/[0.08] focus:border-purple-500/50 rounded-xl"
-                                  required
-                                />
+                                <div className="relative group">
+                                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/30 group-focus-within:text-purple-400 transition-colors" />
+                                  <Input
+                                    id="email"
+                                    name="email"
+                                    type="email"
+                                    placeholder="seu@exemplo.com"
+                                    value={form.email}
+                                    onChange={handleChange}
+                                    className="h-14 pl-12 pr-4 bg-white/[0.03] border border-white/[0.08] focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/30 rounded-2xl text-white font-semibold placeholder:text-white/20 transition-all focus:bg-white/[0.05]"
+                                    required
+                                  />
+                                </div>
                               </div>
                            </div>
                            
                            <div className="space-y-2">
                               <Label htmlFor="subject" className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-1">Assunto</Label>
-                              <Input
-                                id="subject"
-                                name="subject"
-                                placeholder="Qual o motivo do contato?"
-                                value={form.subject}
-                                onChange={handleChange}
-                                className="h-12 bg-white/[0.03] border-white/[0.08] focus:border-purple-500/50 rounded-xl"
-                                required
-                              />
+                              <div className="relative group">
+                                <FileText className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/30 group-focus-within:text-purple-400 transition-colors" />
+                                <Input
+                                  id="subject"
+                                  name="subject"
+                                  placeholder="Qual o motivo do contato?"
+                                  value={form.subject}
+                                  onChange={handleChange}
+                                  className="h-14 pl-12 pr-4 bg-white/[0.03] border border-white/[0.08] focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/30 rounded-2xl text-white font-semibold placeholder:text-white/20 transition-all focus:bg-white/[0.05]"
+                                  required
+                                />
+                              </div>
                            </div>
 
                            <div className="space-y-2">
                               <Label htmlFor="message" className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-1">Mensagem</Label>
-                              <Textarea
-                                id="message"
-                                name="message"
-                                placeholder="Descreva como podemos ajudar com o máximo de detalhes..."
-                                value={form.message}
-                                onChange={handleChange}
-                                rows={5}
-                                className="bg-white/[0.03] border-white/[0.08] focus:border-purple-500/50 rounded-xl resize-none"
-                                required
-                              />
+                              <div className="relative group">
+                                <MessageSquare className="absolute left-4 top-4 h-5 w-5 text-white/30 group-focus-within:text-purple-400 transition-colors" />
+                                <Textarea
+                                  id="message"
+                                  name="message"
+                                  placeholder="Descreva como podemos ajudar com o máximo de detalhes..."
+                                  value={form.message}
+                                  onChange={handleChange}
+                                  rows={5}
+                                  className="pl-12 pr-4 pt-4 bg-white/[0.03] border border-white/[0.08] focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/30 rounded-2xl text-white font-semibold placeholder:text-white/20 transition-all focus:bg-white/[0.05] resize-none"
+                                  required
+                                />
+                              </div>
                            </div>
 
                            <Button
                              type="submit"
                              disabled={isSubmitting}
-                             className="w-full h-14 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-black text-sm uppercase tracking-widest border-0 shadow-xl shadow-purple-500/20 active:scale-95 transition-all"
+                             className="w-full h-14 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-black text-sm uppercase tracking-widest border-0 shadow-[0_0_30px_rgba(147,51,234,0.3)] active:scale-[0.98] transition-all rounded-2xl flex items-center justify-center gap-2"
                            >
                              {isSubmitting ? (
                                <div className="h-5 w-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
                              ) : (
-                               "Enviar pedido de ajuda"
+                               <>Enviar pedido de ajuda <Send className="h-4 w-4" /></>
                              )}
                            </Button>
                         </form>
