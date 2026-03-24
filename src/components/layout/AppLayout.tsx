@@ -12,17 +12,35 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { User, Settings, LogOut, Eye, EyeOff, Wallet } from "lucide-react";
+import { 
+  User, 
+  Settings, 
+  LogOut, 
+  Eye, 
+  EyeOff, 
+  Wallet, 
+  SunMoon, 
+  Sparkles, 
+  Command, 
+  HelpCircle,
+  ChevronRight,
+  Plus
+} from "lucide-react";
 import { getSession, logout } from "@/lib/auth";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { usePrivacy } from "@/hooks/use-privacy";
 import { ModeToggle } from "./ThemeToggle";
+import { Button } from "@/components/ui/button";
+import { useTheme } from "@/components/theme-provider";
 
 export function AppLayout() {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const { isPrivate, togglePrivacy } = usePrivacy();
+  const { theme } = useTheme();
   const [user, setUser] = useState(() => getSession());
+
+  const isDark = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
 
   // Keep user state in sync (e.g. after register/login)
   useEffect(() => {
@@ -65,34 +83,40 @@ export function AppLayout() {
               )}
             </div>
 
-            <div className="flex items-center gap-2 sm:gap-4">
-              <button
-                onClick={togglePrivacy}
-                className="p-2.5 rounded-xl hover:bg-muted text-muted-foreground hover:text-foreground transition-all outline-none"
-                title={isPrivate ? "Mostrar valores" : "Esconder valores"}
-              >
-                {isPrivate ? (
-                  <EyeOff className="h-5 w-5" />
-                ) : (
-                  <Eye className="h-5 w-5" />
-                )}
-              </button>
+            <div className="flex items-center gap-4">
+              {/* Create Button - Desktop only */}
+              {!isMobile && (
+                <Button 
+                  onClick={() => navigate("/?new=1")}
+                  className="rounded-full px-5 h-10 border-border/50 bg-background hover:bg-muted text-foreground font-semibold shadow-sm flex items-center gap-2 transition-all active:scale-95"
+                  variant="outline"
+                >
+                  <Plus className="h-4 w-4" />
+                  <span>Create</span>
+                </Button>
+              )}
 
-              <ModeToggle />
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={togglePrivacy}
+                  className="p-2.5 rounded-xl hover:bg-muted text-muted-foreground hover:text-foreground transition-all outline-none"
+                  title={isPrivate ? "Mostrar valores" : "Esconder valores"}
+                >
+                  {isPrivate ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
+
+                <ModeToggle />
+              </div>
 
               <div className="h-6 w-px bg-border mx-1 hidden sm:block" />
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="flex items-center gap-3 hover:opacity-90 transition-all outline-none group">
-                    <div className="flex flex-col items-end hidden sm:flex">
-                      <span className="text-sm font-semibold leading-none">
-                        {username}
-                      </span>
-                      <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider mt-1">
-                        Conta Ativa
-                      </span>
-                    </div>
                     <Avatar className="h-9 w-9 border-2 border-primary/20 ring-offset-2 ring-offset-background group-hover:ring-2 ring-primary/20 transition-all">
                       <AvatarImage src={avatarUrl} alt={username} />
                       <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
@@ -101,37 +125,93 @@ export function AppLayout() {
                     </Avatar>
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 p-2 rounded-2xl shadow-2xl border-border/50">
-                  <div className="px-3 py-3 space-y-1 mb-1 bg-muted/30 rounded-xl">
-                    <p className="text-sm font-bold truncate">{username}</p>
-                    <p className="text-[10px] text-muted-foreground truncate uppercase tracking-tight">
-                      {email}
-                    </p>
+                <DropdownMenuContent 
+                  align="end" 
+                  className={cn(
+                    "w-64 p-2 rounded-[22px] shadow-2xl border-border/50 animate-in zoom-in-95 duration-200",
+                    isDark ? "bg-[#0f0f12] text-white" : "bg-white text-slate-900"
+                  )}
+                >
+                  {/* User Profile Header */}
+                  <div className="px-3 py-3 mb-1">
+                    <div className="flex items-center gap-3">
+                      <Avatar className={cn("h-10 w-10 border", isDark ? "border-white/10 shadow-inner" : "border-slate-200 shadow-sm")}>
+                        <AvatarImage src={avatarUrl} alt={username} />
+                        <AvatarFallback className={cn("bg-muted text-muted-foreground text-xs font-bold", isDark && "bg-white/5 text-white/70")}>
+                          {initials}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex flex-col min-w-0">
+                        <p className="text-[14px] font-bold truncate tracking-tight">{username}</p>
+                        <p className={cn("text-[11px] truncate tracking-tight leading-none mt-0.5", isDark ? "text-white/40" : "text-slate-500")}>
+                          {email}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  <DropdownMenuSeparator className="-mx-1 my-1" />
-                  <DropdownMenuItem asChild className="rounded-lg h-10 px-3">
-                    <Link
-                      to="/perfil"
-                      className="flex items-center gap-2.5 cursor-pointer font-medium"
+
+                  {/* Main Links */}
+                  <div className="space-y-0.5 mt-1 px-1">
+                    <DropdownMenuItem asChild className="rounded-[12px] h-10 px-3 focus:bg-accent cursor-pointer outline-none">
+                      <Link to="/perfil" className="flex items-center gap-3 group/item">
+                        <User className="h-[18px] w-[18px] opacity-60 group-hover/item:opacity-100 transition-opacity" />
+                        <span className="text-[13px] font-medium tracking-tight">Profile</span>
+                      </Link>
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem asChild className="rounded-[12px] h-10 px-3 focus:bg-accent cursor-pointer outline-none">
+                      <Link to="/configuracoes" className="flex items-center gap-3 group/item">
+                        <Settings className="h-[18px] w-[18px] opacity-60 group-hover/item:opacity-100 transition-opacity" />
+                        <span className="text-[13px] font-medium tracking-tight">Settings</span>
+                      </Link>
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem 
+                      className="rounded-[12px] h-10 px-3 focus:bg-accent cursor-pointer flex items-center justify-between group/item outline-none"
+                      onClick={() => navigate("/configuracoes?tab=theme")}
                     >
-                      <User className="h-4 w-4 text-muted-foreground" /> Meu Perfil
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="rounded-lg h-10 px-3">
-                    <Link
-                      to="/configuracoes"
-                      className="flex items-center gap-2.5 cursor-pointer font-medium"
+                      <div className="flex items-center gap-3">
+                        <SunMoon className="h-[18px] w-[18px] opacity-60 group-hover/item:opacity-100 transition-opacity" />
+                        <span className="text-[13px] font-medium tracking-tight">Theme</span>
+                      </div>
+                      <ChevronRight className="h-4 w-4 opacity-20" />
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem asChild className="rounded-[12px] h-10 px-3 focus:bg-accent cursor-pointer outline-none">
+                      <div className="flex items-center gap-3 group/item">
+                        <Sparkles className="h-[18px] w-[18px] opacity-60 group-hover/item:opacity-100 transition-opacity" />
+                        <span className="text-[13px] font-medium tracking-tight">Upgrade</span>
+                      </div>
+                    </DropdownMenuItem>
+                  </div>
+
+                  <DropdownMenuSeparator className="my-1.5 mx-2" />
+
+                  {/* Secondary Links */}
+                  <div className="space-y-0.5 px-1">
+                    <DropdownMenuItem className="rounded-[12px] h-10 px-3 focus:bg-accent cursor-pointer flex items-center gap-3 group/item outline-none">
+                      <Command className="h-[18px] w-[18px] opacity-60 group-hover/item:opacity-100 transition-opacity" />
+                      <span className="text-[13px] font-medium tracking-tight">Keyboard shortcuts</span>
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem className="rounded-[12px] h-10 px-3 focus:bg-accent cursor-pointer flex items-center gap-3 group/item outline-none">
+                      <HelpCircle className="h-[18px] w-[18px] opacity-60 group-hover/item:opacity-100 transition-opacity" />
+                      <span className="text-[13px] font-medium tracking-tight">Help center</span>
+                    </DropdownMenuItem>
+                  </div>
+
+                  <DropdownMenuSeparator className="my-1.5 mx-2" />
+
+                  {/* Logout */}
+                  <div className="px-1">
+                    <DropdownMenuItem
+                      onClick={handleLogout}
+                      className="rounded-[12px] h-10 px-3 focus:bg-red-500/10 cursor-pointer flex items-center gap-3 group/logout mb-0.5 text-red-500 focus:text-red-500 outline-none"
                     >
-                      <Settings className="h-4 w-4 text-muted-foreground" /> Configurações
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator className="-mx-1 my-1" />
-                  <DropdownMenuItem
-                    onClick={handleLogout}
-                    className="flex items-center gap-2.5 cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10 rounded-lg h-10 px-3 font-semibold"
-                  >
-                    <LogOut className="h-4 w-4" /> Sair da Conta
-                  </DropdownMenuItem>
+                      <LogOut className="h-[18px] w-[18px] transition-colors" />
+                      <span className="text-[13px] font-bold tracking-tight">Log out</span>
+                    </DropdownMenuItem>
+                  </div>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
