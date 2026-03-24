@@ -35,7 +35,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/components/theme-provider";
 
@@ -46,7 +46,6 @@ const menuItems = [
   { title: "Categorias", url: "/categorias", icon: Tags },
   { title: "Estratégia", url: "/estrategia", icon: Sliders },
   { title: "Relatórios", url: "/relatorios", icon: FileBarChart },
-  { title: "Configurações", url: "/configuracoes", icon: Settings },
   { title: "Suporte", url: "/suporte", icon: LifeBuoy },
 ];
 
@@ -63,8 +62,8 @@ export function AppSidebar() {
       collapsible="icon"
       className="border-r-0 transition-[width,background-color] duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]"
       style={{
-        background: isDark 
-          ? "linear-gradient(180deg, #111114 0%, #0e0e11 100%)" 
+        background: isDark
+          ? "linear-gradient(180deg, #111114 0%, #0e0e11 100%)"
           : "linear-gradient(180deg, #ffffff 0%, #f9fafb 100%)",
         borderRight: isDark ? "none" : "1px solid #e5e7eb"
       }}
@@ -141,13 +140,13 @@ export function AppSidebar() {
                       style={
                         isActive
                           ? {
-                              background: isDark
-                                ? "linear-gradient(90deg, rgba(255,255,255,0.07) 0%, rgba(139,92,246,0.18) 85%, rgba(168,85,247,0.55) 100%)"
-                                : "linear-gradient(90deg, rgba(16,185,129,0.05) 0%, rgba(16,185,129,0.1) 85%, rgba(16,185,129,0.2) 100%)",
-                              borderRight: isDark 
-                                ? "3px solid rgba(168,85,247,0.9)"
-                                : "3px solid #10b981",
-                            }
+                            background: isDark
+                              ? "linear-gradient(90deg, rgba(255,255,255,0.07) 0%, rgba(139,92,246,0.18) 85%, rgba(168,85,247,0.55) 100%)"
+                              : "linear-gradient(90deg, rgba(16,185,129,0.05) 0%, rgba(16,185,129,0.1) 85%, rgba(16,185,129,0.2) 100%)",
+                            borderRight: isDark
+                              ? "3px solid rgba(168,85,247,0.9)"
+                              : "3px solid #10b981",
+                          }
                           : undefined
                       }
                     >
@@ -168,8 +167,8 @@ export function AppSidebar() {
                         <span
                           className={cn(
                             "font-medium text-sm transition-all duration-500 group-data-[state=collapsed]:opacity-0 group-data-[state=collapsed]:translate-x-4",
-                            isActive 
-                              ? (isDark ? "text-white" : "text-emerald-700") 
+                            isActive
+                              ? (isDark ? "text-white" : "text-emerald-700")
                               : (isDark ? "text-white/55" : "text-slate-600")
                           )}
                         >
@@ -258,8 +257,11 @@ export function AppSidebar() {
                   ))}
                 </div>
 
-                <Button className="w-full h-14 gradient-primary rounded-xl font-bold text-lg hover:scale-105 transition-transform active:scale-95 border-0 text-white">
-                  Fazer Upgrade Agora
+                <Button 
+                  asChild
+                  className="w-full h-14 gradient-primary rounded-xl font-bold text-lg hover:scale-105 transition-transform active:scale-95 border-0 text-white"
+                >
+                  <Link to="/planos">Fazer Upgrade Agora</Link>
                 </Button>
               </div>
             </DialogContent>

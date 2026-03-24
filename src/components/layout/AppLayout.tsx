@@ -12,19 +12,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { 
-  User, 
-  Settings, 
-  LogOut, 
-  Eye, 
-  EyeOff, 
-  Wallet, 
-  SunMoon, 
-  Sparkles, 
-  Command, 
+import {
+  User,
+  Settings,
+  LogOut,
+  Eye,
+  EyeOff,
+  Wallet,
+  SunMoon,
+  Sparkles,
+  Command,
   HelpCircle,
   ChevronRight,
-  Plus
+  Plus,
+  CheckCircle2
 } from "lucide-react";
 import { getSession, logout } from "@/lib/auth";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -86,7 +87,7 @@ export function AppLayout() {
             <div className="flex items-center gap-4">
               {/* Create Button - Desktop only */}
               {!isMobile && (
-                <Button 
+                <Button
                   onClick={() => navigate("/?new=1")}
                   className="rounded-full px-5 h-10 border-border/50 bg-background hover:bg-muted text-foreground font-semibold shadow-sm flex items-center gap-2 transition-all active:scale-95"
                   variant="outline"
@@ -125,8 +126,8 @@ export function AppLayout() {
                     </Avatar>
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent 
-                  align="end" 
+                <DropdownMenuContent
+                  align="end"
                   className={cn(
                     "w-64 p-2 rounded-[22px] shadow-2xl border-border/50 animate-in zoom-in-95 duration-200",
                     isDark ? "bg-[#0f0f12] text-white" : "bg-white text-slate-900"
@@ -166,7 +167,7 @@ export function AppLayout() {
                       </Link>
                     </DropdownMenuItem>
 
-                    <DropdownMenuItem 
+                    <DropdownMenuItem
                       className="rounded-[12px] h-10 px-3 focus:bg-accent cursor-pointer flex items-center justify-between group/item outline-none"
                       onClick={() => navigate("/configuracoes?tab=theme")}
                     >
@@ -178,10 +179,10 @@ export function AppLayout() {
                     </DropdownMenuItem>
 
                     <DropdownMenuItem asChild className="rounded-[12px] h-10 px-3 focus:bg-accent cursor-pointer outline-none">
-                      <div className="flex items-center gap-3 group/item">
+                      <Link to="/planos" className="flex items-center gap-3 group/item">
                         <Sparkles className="h-[18px] w-[18px] opacity-60 group-hover/item:opacity-100 transition-opacity" />
-                        <span className="text-[13px] font-medium tracking-tight">Upgrade</span>
-                      </div>
+                        <span className="text-[13px] font-medium tracking-tight">Fazer Upgrade</span>
+                      </Link>
                     </DropdownMenuItem>
                   </div>
 
@@ -211,11 +212,11 @@ export function AppLayout() {
                       <LogOut className="h-[18px] w-[18px] transition-colors" />
                       <span className="text-[13px] font-bold tracking-tight">Log out</span>
                     </DropdownMenuItem>
-                  </div>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </header>
+                    </div>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </header>
           <main className={cn("flex-1", isMobile && "pb-20")}>
             <Outlet />
           </main>
