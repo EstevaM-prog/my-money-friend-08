@@ -26,6 +26,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import EmailSent from "./pages/EmailSent";
 import ResetPassword from "./pages/ResetPassword";
 import PlanMode from "./pages/PlanMode";
+import Payment from "./pages/Payment";
 
 import { ThemeProvider } from "@/components/theme-provider";
 
@@ -101,6 +102,7 @@ const App = () => (
           <Route path="/documentacao" element={<Documentation />} />
           <Route path="/documentacao/:id" element={<DocArticle />} />
           <Route path="/planos" element={<PlanMode />} />
+          <Route path="/pagamento" element={<Payment />} />
 
           {/* Private routes */}
           <Route

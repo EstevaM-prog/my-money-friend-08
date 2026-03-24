@@ -8,13 +8,18 @@ import {
   ChevronDown,
   ChevronUp,
   LifeBuoy,
-  ExternalLink,
+  Plus,
+  Send,
+  HelpCircle,
+  Sparkles as SparklesIcon,
+  ArrowRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { getSession } from "@/lib/auth";
+import { cn } from "@/lib/utils";
 
 const faqs = [
   {
@@ -48,8 +53,9 @@ const channels = [
     icon: Mail,
     title: "E-mail",
     desc: "Resposta em até 24 horas",
-    action: "suporte@mymoneyfriend.app",
+    action: "Nos envie um e-mail",
     href: "mailto:suporte@mymoneyfriend.app",
+    color: "from-blue-500/20 to-indigo-500/20"
   },
   {
     icon: MessageCircle,
@@ -57,6 +63,7 @@ const channels = [
     desc: "Disponível de seg. a sex., 9h–18h",
     action: "Iniciar conversa",
     href: "/chat",
+    color: "from-purple-500/20 to-pink-500/20"
   },
   {
     icon: BookOpen,
@@ -64,29 +71,42 @@ const channels = [
     desc: "Guias e tutoriais completos",
     action: "Ver documentação",
     href: "/documentacao",
+    color: "from-emerald-500/20 to-teal-500/20"
   },
 ];
 
 function FaqItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border rounded-xl overflow-hidden">
+    <div className={cn(
+      "group border border-white/[0.06] rounded-2xl overflow-hidden transition-all duration-300",
+      open ? "bg-white/[0.03] border-white/10" : "hover:border-white/10"
+    )}>
       <button
-        className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-muted/40 transition-colors"
+        className="w-full flex items-center justify-between px-6 py-5 text-left transition-colors outline-none"
         onClick={() => setOpen((v) => !v)}
       >
-        <span className="font-medium text-sm">{q}</span>
-        {open ? (
-          <ChevronUp className="h-4 w-4 text-muted-foreground shrink-0" />
-        ) : (
-          <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />
-        )}
-      </button>
-      {open && (
-        <div className="px-5 pb-4 text-sm text-muted-foreground leading-relaxed border-t bg-muted/20">
-          <p className="pt-3">{a}</p>
+        <span className={cn(
+          "font-bold text-sm tracking-tight transition-colors",
+          open ? "text-white" : "text-white/70"
+        )}>{q}</span>
+        <div className={cn(
+          "h-6 w-6 rounded-lg flex items-center justify-center transition-all duration-300",
+          open ? "bg-white/10 rotate-180" : "bg-white/[0.03]"
+        )}>
+          <ChevronDown className="h-4 w-4 text-white/40" />
         </div>
-      )}
+      </button>
+      <div className={cn(
+        "grid transition-all duration-300 ease-in-out",
+        open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+      )}>
+        <div className="overflow-hidden">
+          <div className="px-6 pb-5 text-[13px] text-white/40 font-medium leading-relaxed">
+            {a}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -95,6 +115,7 @@ export default function Support() {
   const session = getSession();
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
   const [sent, setSent] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -102,167 +123,267 @@ export default function Support() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // Simulate send (no backend)
-    setSent(true);
+    setIsSubmitting(true);
+    // Simulate send
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setSent(true);
+    }, 1500);
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
-      {/* Nav */}
-      <header className="sticky top-0 z-50 border-b bg-card/80 backdrop-blur-sm">
-        <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2.5">
-            <div className="p-1.5 rounded-lg gradient-primary">
-              <Wallet className="h-5 w-5 text-primary-foreground" />
+    <div className="min-h-screen bg-[#020205] text-white flex flex-col font-sans selection:bg-purple-500/30 overflow-x-hidden">
+      
+      {/* ─── Ambient Glows ─── */}
+      <div className="fixed inset-0 -z-10 pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-1/2 h-1/2 rounded-full bg-purple-600/[0.08] blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-1/2 h-1/2 rounded-full bg-blue-600/[0.08] blur-[120px]" />
+      </div>
+
+      {/* Header / Nav */}
+      <header className="fixed top-0 inset-x-0 z-50 px-6 py-6 pointer-events-none">
+        <div className="max-w-5xl mx-auto flex items-center justify-between h-14 px-6 rounded-full border border-white/[0.08] bg-black/40 backdrop-blur-xl pointer-events-auto shadow-2xl shadow-black/50">
+          <Link to="/" className="flex items-center gap-2.5 group">
+            <div className="p-1.5 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-600 rotate-3 group-hover:rotate-0 transition-transform shadow-lg shadow-purple-500/20">
+              <Wallet className="h-4.5 w-4.5 text-white" />
             </div>
-            <span className="text-lg font-bold tracking-tight">CashFlow</span>
+            <span className="text-lg font-black tracking-tighter">Cash<span className="text-purple-400 italic font-medium">Flow</span></span>
           </Link>
-          <div className="flex items-center gap-3">
+
+          <div className="flex items-center gap-4">
             {session ? (
-              <Button asChild className="gradient-primary border-0 text-primary-foreground">
+              <Button asChild className="h-9 px-5 rounded-full bg-white text-black hover:bg-white/90 font-bold text-xs transition-all active:scale-95 border-0">
                 <Link to="/">Meu Painel</Link>
               </Button>
             ) : (
-              <Button asChild className="gradient-primary border-0 text-primary-foreground">
-                <Link to="/cadastro">Criar conta</Link>
+              <Button asChild className="h-9 px-5 rounded-full bg-white text-black hover:bg-white/90 font-bold text-xs transition-all active:scale-95 border-0">
+                <Link to="/cadastro">Começar Agora</Link>
               </Button>
             )}
           </div>
         </div>
       </header>
 
-      <main className="flex-1">
-        {/* Hero */}
-        <section className="py-16 px-4 text-center">
-          <div className="max-w-2xl mx-auto space-y-4">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border bg-accent/50 text-accent-foreground text-sm font-medium">
+      <main className="flex-1 pt-32 lg:pt-40">
+        
+        {/* Banner Hero */}
+        <section className="px-6 pb-20 text-center relative">
+          <div className="max-w-3xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-5 duration-700">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-purple-500/20 bg-purple-500/[0.08] text-purple-400 text-[11px] font-black uppercase tracking-[0.2em]">
               <LifeBuoy className="h-3.5 w-3.5" />
-              Central de Suporte
+              Central de Ajuda
             </div>
-            <h1 className="text-4xl font-bold tracking-tight">Como podemos ajudar?</h1>
-            <p className="text-muted-foreground">
-              Encontre respostas rápidas nas perguntas frequentes ou entre em contato com nossa equipe.
+            <h1 
+              className="text-4xl md:text-5xl lg:text-[4.5rem] font-black tracking-tighter leading-tight"
+              style={{ fontFamily: "'Outfit', sans-serif" }}
+            >
+              Como podemos <br />
+              <span className="bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent italic">ajudar você?</span>
+            </h1>
+            <p className="text-white/40 text-base md:text-lg max-w-xl mx-auto font-medium">
+              Estamos aqui para garantir que sua jornada financeira seja tranquila e eficiente. Explore nossos recursos ou fale com a gente.
             </p>
           </div>
         </section>
 
-        {/* Channels */}
-        <section className="pb-16 px-4">
-          <div className="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {channels.map((c) => (
-                <div key={c.title} className="bg-card border rounded-2xl p-6 flex flex-col items-center justify-center text-center hover:border-primary/50 transition-colors card-shadow group">
-                  <div className="p-3 bg-muted rounded-full group-hover:bg-primary/10 transition-colors mb-4">
-                    <c.icon className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
+        {/* Support Channels */}
+        <section className="px-6 pb-24">
+          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+            {channels.map((c, i) => (
+              <div 
+                key={c.title} 
+                className="group relative bg-[#090910]/40 backdrop-blur-3xl border border-white/[0.06] rounded-[2rem] p-8 flex flex-col items-center justify-center text-center hover:border-white/10 transition-all duration-500 hover:-translate-y-2 overflow-hidden"
+              >
+                {/* Channel Background Glow */}
+                <div className={cn("absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-10 transition-opacity duration-500", c.color)} />
+                
+                <div className="relative z-10 space-y-6 flex flex-col items-center h-full">
+                  <div className="p-4 bg-white/[0.03] border border-white/[0.08] rounded-2xl group-hover:bg-white/10 transition-all duration-500">
+                    <c.icon className="h-8 w-8 text-white/50 group-hover:text-white transition-colors" />
                   </div>
-                  <h3 className="font-semibold text-lg">{c.title}</h3>
-                  <p className="text-sm text-muted-foreground mt-1 mb-6 h-10">{c.desc}</p>
-                  <Button variant="outline" asChild className="w-full mt-auto group-hover:bg-primary group-hover:text-primary-foreground">
-                     {c.href.startsWith("mailto:") ? (
-                       <a href={c.href}>{c.action}</a>
-                     ) : (
-                       <Link to={c.href}>{c.action}</Link>
-                     )}
+                  <div className="space-y-2">
+                    <h3 className="font-bold text-xl tracking-tight">{c.title}</h3>
+                    <p className="text-sm text-white/40 font-medium leading-relaxed">{c.desc}</p>
+                  </div>
+                  <Button variant="ghost" asChild className="mt-auto w-full h-12 rounded-xl border border-white/[0.06] hover:bg-white hover:text-black font-bold text-[13px] group-hover:shadow-2xl transition-all">
+                       {c.href.startsWith("mailto:") ? (
+                         <a href={c.href}>{c.action}</a>
+                       ) : (
+                         <Link to={c.href} className="flex items-center gap-2">
+                           {c.action} <ArrowRight className="h-4 w-4" />
+                         </Link>
+                       )}
                   </Button>
                 </div>
+              </div>
             ))}
           </div>
         </section>
 
-        {/* FAQ + Contact form */}
-        <section className="pb-20 px-4">
-          <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10">
-            {/* FAQ */}
-            <div className="space-y-4">
-              <h2 className="text-2xl font-bold tracking-tight">Perguntas frequentes</h2>
-              <div className="space-y-2">
-                {faqs.map((faq) => (
-                  <FaqItem key={faq.q} q={faq.q} a={faq.a} />
-                ))}
-              </div>
-            </div>
+        {/* Content Section: FAQ + Contact Form */}
+        <section className="px-6 pb-32">
+          <div className="max-w-6xl mx-auto">
+             <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
+               {/* Left Column: FAQ */}
+               <div className="space-y-12">
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                       <HelpCircle className="h-6 w-6 text-purple-400/50" />
+                       <h2 className="text-2xl font-bold tracking-tight">Perguntas Frequentes</h2>
+                    </div>
+                    <p className="text-sm text-white/40 font-medium">As soluções mais rápidas para suas dúvidas comuns.</p>
+                  </div>
 
-            {/* Contact form */}
-            <div className="space-y-4">
-              <h2 className="text-2xl font-bold tracking-tight">Enviar mensagem</h2>
-              {sent ? (
-                <div className="bg-accent/40 border border-primary/20 rounded-2xl p-8 text-center space-y-3">
-                  <div className="p-3 rounded-full gradient-primary w-fit mx-auto">
-                    <LifeBuoy className="h-6 w-6 text-primary-foreground" />
+                  <div className="space-y-3">
+                    {faqs.map((faq) => (
+                      <FaqItem key={faq.q} q={faq.q} a={faq.a} />
+                    ))}
                   </div>
-                  <h3 className="font-semibold text-lg">Mensagem enviada!</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Nossa equipe responderá em até 24 horas no e-mail informado.
-                  </p>
-                  <Button variant="outline" onClick={() => setSent(false)}>
-                    Enviar outra mensagem
-                  </Button>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="bg-card border rounded-2xl p-6 card-shadow space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <Label htmlFor="name">Nome</Label>
-                      <Input
-                        id="name"
-                        name="name"
-                        placeholder="Seu nome"
-                        value={form.name}
-                        onChange={handleChange}
-                        required
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label htmlFor="email">E-mail</Label>
-                      <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        placeholder="seu@email.com"
-                        value={form.email}
-                        onChange={handleChange}
-                        required
-                      />
-                    </div>
+
+                  <div className="p-8 rounded-3xl bg-gradient-to-br from-indigo-500/10 to-purple-500/5 border border-indigo-500/20 flex items-center justify-between gap-6 group">
+                     <div className="space-y-1">
+                        <p className="font-bold text-sm">Não encontrou o que procurava?</p>
+                        <p className="text-xs text-white/40 font-medium">Explore nossa base de conhecimento completa.</p>
+                     </div>
+                     <Link to="/documentacao" className="h-10 w-10 flex items-center justify-center rounded-full bg-white text-black hover:scale-110 transition-transform">
+                        <Plus className="h-5 w-5" />
+                     </Link>
                   </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="subject">Assunto</Label>
-                    <Input
-                      id="subject"
-                      name="subject"
-                      placeholder="Ex: Problema ao adicionar transação"
-                      value={form.subject}
-                      onChange={handleChange}
-                      required
-                    />
+               </div>
+
+               {/* Right Column: Form */}
+               <div className="relative">
+                  {/* Form Decoration */}
+                  <div className="absolute -top-10 -right-10 p-10 opacity-10 pointer-events-none">
+                     <Sparkles className="h-40 w-40 text-purple-400" />
                   </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="message">Mensagem</Label>
-                    <Textarea
-                      id="message"
-                      name="message"
-                      placeholder="Descreva sua dúvida ou problema com o máximo de detalhes..."
-                      value={form.message}
-                      onChange={handleChange}
-                      rows={5}
-                      required
-                    />
+
+                  <div className={cn(
+                    "relative p-8 lg:p-10 rounded-[2.5rem] border transition-all duration-700 backdrop-blur-3xl overflow-hidden shadow-2xl",
+                    sent ? "bg-emerald-500/[0.02] border-emerald-500/20" : "bg-white/[0.03] border-white/[0.08]"
+                  )}>
+                    {sent ? (
+                      <div className="text-center space-y-8 py-10 animate-in zoom-in-95 duration-500">
+                        <div className="w-20 h-20 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center mx-auto shadow-2xl shadow-emerald-500/20">
+                          <Send className="h-8 w-8 text-emerald-400" />
+                        </div>
+                        <div className="space-y-3">
+                          <h3 className="text-2xl font-bold tracking-tight">Recebemos sua mensagem!</h3>
+                          <p className="text-sm text-white/40 font-medium max-w-[280px] mx-auto leading-relaxed">
+                            Nossa equipe já está com seu pedido e retornaremos em até 24 horas.
+                          </p>
+                        </div>
+                        <Button 
+                          variant="ghost" 
+                          onClick={() => setSent(false)}
+                          className="font-bold text-xs uppercase tracking-widest text-white/50 hover:text-white"
+                        >
+                          Enviar outra mensagem
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="space-y-8">
+                        <div className="space-y-2">
+                           <h2 className="text-2xl font-bold tracking-tight">Enviar Mensagem</h2>
+                           <p className="text-xs font-medium text-white/40">Responderemos o mais rápido possível.</p>
+                        </div>
+
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <Label htmlFor="name" className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-1">Nome</Label>
+                                <Input
+                                  id="name"
+                                  name="name"
+                                  placeholder="Como se chama?"
+                                  value={form.name}
+                                  onChange={handleChange}
+                                  className="h-12 bg-white/[0.03] border-white/[0.08] focus:border-purple-500/50 rounded-xl"
+                                  required
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-1">E-mail</Label>
+                                <Input
+                                  id="email"
+                                  name="email"
+                                  type="email"
+                                  placeholder="seu@exemplo.com"
+                                  value={form.email}
+                                  onChange={handleChange}
+                                  className="h-12 bg-white/[0.03] border-white/[0.08] focus:border-purple-500/50 rounded-xl"
+                                  required
+                                />
+                              </div>
+                           </div>
+                           
+                           <div className="space-y-2">
+                              <Label htmlFor="subject" className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-1">Assunto</Label>
+                              <Input
+                                id="subject"
+                                name="subject"
+                                placeholder="Qual o motivo do contato?"
+                                value={form.subject}
+                                onChange={handleChange}
+                                className="h-12 bg-white/[0.03] border-white/[0.08] focus:border-purple-500/50 rounded-xl"
+                                required
+                              />
+                           </div>
+
+                           <div className="space-y-2">
+                              <Label htmlFor="message" className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-1">Mensagem</Label>
+                              <Textarea
+                                id="message"
+                                name="message"
+                                placeholder="Descreva como podemos ajudar com o máximo de detalhes..."
+                                value={form.message}
+                                onChange={handleChange}
+                                rows={5}
+                                className="bg-white/[0.03] border-white/[0.08] focus:border-purple-500/50 rounded-xl resize-none"
+                                required
+                              />
+                           </div>
+
+                           <Button
+                             type="submit"
+                             disabled={isSubmitting}
+                             className="w-full h-14 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-black text-sm uppercase tracking-widest border-0 shadow-xl shadow-purple-500/20 active:scale-95 transition-all"
+                           >
+                             {isSubmitting ? (
+                               <div className="h-5 w-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                             ) : (
+                               "Enviar pedido de ajuda"
+                             )}
+                           </Button>
+                        </form>
+                      </div>
+                    )}
                   </div>
-                  <Button
-                    type="submit"
-                    className="w-full gradient-primary border-0 text-primary-foreground font-semibold"
-                  >
-                    Enviar mensagem
-                  </Button>
-                </form>
-              )}
-            </div>
+               </div>
+             </div>
           </div>
         </section>
       </main>
 
-      <footer className="border-t py-6 px-4 text-center text-sm text-muted-foreground">
-        © {new Date().getFullYear()} My Money Friend. Todos os direitos reservados.
+      <footer className="px-6 py-12 border-t border-white/[0.06] text-center">
+        <div className="max-w-5xl mx-auto space-y-4">
+           <div className="flex items-center justify-center gap-2 text-white/20 text-xs font-bold uppercase tracking-widest">
+              <SparklesIcon className="h-3 w-3" />
+              CashFlow Intelligence
+           </div>
+           <p className="text-[11px] text-white/30 font-medium tracking-wide">
+             © {new Date().getFullYear()} CashFlow Finance. Protegendo seus dados com criptografia de ponta a ponta.
+           </p>
+        </div>
       </footer>
     </div>
+  );
+}
+
+function Sparkles({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 200 200" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M100 0L105.8 84.2L190 90L105.8 95.8L100 180L94.2 95.8L10 90L94.2 84.2L100 0Z" fill="currentColor"/>
+    </svg>
   );
 }

@@ -6,7 +6,7 @@
 
 ## ✨ Visão Geral
 
-O **CashFlow** (anteriormente _My Money Friend_) é uma aplicação web de controle de finanças pessoais construída com React + TypeScript. Todos os dados são salvos no `localStorage` do browser — zero servidores, zero rastreamento.
+O **CashFlow** é uma aplicação web de controle de finanças pessoais de elite, construída com React + TypeScript. Focada em **privacidade e design**, todos os dados são salvos no `localStorage` do seu navegador — garantindo que suas informações financeiras nunca saiam do seu dispositivo.
 
 ---
 
@@ -16,7 +16,7 @@ O **CashFlow** (anteriormente _My Money Friend_) é uma aplicação web de contr
 |---|---|
 | Framework | [Vite](https://vitejs.dev/) + [React 18](https://react.dev/) |
 | Linguagem | TypeScript |
-| Estilo | Tailwind CSS + CSS customizado (glassmorphism, gradientes) |
+| Estilo | Tailwind CSS + CSS customizado (glassmorphism, anim. radiais) |
 | Componentes | [shadcn/ui](https://ui.shadcn.com/) + [Radix UI](https://www.radix-ui.com/) |
 | Ícones | [Lucide React](https://lucide.dev/) |
 | Gráficos | [Recharts](https://recharts.org/) |
@@ -32,7 +32,7 @@ src/
 ├── components/
 │   ├── charts/          # Componentes de gráficos Recharts
 │   ├── finance/         # Cards, dialogs, toggles financeiros
-│   ├── layout/          # AppLayout, Sidebar, Navbar
+│   ├── layout/          # AppLayout, Sidebar, Navbar, MobileNav
 │   └── ui/              # shadcn/ui base components
 ├── hooks/               # Hooks customizados (useFinance, usePrivacy, …)
 ├── lib/
@@ -41,19 +41,15 @@ src/
 │   ├── icons.ts         # Mapeamento categoria → ícone
 │   └── utils.ts         # Helpers gerais
 ├── pages/
-│   ├── Landing.tsx      # Página pública de apresentação (/)
+│   ├── Landing.tsx      # Página pública de apresentação (Premium Dark)
+│   ├── PlanMode.tsx     # Página de planos e assinaturas (Stellar Style)
+│   ├── Payment.tsx      # Página de checkout seguro com visualizador de cartão
 │   ├── Login.tsx        # Login — aceita e-mail ou username
-│   ├── Register.tsx     # Cadastro de nova conta
-│   ├── Index.tsx        # Dashboard principal
-│   ├── Accounts.tsx     # Contas e cartões
-│   ├── Categories.tsx   # Categorias de transações
-│   ├── Goals.tsx        # Metas financeiras
-│   ├── Reports.tsx      # Relatórios e gráficos
-│   ├── StrategicFinance.tsx # Finanças estratégicas
-│   ├── Settings.tsx     # Configurações do usuário
-│   ├── Support.tsx      # Suporte / contato
-│   └── Documentation.tsx # Documentação interna
-└── index.css            # Design system + utilitários CSS
+│   ├── Index.tsx        # Dashboard principal refinado
+│   ├── Reports.tsx      # Relatórios e visualização de dados
+│   ├── Support.tsx      # Central de ajuda e contato (Refatorado)
+│   └── ...              # Outras páginas funcionais
+└── index.css            # Design system, gradientes e animações
 ```
 
 ---
@@ -72,7 +68,7 @@ npm install
 npm run dev
 ```
 
-Acesse em `http://localhost:5173`
+Acesse em `http://localhost:8080/` (ou a porta padrão configurada no `vite.config.ts`)
 
 ---
 
@@ -81,21 +77,12 @@ Acesse em `http://localhost:5173`
 Autenticação 100% client-side via `localStorage` — sem back-end necessário.
 
 ### Criar Conta (`/cadastro`)
-- Nome completo, e-mail e senha
-- Senha mínima de 6 caracteres
-- Sessão criada automaticamente após o cadastro
+- Nome completo, e-mail e senha.
+- Sessão criada automaticamente após o cadastro.
 
 ### Login (`/login`)
-- Aceita **e-mail** `seu@email.com` **ou username** (nome cadastrado) `joaosilva`
-- Matching case-insensitive para o username
-- Opção "Lembrar por 7 dias" (sessão persistente)
-- Sem o "lembrar", a sessão expira ao fechar o browser
-
-### Sessão
-| Tipo | Comportamento |
-|---|---|
-| Com "lembrar" | Persiste por 7 dias no `localStorage` |
-| Sem "lembrar" | Expira ao fechar a aba (via `sessionStorage`) |
+- Aceita **e-mail** ou **username** (nome cadastrado).
+- Opção "Lembrar por 7 dias" para sessão persistente.
 
 ---
 
@@ -103,68 +90,57 @@ Autenticação 100% client-side via `localStorage` — sem back-end necessário.
 
 | Rota | Página | Acesso |
 |---|---|---|
-| `/apresentacao` | Landing — apresentação do produto | Público |
-| `/login` | Login (e-mail ou username) | Público |
-| `/cadastro` | Criar nova conta | Público |
-| `/` | Dashboard financeiro | 🔒 Autenticado |
-| `/contas` | Contas e cartões | 🔒 Autenticado |
-| `/categorias` | Categorias | 🔒 Autenticado |
-| `/metas` | Metas financeiras | 🔒 Autenticado |
-| `/relatorios` | Relatórios & gráficos | 🔒 Autenticado |
-| `/financas-estrategicas` | Estratégia financeira | 🔒 Autenticado |
-| `/configuracoes` | Perfil e configurações | 🔒 Autenticado |
-| `/suporte` | Chat de suporte | 🔒 Autenticado |
-| `/documentacao` | Documentação do app | 🔒 Autenticado |
+| `/apresentacao` | Landing Page (Estilo Phylum) | Público |
+| `/planos` | Pricing Tiers (Estilo Stellar) | Público |
+| `/pagamento` | Checkout Seguro | Público |
+| `/login` / `/cadastro` | Autenticação | Público |
+| `/` | Dashboard Financeiro | 🔒 Autenticado |
+| `/relatorios` | Gráficos e Analytics | 🔒 Autenticado |
+| `/configuracoes` | Perfil e Preferências | 🔒 Autenticado |
+| `/suporte` | Central de Ajuda | Público |
 
 ---
 
-## 🎨 Design System
+## 🎨 Design System Premium
 
-- **Tipografia**: Inter (corpo) + Outfit (títulos)
-- **Cor primária**: Emerald/Teal `hsl(160 84% 39%)`
-- **Glassmorphism**: `.glass` — backdrop blur + border translúcido
-- **Gradiente**: `.gradient-primary` — emerald 39% → 55%
-- **Texto gradiente**: `.gradient-text` — animação infinita
-- **Modo escuro**: Suporte total via Tailwind `dark:`
-- **Animações**: `card-reveal`, `bounce-slow`, `textGradient`
+- **Minimalismo Negro**: Fundo `#020205` com profundidade e glows radiais.
+- **Glassmorphism**: Abordagem moderna com bordas translúcidas e `backdrop-blur`.
+- **Micro-animações**: Transições de cards, glows pulsantes e hover states avançados.
+- **Feedback Visual**: Cores semânticas consistentes (Success, Error, Warning).
 
 ---
 
 ## 📊 Funcionalidades Principais
 
-- ✅ Dashboard com resumo mensal (receitas, despesas, saldo, economia)
-- ✅ Lançamento de transações com categorias e ícones coloridos
-- ✅ Receitas em **verde** e despesas em **vermelho** (visual imediato)
-- ✅ Múltiplas contas e cartões
-- ✅ Metas financeiras com acompanhamento de progresso
-- ✅ Relatórios com gráficos (linha, barras, pizza)
-- ✅ Finanças estratégicas e planejamento
-- ✅ Tema claro / escuro
-- ✅ Modo privacidade (ocultar valores)
-- ✅ Export / Import de dados (JSON)
-- ✅ Suporte integrado
+- ✅ Dashboard completo com resumo mensal.
+- ✅ Gestão de transações com ícones e categorias automáticas.
+- ✅ Metas financeiras com barras de progresso.
+- ✅ Checkout simulado com visualizador de cartão de crédito em tempo real.
+- ✅ Suporte via Chat e E-mail integrado.
+- ✅ Modo Privacidade (esconde valores com um clique).
+- ✅ Export/Import de dados em formato JSON.
 
 ---
 
 ## 🔄 Scripts Disponíveis
 
 ```bash
-npm run dev      # Servidor de desenvolvimento (Vite HMR)
-npm run build    # Build de produção
-npm run preview  # Preview do build de produção
-npm run lint     # ESLint
+npm run dev      # Inicia o ambiente de desenvolvimento
+npm run build    # Gera a build otimizada para produção
+npm run preview  # Testa a build de produção localmente
 ```
 
 ---
 
 ## 📝 Changelog Recente
 
-### v0.8 (Mar 2026)
-- 🎨 Refactor completo da Landing page (hero, testimonials, benefit pills, floating cards)
-- 🔐 Login agora aceita **e-mail ou username**
-- 💸 Ícones e cores por categoria nas transações
-- 🟢 Valores de receita em verde, despesas em vermelho
+### v0.9 (Mar 2026) - The Premium Update
+- 💎 **Nova Landing Page**: Design totalmente reformulado com estética dark de alto nível.
+- 💳 **Página de Checkout**: Implementação do `/pagamento` com visualizador dinâmico de cartão e suporte a Pix.
+- 🏷️ **Página de Planos**: Novo layout de precificação inspirado em plataformas SaaS de elite.
+* 🛠️ **Refactor de Suporte**: Central de ajuda modernizada com FAQ interativo.
+* 📱 **Mobile UX**: Melhorias na barra de navegação inferior para dispositivos móveis.
 
 ---
 
-> Desenvolvido com ❤️ · CashFlow Premium · 2026
+> Desenvolvido com ❤️ · CashFlow Premium Finance · 2026

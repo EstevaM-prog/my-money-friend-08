@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
+import { getSession } from "@/lib/auth";
+
 const plans = [
   {
     name: "Basic plan",
@@ -134,7 +136,9 @@ export default function PlanMode() {
                       : "bg-white/[0.03] text-white/80 hover:bg-white/5 hover:text-white"
                   )}
                 >
-                  <Link to="/cadastro">{plan.buttonText}</Link>
+                  <Link to="/pagamento">
+                    {plan.buttonText}
+                  </Link>
                 </Button>
               </div>
 
