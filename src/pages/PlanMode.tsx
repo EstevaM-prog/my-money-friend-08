@@ -9,54 +9,54 @@ import { motion, AnimatePresence } from "framer-motion";
 export const PLAN_DETAILS = [
   {
     id: "basic",
-    name: "Basic plan",
-    price: "$10",
-    numericPrice: 10,
-    period: "per month",
-    description: "Basic features for up to 10 users.",
-    buttonText: "Get started",
-    featuresTitle: "Everything in our free plan plus...",
+    name: "Starter",
+    price: "R$ 0",
+    numericPrice: 0,
+    period: "para sempre",
+    description: "O essencial para organizar as rotinas do seu dia a dia.",
+    buttonText: "Começar Grátis",
+    featuresTitle: "Tudo que você precisa para iniciar:",
     features: [
-      "Access to basic features",
-      "Basic reporting and analytics",
-      "Up to 10 individual users",
-      "20GB individual data each user",
-      "Basic chat and email support"
+      "Lançamentos de Receitas e Despesas",
+      "Dashboard com resumo mensal parcial",
+      "Até 5 Categorias personalizadas",
+      "Gestão de apenas 1 Conta/Cartão",
+      "Modo Privacidade Anti-Curiosos"
     ]
   },
   {
     id: "business",
-    name: "Business plan",
-    price: "$20",
-    numericPrice: 20,
-    period: "per month",
-    description: "Growing teams up to 20 users.",
-    buttonText: "Get started",
-    badge: "Popular",
-    featuresTitle: "Everything in Basic plus...",
+    name: "CashFlow Pro",
+    price: "R$ 14,90",
+    numericPrice: 14.90,
+    period: "por mês",
+    description: "Poder analítico. Múltiplas contas, metas livres e gráficos.",
+    buttonText: "Assinar o Pro",
+    badge: "Mais Popular",
+    featuresTitle: "Tudo do Starter e ainda:",
     features: [
-      "Access to basic features",
-      "Basic reporting and analytics",
-      "Up to 10 individual users",
-      "20GB individual data each user",
-      "Basic chat and email support"
+      "Contas Bancárias e Cartões Ilimitados",
+      "Categorias Financeiras Ilimitadas",
+      "Módulo Completo de Metas (Projeção)",
+      "Página de Relatórios e Análise Gráfica",
+      "Suporte Prioritário 24 horas por E-mail"
     ]
   },
   {
     id: "enterprise",
-    name: "Enterprise plan",
-    price: "$40",
-    numericPrice: 40,
-    period: "per month",
-    description: "Advanced features + unlimited users.",
-    buttonText: "Get started",
-    featuresTitle: "Everything in Business plus...",
+    name: "Lifetime",
+    price: "R$ 197",
+    numericPrice: 197,
+    period: "pagamento único",
+    description: "Passaporte vitalício para quem respira gestão patrimonial.",
+    buttonText: "Garantir Vitalício",
+    featuresTitle: "Todos os poderes do Pro e mais:",
     features: [
-      "Access to basic features",
-      "Basic reporting and analytics",
-      "Up to 10 individual users",
-      "20GB individual data each user",
-      "Basic chat and email support"
+      "Acesso vitalício garantido ao app",
+      "Zero mensalidades (pague 1 vez)",
+      "Importação e Exportação CSV / PDF",
+      "Visão de Finanças Estratégicas Avançadas",
+      "Acesso antecipado a Novas Funções (Beta)"
     ]
   }
 ];
@@ -76,8 +76,11 @@ export default function PlanMode() {
 
   const handleCheckout = (e: React.MouseEvent, planId: string) => {
     e.stopPropagation();
-    // Simulate setting chosen plan and go to checkout
-    navigate(`/pagamento?plan=${planId}`);
+    if (planId === "basic") {
+      navigate("/");
+    } else {
+      navigate(`/pagamento?plan=${planId}`);
+    }
   };
 
   return (
@@ -96,10 +99,10 @@ export default function PlanMode() {
             className="text-4xl md:text-5xl lg:text-[4rem] font-black tracking-tight"
             style={{ fontFamily: "'Outfit', sans-serif" }}
           >
-            A plan for every need
+            Um plano para <span className="bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent italic pr-2">cada fase</span> da vida
           </h1>
           <p className="text-white/40 text-base md:text-lg max-w-xl mx-auto font-medium">
-            Safely trade, earn, & borrow digital assets with top-tier security.
+            Transforme sua gestão patrimonial com nossa tecnologia de alto padrão. Não é só sobre poupar dinheiro, é sobre comprar paz mental.
           </p>
         </div>
 
