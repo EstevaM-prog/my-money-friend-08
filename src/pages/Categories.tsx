@@ -11,28 +11,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import {
-  ShoppingBag,
-  Car,
-  Home,
-  HeartPulse,
-  GraduationCap,
-  Coffee,
-  Plane,
-  Gift,
-  Tv,
-  Smartphone,
-  Book,
-  Monitor,
-  Pizza,
-  Music,
-  Dumbbell,
-  Briefcase,
-  TrendingUp,
-  Landmark,
   Plus,
   Trash2,
   Edit2,
-  Tags
+  Tags,
+  Sparkles,
+  LayoutGrid
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { INCOME_CATEGORIES, EXPENSE_CATEGORIES } from "@/lib/finance-data";
@@ -96,46 +80,69 @@ export default function Categories() {
   const usedIcons = customCategories.map(c => c.icon);
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl gradient-primary">
-            <Tags className="h-5 w-5 text-white" />
+    <div className="max-w-6xl mx-auto px-4 py-8 space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      
+      {/* ─── Header ─── */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 pb-6 border-b border-border/50">
+        <div className="space-y-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-500 font-bold uppercase tracking-widest text-[10px]">
+            <Sparkles className="h-3.5 w-3.5" />
+            Taxonomia Inteligente
           </div>
-          <div>
-             <h1 className="text-2xl font-bold tracking-tight">Categorias Customizadas</h1>
-             <p className="text-sm text-muted-foreground">Personalize as despesas e receitas exatamente do seu jeito.</p>
-          </div>
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tight font-outfit">Categorias Customizadas</h1>
+          <p className="text-muted-foreground font-medium text-sm max-w-lg">
+            Crie classificações personalizadas para agrupar suas despesas e receitas exatamente com a cara da sua rotina.
+          </p>
         </div>
-        
+
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button onClick={handleOpenNew} className="gap-2 gradient-primary">
-              <Plus className="h-4 w-4" /> Nova Categoria
+            <Button 
+              onClick={handleOpenNew} 
+              className="h-11 px-6 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-black shadow-lg shadow-indigo-500/20 gap-2 transition-all active:scale-95 border-0"
+            >
+              <Plus className="h-5 w-5" /> Montar Categoria
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle>{editingId ? "Editar Categoria" : "Criar Categoria"}</DialogTitle>
+          <DialogContent className="sm:max-w-md rounded-[2rem] bg-card/95 backdrop-blur-xl border border-border/50 shadow-2xl p-6 sm:p-8">
+            <DialogHeader className="mb-6">
+              <DialogTitle className="text-2xl font-black font-outfit tracking-tight">
+                {editingId ? "Editar Classificação" : "Nova Classificação"}
+              </DialogTitle>
+              <p className="text-sm text-muted-foreground font-medium">Personalize a gaveta financeira para classificar seus lançamentos.</p>
             </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              
               <div className="space-y-2">
-                <Label>Nome</Label>
-                <Input value={name} onChange={(e) => setName(e.target.value)} required placeholder="Ex: Roupas Mensais" />
+                <Label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Nomenclatura Única</Label>
+                <Input 
+                  value={name} 
+                  onChange={(e) => setName(e.target.value)} 
+                  required 
+                  placeholder="Ex: Roupas de Grife, Assinaturas..." 
+                  className="h-12 bg-background/50 border-border/50 rounded-xl focus:ring-indigo-500 text-base font-semibold"
+                />
               </div>
+
               <div className="space-y-2">
-                <Label>Tipo</Label>
+                <Label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Natureza da Categoria</Label>
                 <Select value={type} onValueChange={(v: "income" | "expense") => setType(v)}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="income">Receita (Entrada)</SelectItem>
-                    <SelectItem value="expense">Despesa (Saída)</SelectItem>
+                  <SelectTrigger className="h-12 bg-background/50 border-border/50 rounded-xl font-semibold">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl border-border/50 shadow-xl">
+                    <SelectItem value="income" className="font-medium text-emerald-500">Receita (Dinheiro Entrando)</SelectItem>
+                    <SelectItem value="expense" className="font-medium text-rose-500">Despesa (Dinheiro Saindo)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
-                <Label>Escolha um Ícone (Único)</Label>
-                <div className="grid grid-cols-6 gap-2 mt-2">
+
+              <div className="space-y-3">
+                <Label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex justify-between">
+                  <span>Simbologia Visual</span>
+                  <span className="text-muted-foreground/50 lowercase font-normal">escolha 1 ícone exclusivo</span>
+                </Label>
+                <div className="grid grid-cols-6 sm:grid-cols-7 gap-2.5 p-4 rounded-2xl bg-background/40 border border-border/50 max-h-[220px] overflow-y-auto custom-scrollbar shadow-inner">
                   {AVAILABLE_ICONS.map((IconObj) => {
                     const isUsed = usedIcons.includes(IconObj.name) && IconObj.name !== selectedIcon;
                     const isSelected = selectedIcon === IconObj.name;
@@ -146,52 +153,100 @@ export default function Categories() {
                         disabled={isUsed}
                         onClick={() => setSelectedIcon(IconObj.name)}
                         className={cn(
-                          "aspect-square rounded-xl flex items-center justify-center transition-all",
-                          isSelected ? "bg-primary text-primary-foreground shadow-md ring-2 ring-primary ring-offset-2 ring-offset-background scale-110" : "bg-muted text-muted-foreground hover:bg-muted/80",
-                          isUsed && "opacity-20 cursor-not-allowed grayscale"
+                          "aspect-square rounded-[0.8rem] flex items-center justify-center transition-all duration-300 relative group overflow-hidden",
+                          isSelected 
+                            ? "bg-indigo-600 text-white shadow-lg ring-[3px] ring-indigo-500/30 scale-[1.05]" 
+                            : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground",
+                          isUsed && "opacity-20 cursor-not-allowed scale-95"
                         )}
-                        title={isUsed ? "Ícone já utilizado" : IconObj.name}
+                        title={isUsed ? "Ícone em uso por outra categoria" : IconObj.name}
                       >
-                        <IconObj.icon className="h-5 w-5" />
+                         {isSelected && <div className="absolute inset-0 bg-white/10" />}
+                        <IconObj.icon className="h-5 w-5 relative z-10" />
                       </button>
                     )
                   })}
                 </div>
               </div>
-              <Button type="submit" disabled={!name || !selectedIcon} className="w-full gradient-primary">
-                {editingId ? "Salvar" : "Criar"}
+
+              <Button 
+                type="submit" 
+                disabled={!name || !selectedIcon} 
+                className="w-full h-12 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-black uppercase tracking-widest text-xs shadow-lg shadow-indigo-500/20 transition-all border-0"
+              >
+                {editingId ? "Salvar Alterações" : "Carimbar Coleção"}
               </Button>
             </form>
           </DialogContent>
         </Dialog>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* ─── Grid ─── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {customCategories.length === 0 ? (
-           <div className="col-span-full p-12 text-center rounded-2xl border bg-card/50 text-muted-foreground border-dashed">
-             Você ainda não criou nenhuma categoria customizada.
+           <div className="col-span-full py-20 px-6 flex flex-col items-center justify-center text-center rounded-[2rem] border border-border/40 border-dashed bg-card/20 text-muted-foreground">
+             <div className="h-20 w-20 rounded-full bg-muted/50 flex items-center justify-center mb-6">
+               <LayoutGrid className="h-10 w-10 opacity-40" />
+             </div>
+             <p className="text-lg font-bold text-foreground">Sua gaveta de categorias está vazia.</p>
+             <p className="text-sm font-medium mt-1 max-w-sm">
+               Crie tags e ícones que fazem sentido para o seu estilo de vida exclusivista. (Ex: Viagens para Dubai, Joias, etc.)
+             </p>
            </div>
         ) : (
           customCategories.map((cat) => {
             const IconComponent = getIconComponent(cat.icon);
+            const isIncome = cat.type === "income";
+
             return (
-              <div key={cat.id} className="bg-card p-4 rounded-2xl border flex items-center justify-between card-shadow group">
-                 <div className="flex items-center gap-3">
-                   <div className={cn("p-2 rounded-xl", cat.type === "income" ? "bg-income/10 text-income" : "bg-expense/10 text-expense")}>
-                      <IconComponent className="h-5 w-5" />
+              <div 
+                key={cat.id} 
+                className={cn(
+                  "bg-card/40 backdrop-blur-md p-5 rounded-3xl border border-border/40 flex flex-col justify-between group transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-border/80 relative overflow-hidden h-[160px]"
+                )}
+              >
+                 {/* Fundo glow sutil no hover */}
+                 <div className={cn(
+                   "absolute -right-8 -bottom-8 w-32 h-32 rounded-full blur-[40px] opacity-0 group-hover:opacity-20 transition-opacity duration-500 pointer-events-none",
+                   isIncome ? "bg-emerald-500" : "bg-rose-500"
+                 )} />
+
+                 <div className="flex items-start justify-between relative z-10">
+                   <div className={cn(
+                     "w-12 h-12 rounded-2xl flex items-center justify-center border shadow-inner shrink-0", 
+                     isIncome ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" : "bg-rose-500/10 text-rose-500 border-rose-500/20"
+                   )}>
+                      <IconComponent className="h-6 w-6" />
                    </div>
-                   <div>
-                      <p className="font-bold">{cat.name}</p>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wider">{cat.type === "income" ? "Receita" : "Despesa"}</p>
+                   
+                   <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                     <Button 
+                       variant="ghost" 
+                       size="icon" 
+                       onClick={() => handleOpenEdit(cat)} 
+                       className="h-8 w-8 rounded-lg bg-background/50 hover:bg-background text-muted-foreground hover:text-foreground shadow-sm"
+                     >
+                       <Edit2 className="h-3.5 w-3.5" />
+                     </Button>
+                     <Button 
+                       variant="ghost" 
+                       size="icon" 
+                       onClick={() => deleteCustomCategory(cat.id)} 
+                       className="h-8 w-8 rounded-lg bg-background/50 hover:bg-destructive/10 text-muted-foreground hover:text-destructive shadow-sm"
+                     >
+                       <Trash2 className="h-3.5 w-3.5" />
+                     </Button>
                    </div>
                  </div>
-                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                   <Button variant="ghost" size="icon" onClick={() => handleOpenEdit(cat)} className="h-8 w-8 text-muted-foreground hover:text-primary">
-                     <Edit2 className="h-4 w-4" />
-                   </Button>
-                   <Button variant="ghost" size="icon" onClick={() => deleteCustomCategory(cat.id)} className="h-8 w-8 text-muted-foreground hover:text-destructive">
-                     <Trash2 className="h-4 w-4" />
-                   </Button>
+
+                 <div className="relative z-10">
+                    <p className="font-black text-lg font-outfit tracking-tight truncate pr-2">{cat.name}</p>
+                    <p className={cn(
+                      "text-[10px] font-bold uppercase tracking-widest mt-1",
+                      isIncome ? "text-emerald-500/70" : "text-rose-500/70"
+                    )}>
+                      {isIncome ? "Entrada de Caixa" : "Saída de Caixa"}
+                    </p>
                  </div>
               </div>
             )

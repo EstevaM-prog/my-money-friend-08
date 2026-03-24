@@ -11,6 +11,7 @@ import {
   CheckCircle2,
   Tags,
   Sliders,
+  CandlestickChart,
 } from "lucide-react";
 import { NavLink } from "./NavLink";
 import {
@@ -45,6 +46,7 @@ const menuItems = [
   { title: "Contas", url: "/contas", icon: CreditCard },
   { title: "Categorias", url: "/categorias", icon: Tags },
   { title: "Estratégia", url: "/estrategia", icon: Sliders },
+  { title: "Investimentos", url: "/investimentos", icon: CandlestickChart },
   { title: "Relatórios", url: "/relatorios", icon: FileBarChart },
   { title: "Suporte", url: "/suporte", icon: LifeBuoy },
 ];

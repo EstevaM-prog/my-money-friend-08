@@ -14,6 +14,7 @@ import ProfilePage from "./pages/Profile";
 import Categories from "./pages/Categories";
 import ViewAllActives from "./pages/ViewAllActives";
 import StrategicFinance from "./pages/StrategicFinance";
+import Finance from "./pages/Finance";
 import NotFound from "./pages/NotFound";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
@@ -120,6 +121,7 @@ const App = () => (
             <Route path="/categorias" element={<Categories />} />
             <Route path="/view-all-actives" element={<ViewAllActives />} />
             <Route path="/estrategia" element={<StrategicFinance />} />
+            <Route path="/investimentos" element={<Finance />} />
             <Route path="/perfil" element={<ProfilePage />} />
           </Route>
 

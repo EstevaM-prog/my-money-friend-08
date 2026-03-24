@@ -44,7 +44,7 @@ const Index = () => {
   const { filtered, totalIncome, totalExpense, balance, transactionCount } = useMemo(() => {
     const monthStart = startOfMonth(currentMonth);
     const monthEnd = endOfMonth(currentMonth);
-    
+
     const _filtered = transactions.filter((t) =>
       isWithinInterval(new Date(t.date), { start: monthStart, end: monthEnd })
     );
@@ -83,7 +83,7 @@ const Index = () => {
   return (
     <div className="w-full min-h-screen pb-20 sm:pb-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-8 py-6 sm:py-10 space-y-8">
-        
+
         {/* Hero Greeting Section */}
         <section className="flex flex-col md:flex-row md:items-end justify-between gap-6 card-reveal">
           <div className="space-y-2">
@@ -106,7 +106,7 @@ const Index = () => {
 
         {/* Month Navigation & Global Summaries */}
         <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-          
+
           <div className="xl:col-span-1 space-y-6">
             <div className="glass-card p-6 rounded-2xl flex flex-col items-center justify-between h-full min-h-[160px]">
               <div className="flex items-center justify-between w-full mb-4">
@@ -121,8 +121,8 @@ const Index = () => {
                   <ChevronRight className="h-5 w-5" />
                 </Button>
               </div>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="w-full gap-2 rounded-xl border-dashed border-primary/50 text-primary hover:bg-primary/5"
                 onClick={() => setCurrentMonth(new Date())}
               >
@@ -140,7 +140,7 @@ const Index = () => {
 
         {/* Data Visualization Section */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          
+
           <div className="lg:col-span-8 space-y-8">
             <div className="glass-card p-6 sm:p-8 rounded-3xl overflow-hidden card-reveal" style={{ animationDelay: '0.1s' }}>
               <div className="flex items-center justify-between mb-8">
@@ -171,7 +171,7 @@ const Index = () => {
                 />
               </div>
 
-               <div className="glass-card p-6 sm:p-8 rounded-3xl card-reveal" style={{ animationDelay: '0.3s' }}>
+              <div className="glass-card p-6 sm:p-8 rounded-3xl card-reveal" style={{ animationDelay: '0.3s' }}>
                 <h3 className="text-lg font-bold mb-6">Categorias Principais</h3>
                 <CategoryChart transactions={filtered} />
               </div>
@@ -191,10 +191,10 @@ const Index = () => {
                 </Button>
               </div>
               <div className="flex-1 overflow-auto pr-1 custom-scrollbar">
-                <TransactionList 
-                  transactions={filtered} 
-                  onDelete={deleteTransaction} 
-                  onToggleNotification={toggleNotification} 
+                <TransactionList
+                  transactions={filtered}
+                  onDelete={deleteTransaction}
+                  onToggleNotification={toggleNotification}
                 />
               </div>
             </div>
