@@ -22,6 +22,9 @@ import Support from "./pages/Support";
 import ChatSupport from "./pages/ChatSupport";
 import Documentation from "./pages/Documentation";
 import DocArticle from "./pages/docs/DocArticle";
+import ForgotPassword from "./pages/ForgotPassword";
+import EmailSent from "./pages/EmailSent";
+import ResetPassword from "./pages/ResetPassword";
 
 import { ThemeProvider } from "@/components/theme-provider";
 
@@ -65,6 +68,30 @@ const App = () => (
             element={
               <PublicOnlyRoute>
                 <Register />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/esqueci-senha"
+            element={
+              <PublicOnlyRoute>
+                <ForgotPassword />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/email-enviado"
+            element={
+              <PublicOnlyRoute>
+                <EmailSent />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/resetar-senha"
+            element={
+              <PublicOnlyRoute>
+                <ResetPassword />
               </PublicOnlyRoute>
             }
           />

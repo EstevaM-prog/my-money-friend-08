@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Eye, EyeOff, Wallet } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, Wallet, LogIn } from "lucide-react";
 import { login } from "@/lib/auth";
 
 export default function Login() {
@@ -33,146 +33,107 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-[#111111] flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl flex rounded-2xl overflow-hidden shadow-2xl shadow-black/60 min-h-[520px]">
+    <div className="min-h-screen bg-[#0a0a0c] flex items-center justify-center p-6 relative overflow-hidden font-sans">
+      {/* Background Glows */}
+      <div className="absolute top-[-20%] left-[-10%] w-[70%] h-[70%] rounded-full bg-blue-600/10 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-emerald-600/5 blur-[100px] pointer-events-none" />
 
-        {/* ── Left Panel: Green Gradient ── */}
-        <div className="hidden md:flex md:w-[42%] relative flex-col justify-between p-10 overflow-hidden"
-          style={{ background: "linear-gradient(160deg, #1a5c45 0%, #0d3d2e 40%, #0a2a20 100%)" }}>
-
-          {/* Noise/glow overlay */}
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute top-[-30%] right-[-20%] w-[80%] h-[80%] rounded-full bg-emerald-400/10 blur-[80px]" />
-            <div className="absolute bottom-[-20%] left-[-20%] w-[60%] h-[60%] rounded-full bg-teal-900/40 blur-[60px]" />
+      <div className="w-full max-w-md relative z-10 flex flex-col items-center">
+        {/* Logo */}
+        <div className="flex items-center gap-3 mb-10">
+          <div className="p-2.5 rounded-2xl bg-blue-600/20 border border-blue-500/30">
+            <Wallet className="h-6 w-6 text-blue-500" />
           </div>
-
-          {/* Logo */}
-          <div className="relative z-10 flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-white/10 border border-white/20 backdrop-blur-sm">
-              <Wallet className="h-4 w-4 text-white" />
-            </div>
-            <span className="text-white font-black text-lg tracking-tight">
-              Cash<span className="italic text-white/60">Flow</span>
-            </span>
-          </div>
-
-          {/* Main copy */}
-          <div className="relative z-10 space-y-3">
-            <h1 className="text-3xl font-black text-white leading-tight">
-              Entre na sua
-              <br />
-              conta com us
-            </h1>
-            <p className="text-white/50 text-sm leading-relaxed max-w-[200px]">
-              Acesse e continue de onde parou.
-            </p>
-          </div>
-
-          {/* Steps */}
-          <div className="relative z-10 flex gap-3">
-            {[
-              { n: "1", label: "Insira seus dados" },
-              { n: "2", label: "Acesse o dashboard" },
-              { n: "3", label: "Controle tudo" },
-            ].map((s) => (
-              <div
-                key={s.n}
-                className="flex-1 bg-white/8 border border-white/10 rounded-xl p-3 backdrop-blur-sm"
-              >
-                <span className="flex items-center justify-center w-6 h-6 rounded-full bg-white/15 text-white text-xs font-bold mb-2">
-                  {s.n}
-                </span>
-                <p className="text-white/70 text-[11px] leading-tight font-medium">{s.label}</p>
-              </div>
-            ))}
-          </div>
+          <span className="text-white font-black text-2xl tracking-tighter">
+            Cash<span className="text-blue-500 italic">Flow</span>
+          </span>
         </div>
 
-        {/* ── Right Panel: Dark + White Card ── */}
-        <div className="flex-1 bg-[#1a1a1a] flex items-center justify-center p-8 md:p-12">
-          <div className="w-full max-w-sm">
+        {/* Card */}
+        <div className="w-full bg-[#16161a] border border-white/5 rounded-[32px] p-8 shadow-2xl shadow-black/50">
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-white tracking-tight mb-1">Sign in</h2>
+            <p className="text-sm text-white/40 font-medium">Login to manage your account</p>
+          </div>
 
-            {/* Heading */}
-            <div className="mb-7 text-center">
-              <h2 className="text-xl font-bold text-white tracking-tight">Entrar na conta</h2>
-              <p className="text-sm text-white/40 mt-1">
-                Use seu e-mail ou nome de usuário.
-              </p>
-            </div>
-
-            {/* White Form Card */}
-            <div className="bg-white rounded-2xl p-6 shadow-xl shadow-black/40 space-y-4">
-
-              {/* Identifier */}
-              <div className="space-y-1.5">
-                <label htmlFor="identifier" className="block text-[13px] font-semibold text-gray-700">
-                  E-mail ou usuário
-                </label>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <div className="relative group">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-blue-500 transition-colors">
+                  <Mail className="h-5 w-5" />
+                </div>
                 <input
-                  id="identifier"
                   name="identifier"
                   type="text"
-                  placeholder="ex. joaosilva ou joao@email.com"
+                  placeholder="Email or username"
+                  required
                   value={form.identifier}
                   onChange={handleChange}
-                  autoComplete="username"
-                  className="w-full h-10 px-3.5 rounded-lg border border-gray-200 bg-gray-50 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all"
+                  className="w-full h-14 pl-12 pr-4 rounded-2xl bg-white/[0.03] border border-white/10 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500/50 transition-all font-medium"
                 />
               </div>
-
-              {/* Password */}
-              <div className="space-y-1.5">
-                <label htmlFor="password" className="block text-[13px] font-semibold text-gray-700">
-                  Senha
-                </label>
-                <div className="relative">
-                  <input
-                    id="password"
-                    name="password"
-                    type={showPass ? "text" : "password"}
-                    placeholder="Digite sua senha"
-                    value={form.password}
-                    onChange={handleChange}
-                    autoComplete="current-password"
-                    className="w-full h-10 px-3.5 pr-10 rounded-lg border border-gray-200 bg-gray-50 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPass((s) => !s)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-                  >
-                    {showPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
-                </div>
-                <p className="text-[11px] text-gray-400">Mínimo de 6 caracteres.</p>
-              </div>
-
-              {/* Error */}
-              {error && (
-                <p className="text-[12px] text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
-                  {error}
-                </p>
-              )}
-
-              {/* Submit */}
-              <button
-                type="button"
-                onClick={handleSubmit as unknown as React.MouseEventHandler}
-                disabled={loading}
-                className="w-full h-10 rounded-lg bg-gray-900 hover:bg-gray-800 active:scale-[0.98] text-white text-sm font-bold transition-all shadow-md disabled:opacity-60"
-              >
-                {loading ? "Entrando..." : "Entrar"}
-              </button>
             </div>
 
-            {/* Footer */}
-            <p className="text-center text-[13px] text-white/40 mt-5">
-              Não tem conta?{" "}
-              <Link to="/cadastro" className="text-emerald-400 font-semibold hover:text-emerald-300 transition-colors">
-                Criar conta
-              </Link>
-            </p>
-          </div>
+            <div className="space-y-2">
+              <div className="relative group">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-blue-500 transition-colors">
+                  <Lock className="h-5 w-5" />
+                </div>
+                <input
+                  name="password"
+                  type={showPass ? "text" : "password"}
+                  placeholder="Password"
+                  required
+                  value={form.password}
+                  onChange={handleChange}
+                  className="w-full h-14 pl-12 pr-12 rounded-2xl bg-white/[0.03] border border-white/10 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500/50 transition-all font-medium"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPass(!showPass)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white/20 hover:text-white transition-colors px-1 text-xs font-bold uppercase tracking-wider"
+                >
+                  {showPass ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                </button>
+              </div>
+            </div>
+
+            {error && (
+               <p className="text-xs text-red-400 bg-red-400/10 border border-red-400/20 rounded-xl px-4 py-3 font-medium animate-in fade-in slide-in-from-top-2">
+                  {error}
+               </p>
+            )}
+
+            <div className="flex items-center justify-between py-1 px-1">
+               <label className="flex items-center gap-2 cursor-pointer group">
+                  <input type="checkbox" className="w-4 h-4 rounded border-white/10 bg-white/5 checked:bg-blue-600 transition-all cursor-pointer" />
+                  <span className="text-[13px] text-white/40 font-medium group-hover:text-white/60 transition-colors">Remember me</span>
+               </label>
+               <Link to="/esqueci-senha" title="Forgot password?" className="text-[13px] text-blue-500 font-semibold hover:text-blue-400 transition-colors">
+                  Reset password?
+               </Link>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full h-14 rounded-2xl bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-base transition-all shadow-lg shadow-blue-600/20 active:scale-[0.98] mt-2 flex items-center justify-center gap-2"
+            >
+              {loading ? "Signing in..." : (
+                <>
+                  <LogIn className="h-5 w-5" />
+                  Sign in
+                </>
+              )}
+            </button>
+          </form>
+
+          <p className="text-center text-[13px] text-white/30 mt-8 font-medium">
+             Don't have an account?{" "}
+             <Link to="/cadastro" className="text-blue-500 font-bold hover:text-blue-400 transition-colors">
+                Sign up
+             </Link>
+          </p>
         </div>
       </div>
     </div>
