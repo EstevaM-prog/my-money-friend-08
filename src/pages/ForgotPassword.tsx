@@ -27,7 +27,7 @@ export default function ForgotPassword() {
 
       <div className="w-full max-w-md relative z-10 flex flex-col items-center">
         {/* Back Link */}
-        <button 
+        <button
           onClick={() => navigate("/login")}
           className="absolute left-0 -top-12 flex items-center gap-2 text-white/40 hover:text-white transition-colors text-sm font-medium"
         >
@@ -49,7 +49,7 @@ export default function ForgotPassword() {
         <div className="w-full bg-[#16161a] border border-white/5 rounded-[32px] p-8 shadow-2xl shadow-black/50">
           <div className="flex flex-col items-center text-center mb-8">
             <div className="w-24 h-24 bg-blue-600/10 rounded-3xl flex items-center justify-center mb-6 border border-blue-500/20 rotate-3">
-               <Send className="h-10 w-10 text-blue-500 -rotate-12" />
+              <Send className="h-10 w-10 text-blue-500 -rotate-12" />
             </div>
             <h2 className="text-2xl font-bold text-white tracking-tight mb-2">Forgot password?</h2>
             <p className="text-sm text-white/40 leading-relaxed px-4">

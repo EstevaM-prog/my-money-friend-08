@@ -26,25 +26,25 @@ export default function Register() {
     e.preventDefault();
     const { firstName, lastName, email, password, confirm } = form;
     if (!firstName || !lastName || !email || !password || !confirm) {
-        setError("Preencha todos os campos.");
-        return;
+      setError("Preencha todos os campos.");
+      return;
     }
     if (password.length < 6) {
-        setError("A senha deve ter pelo menos 6 caracteres.");
-        return;
+      setError("A senha deve ter pelo menos 6 caracteres.");
+      return;
     }
     if (password !== confirm) {
-        setError("As senhas não coincidem.");
-        return;
+      setError("As senhas não coincidem.");
+      return;
     }
     setLoading(true);
     try {
-        register(`${firstName} ${lastName}`, email, password);
-        navigate("/");
+      register(`${firstName} ${lastName}`, email, password);
+      navigate("/");
     } catch (err: unknown) {
-        setError(err instanceof Error ? err.message : "Erro ao criar conta.");
+      setError(err instanceof Error ? err.message : "Erro ao criar conta.");
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   }
 
@@ -142,7 +142,7 @@ export default function Register() {
 
             <div className="space-y-2">
               <div className="relative group">
-                 <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-blue-500 transition-colors">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-blue-500 transition-colors">
                   <Fingerprint className="h-5 w-5" />
                 </div>
                 <input
@@ -165,9 +165,9 @@ export default function Register() {
             </div>
 
             {error && (
-               <p className="text-xs text-red-400 bg-red-400/10 border border-red-400/20 rounded-xl px-4 py-3 font-medium">
-                  {error}
-               </p>
+              <p className="text-xs text-red-400 bg-red-400/10 border border-red-400/20 rounded-xl px-4 py-3 font-medium">
+                {error}
+              </p>
             )}
 
             <button
@@ -185,10 +185,10 @@ export default function Register() {
           </form>
 
           <p className="text-center text-[13px] text-white/30 mt-8 font-medium">
-             Already have an account?{" "}
-             <Link to="/login" className="text-blue-500 font-bold hover:text-blue-400 transition-colors">
-                Log in
-             </Link>
+            Already have an account?{" "}
+            <Link to="/login" className="text-blue-500 font-bold hover:text-blue-400 transition-colors">
+              Log in
+            </Link>
           </p>
         </div>
       </div>

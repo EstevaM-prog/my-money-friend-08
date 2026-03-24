@@ -99,19 +99,19 @@ export default function Login() {
             </div>
 
             {error && (
-               <p className="text-xs text-red-400 bg-red-400/10 border border-red-400/20 rounded-xl px-4 py-3 font-medium animate-in fade-in slide-in-from-top-2">
-                  {error}
-               </p>
+              <p className="text-xs text-red-400 bg-red-400/10 border border-red-400/20 rounded-xl px-4 py-3 font-medium animate-in fade-in slide-in-from-top-2">
+                {error}
+              </p>
             )}
 
             <div className="flex items-center justify-between py-1 px-1">
-               <label className="flex items-center gap-2 cursor-pointer group">
-                  <input type="checkbox" className="w-4 h-4 rounded-full border border-white/10 bg-white/5 checked:bg-blue-600 transition-all cursor-pointer appearance-none checked:border-blue-600 flex items-center justify-center after:content-[''] checked:after:w-1.5 checked:after:h-1.5 checked:after:bg-white checked:after:rounded-full" />
-                  <span className="text-[13px] text-white/40 font-medium group-hover:text-white/60 transition-colors">Remember me</span>
-               </label>
-               <Link to="/esqueci-senha" title="Forgot password?" className="text-[13px] text-blue-500 font-semibold hover:text-blue-400 transition-colors">
-                  Reset password?
-               </Link>
+              <label className="flex items-center gap-2 cursor-pointer group">
+                <input type="checkbox" className="w-4 h-4 rounded-full border border-white/10 bg-white/5 checked:bg-blue-600 transition-all cursor-pointer appearance-none checked:border-blue-600 flex items-center justify-center after:content-[''] checked:after:w-1.5 checked:after:h-1.5 checked:after:bg-white checked:after:rounded-full" />
+                <span className="text-[13px] text-white/40 font-medium group-hover:text-white/60 transition-colors">Remember me</span>
+              </label>
+              <Link to="/esqueci-senha" title="Forgot password?" className="text-[13px] text-blue-500 font-semibold hover:text-blue-400 transition-colors">
+                Reset password?
+              </Link>
             </div>
 
             <button
@@ -129,10 +129,10 @@ export default function Login() {
           </form>
 
           <p className="text-center text-[13px] text-white/30 mt-8 font-medium">
-             Don't have an account?{" "}
-             <Link to="/cadastro" className="text-blue-500 font-bold hover:text-blue-400 transition-colors">
-                Sign up
-             </Link>
+            Don't have an account?{" "}
+            <Link to="/cadastro" className="text-blue-500 font-bold hover:text-blue-400 transition-colors">
+              Sign up
+            </Link>
           </p>
         </div>
       </div>
