@@ -1,12 +1,12 @@
 # 💸 CashFlow — Gestão Financeira Premium
 
-> Gerenciador financeiro pessoal moderno, bonito e 100% local — sem back-end, sem exposição de dados.
+> Gerenciador financeiro pessoal moderno, bonito e full-stack — com back-end em construção usando Go (Gin) para mais velocidade e segurança local.
 
 ---
 
 ## ✨ Visão Geral
 
-O **CashFlow** é uma aplicação web de controle de finanças pessoais de elite, construída com React + TypeScript. Focada em **privacidade e design**, todos os dados são salvos no `localStorage` do seu navegador — garantindo que suas informações financeiras nunca saiam do seu dispositivo.
+O **CashFlow** é uma aplicação web de controle de finanças pessoais de elite. Originalmente 100% client-side, o sistema agora conta com um poderoso e ultra-rápido back-end em **Go (Golang)** integrado (via Gin), oferecendo toda a flexibilidade do servidor e ao mesmo tempo preservando a regra de ouro: **privacidade total e um design impecável**.
 
 ---
 
@@ -14,8 +14,9 @@ O **CashFlow** é uma aplicação web de controle de finanças pessoais de elite
 
 | Camada | Tecnologia |
 |---|---|
-| Framework | [Vite](https://vitejs.dev/) + [React 18](https://react.dev/) |
-| Linguagem | TypeScript |
+| Front-end | [Vite](https://vitejs.dev/) + [React 18](https://react.dev/) |
+| Back-end | [Go](https://go.dev/) + [Gin](https://gin-gonic.com/) Framework |
+| Linguagem | TypeScript (Front-end) + Go (Back-end) |
 | Estilo | Tailwind CSS + CSS customizado (glassmorphism, anim. radiais) |
 | Componentes | [shadcn/ui](https://ui.shadcn.com/) + [Radix UI](https://www.radix-ui.com/) |
 | Ícones | [Lucide React](https://lucide.dev/) |
@@ -28,7 +29,10 @@ O **CashFlow** é uma aplicação web de controle de finanças pessoais de elite
 ## 📁 Estrutura do Projeto
 
 ```
-src/
+backend/                 # Nova API do backend em Go (Gin)
+├── main.go              # Arquivo de inicialização e rotas
+├── go.mod               # Dependências do pacote Go
+src/                     # Front-end React
 ├── components/
 │   ├── charts/          # Componentes de gráficos Recharts
 │   ├── finance/         # Cards, dialogs, toggles financeiros
@@ -64,17 +68,22 @@ cd my-money-friend-08
 # 2. Instale as dependências
 npm install
 
-# 3. Inicie o servidor de desenvolvimento
+# 3. Inicie o front-end (em um terminal)
 npm run dev
+
+# 4. Inicie o back-end da API (em outro terminal)
+cd backend
+go mod tidy
+go run main.go
 ```
 
-Acesse em `http://localhost:8080/` (ou a porta padrão configurada no `vite.config.ts`)
+O front-end iniciará na porta padrão do Vite (geralmente `http://localhost:5173/`) e a API subirá em `http://localhost:8080/`.
 
 ---
 
 ## 🔐 Sistema de Autenticação
 
-Autenticação 100% client-side via `localStorage` — sem back-end necessário.
+Em período de transição: originalmente 100% mockado via `localStorage`, as chamadas da API agora devem convergir de forma segura pelo servidor Go.
 
 ### Criar Conta (`/cadastro`)
 - Nome completo, e-mail e senha.
