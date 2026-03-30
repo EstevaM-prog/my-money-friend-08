@@ -2,6 +2,7 @@ package handler
 
 import (
 	"backend/ent"
+	"backend/ent/transaction"
 	"net/http"
 	"time"
 
@@ -13,7 +14,7 @@ func GetReceitas(c *gin.Context) {
 	client := c.MustGet("db").(*ent.Client)
 	
 	items, err := client.Transaction.Query().
-		Where(ent.TransactionTypeEQ("income")).
+		Where(transaction.TypeEQ("income")).
 		All(c.Request.Context())
 		
 	if err != nil {

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"backend/ent"
+	"backend/ent/transaction"
 	"net/http"
 	"time"
 
@@ -13,7 +14,7 @@ func GetDespesas(c *gin.Context) {
 	client := c.MustGet("db").(*ent.Client)
 	
 	items, err := client.Transaction.Query().
-		Where(ent.TransactionTypeEQ("expense")).
+		Where(transaction.TypeEQ("expense")).
 		All(c.Request.Context())
 		
 	if err != nil {
