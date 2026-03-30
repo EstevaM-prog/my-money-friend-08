@@ -22,8 +22,12 @@ import { cn } from "@/lib/utils";
 import { INCOME_CATEGORIES, EXPENSE_CATEGORIES } from "@/lib/finance-data";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AVAILABLE_ICONS, getIconComponent } from "@/lib/icons";
+import { useTheme } from "@/components/theme-provider";
 
 export default function Categories() {
+  const { theme } = useTheme();
+  const isDark = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  
   const { customCategories, addCustomCategory, editCustomCategory, deleteCustomCategory } = useFinance();
   const [open, setOpen] = useState(false);
   
@@ -104,39 +108,39 @@ export default function Categories() {
               <Plus className="h-5 w-5" /> Montar Categoria
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px] bg-[#080810]/95 backdrop-blur-3xl border border-white/10 rounded-3xl p-0 overflow-hidden shadow-2xl">
-            <div className={cn("absolute inset-0 opacity-20 blur-[100px] pointer-events-none transition-colors duration-500", type === "income" ? "bg-emerald-500" : "bg-rose-500")} />
+          <DialogContent className="sm:max-w-[425px] bg-background border border-border rounded-3xl p-0 overflow-hidden shadow-2xl">
+            <div className={cn("absolute inset-0 opacity-10 blur-[100px] pointer-events-none transition-colors duration-500", type === "income" ? "bg-emerald-500" : "bg-rose-500")} />
             <div className="p-6 relative z-10">
               <DialogHeader className="mb-6">
-                <DialogTitle className="text-2xl font-black text-white text-center flex items-center justify-center gap-2">
-                  <Tags className="h-6 w-6 text-white/50" />
+                <DialogTitle className="text-2xl font-black text-foreground text-center flex items-center justify-center gap-2">
+                  <Tags className="h-6 w-6 text-muted-foreground/50" />
                   {editingId ? "Editar Classificação" : "Nova Classificação"}
                 </DialogTitle>
-                <p className="text-xs text-white/50 font-medium text-center mt-1">Personalize a gaveta financeira para classificar seus lançamentos.</p>
+                <p className="text-xs text-muted-foreground font-medium text-center mt-1">Personalize a gaveta financeira para classificar seus lançamentos.</p>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-5">
                 
                 <div className="space-y-2">
-                  <Label className="text-white/50 text-xs font-bold uppercase tracking-widest pl-1">Nomenclatura Única</Label>
+                  <Label className="text-muted-foreground text-xs font-bold uppercase tracking-widest pl-1">Nomenclatura Única</Label>
                   <div className="relative group">
-                    <Tags className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
+                    <Tags className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/30" />
                     <Input 
                       value={name} 
                       onChange={(e) => setName(e.target.value)} 
                       required 
                       placeholder="Ex: Roupas de Grife..." 
-                      className="h-12 pl-11 bg-white/[0.02] border border-white/10 rounded-2xl text-white text-sm font-semibold focus:border-white/30 focus:bg-white/[0.05] transition-all"
+                      className="h-12 pl-11 bg-muted/30 border border-border rounded-2xl text-foreground text-sm font-semibold focus:border-primary/50 focus:bg-muted/50 transition-all"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-white/50 text-xs font-bold uppercase tracking-widest pl-1">Natureza da Categoria</Label>
+                  <Label className="text-muted-foreground text-xs font-bold uppercase tracking-widest pl-1">Natureza da Categoria</Label>
                   <Select value={type} onValueChange={(v: "income" | "expense") => setType(v)}>
-                    <SelectTrigger className="h-12 bg-white/[0.02] border border-white/10 rounded-xl text-white font-semibold focus:ring-1 focus:border-white/30">
+                    <SelectTrigger className="h-12 bg-muted/30 border border-border rounded-xl text-foreground font-semibold focus:ring-1 focus:border-primary/30">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-[#0A0B10] border-white/10 text-white rounded-xl shadow-xl">
+                    <SelectContent className="bg-popover border-border text-popover-foreground rounded-xl shadow-xl">
                       <SelectItem value="income" className="font-semibold text-emerald-500 focus:bg-emerald-500/10 focus:text-emerald-400 rounded-lg cursor-pointer">Receita (Dinheiro Entrando)</SelectItem>
                       <SelectItem value="expense" className="font-semibold text-rose-500 focus:bg-rose-500/10 focus:text-rose-400 rounded-lg cursor-pointer">Despesa (Dinheiro Saindo)</SelectItem>
                     </SelectContent>
@@ -148,7 +152,7 @@ export default function Categories() {
                   <span>Simbologia Visual</span>
                   <span className="text-muted-foreground/50 lowercase font-normal italic">escolha 1 ícone exclusivo</span>
                 </Label>
-                <div className="grid grid-cols-6 sm:grid-cols-7 gap-2.5 p-4 rounded-2xl bg-white/[0.02] border border-white/10 max-h-[220px] overflow-y-auto custom-scrollbar shadow-inner">
+                <div className="grid grid-cols-6 sm:grid-cols-7 gap-2.5 p-4 rounded-2xl bg-muted/30 border border-border/50 max-h-[220px] overflow-y-auto custom-scrollbar shadow-inner">
                   {AVAILABLE_ICONS.map((IconObj) => {
                     const isUsed = usedIcons.includes(IconObj.name) && IconObj.name !== selectedIcon;
                     const isSelected = selectedIcon === IconObj.name;
@@ -161,9 +165,9 @@ export default function Categories() {
                         className={cn(
                           "aspect-square rounded-[0.8rem] flex items-center justify-center transition-all duration-300 relative group overflow-hidden",
                           isSelected 
-                            ? "bg-indigo-600 text-white shadow-[0_0_15px_rgba(79,70,229,0.5)] ring-2 ring-indigo-500/50 scale-105" 
-                            : "bg-white/[0.03] border border-white/5 text-muted-foreground hover:bg-white/10 hover:text-foreground hover:border-white/20",
-                          isUsed && "opacity-20 cursor-not-allowed scale-95 hover:bg-transparent hover:border-transparent"
+                            ? "bg-indigo-600 text-white shadow-lg ring-2 ring-indigo-500/50 scale-105" 
+                            : "bg-muted/50 border border-border text-muted-foreground hover:bg-muted hover:text-foreground hover:border-primary/50",
+                          isUsed && "opacity-20 cursor-not-allowed scale-95"
                         )}
                         title={isUsed ? "Ícone em uso por outra categoria" : IconObj.name}
                       >

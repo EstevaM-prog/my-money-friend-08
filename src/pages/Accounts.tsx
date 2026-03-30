@@ -33,6 +33,7 @@ import { Account, AccountType } from "@/lib/finance-data";
 import { useFinance } from "@/hooks/use-finance";
 import { usePrivacy } from "@/hooks/use-privacy";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/components/theme-provider";
 
 const TYPE_LABELS: Record<AccountType, string> = {
   checking: "Conta Corrente",
@@ -63,6 +64,9 @@ const PREMIUM_CARD_GRADIENTS = [
 const fmt = (v: number) => `R$ ${v.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
 
 export default function Accounts() {
+  const { theme } = useTheme();
+  const isDark = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  
   const { accounts, setAccounts } = useFinance();
   const { isPrivate } = usePrivacy();
   const [open, setOpen] = useState(false);
@@ -129,54 +133,54 @@ export default function Accounts() {
         >
           <DialogTrigger asChild>
             <Button 
-              className="h-10 px-5 gap-2 bg-white/10 hover:bg-white/20 text-white font-bold tracking-wide rounded-xl border border-white/20 backdrop-blur-md shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all hover:scale-105 active:scale-95"
+              className="h-10 px-5 gap-2 bg-primary/10 hover:bg-primary/20 text-primary font-bold tracking-wide rounded-xl border border-primary/20 backdrop-blur-md shadow-lg transition-all hover:scale-105 active:scale-95"
             >
               <Plus className="h-4 w-4" /> Adicionar Conta
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px] bg-[#080810]/95 backdrop-blur-3xl border border-white/10 rounded-3xl p-0 overflow-hidden shadow-2xl">
-            <div className="absolute inset-0 opacity-20 blur-[100px] pointer-events-none transition-colors duration-500 bg-indigo-500" />
+          <DialogContent className="sm:max-w-[425px] bg-background border border-border rounded-3xl p-0 overflow-hidden shadow-2xl">
+            <div className="absolute inset-0 opacity-10 blur-[100px] pointer-events-none transition-colors duration-500 bg-indigo-500" />
             <div className="p-6 relative z-10">
               <DialogHeader className="mb-6">
-                <DialogTitle className="text-2xl font-black text-white text-center flex items-center justify-center gap-2">
-                  <Wallet className="h-6 w-6 text-white/50" />
+                <DialogTitle className="text-2xl font-black text-foreground text-center flex items-center justify-center gap-2">
+                  <Wallet className="h-6 w-6 text-muted-foreground/50" />
                   Vincular Instituição
                 </DialogTitle>
-                <p className="text-xs text-white/50 font-medium text-center mt-1">Cadastre um novo banco, carteira ou cartão para monitoramento.</p>
+                <p className="text-xs text-muted-foreground font-medium text-center mt-1">Cadastre um novo banco, carteira ou cartão para monitoramento.</p>
               </DialogHeader>
               <form onSubmit={handleAdd} className="space-y-5">
                 
                 <div className="space-y-2">
-                  <Label className="text-white/50 text-xs font-bold uppercase tracking-widest pl-1">Apelido da Conta</Label>
+                  <Label className="text-muted-foreground text-xs font-bold uppercase tracking-widest pl-1">Apelido da Conta</Label>
                   <div className="relative group">
-                    <Wallet className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
+                    <Wallet className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/30" />
                     <Input 
                       value={name} 
                       onChange={(e) => setName(e.target.value)} 
                       placeholder="Ex: Nubank Principal..." 
                       maxLength={100}
                       required 
-                      className="h-12 pl-11 bg-white/[0.02] border border-white/10 rounded-2xl text-white text-sm font-semibold focus:border-white/30 focus:bg-white/[0.05] transition-all"
+                      className="h-12 pl-11 bg-muted/30 border border-border rounded-2xl text-foreground text-sm font-semibold focus:border-primary/50 focus:bg-muted/50 transition-all"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label className="text-white/50 text-xs font-bold uppercase tracking-widest pl-1">Instituição</Label>
+                    <Label className="text-muted-foreground text-xs font-bold uppercase tracking-widest pl-1">Instituição</Label>
                     <div className="relative group">
-                      <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
+                      <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/30" />
                       <Input 
                         value={institution} 
                         onChange={(e) => setInstitution(e.target.value)} 
                         placeholder="Ex: Nu Pagamentos" 
                         required 
-                        className="h-14 pl-11 pr-4 bg-white/[0.02] border border-white/10 rounded-2xl text-white font-semibold placeholder:text-white/30 focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all focus:bg-white/[0.04]"
+                        className="h-14 pl-11 pr-4 bg-muted/30 border border-border rounded-2xl text-foreground font-semibold placeholder:text-muted-foreground/30 focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all focus:bg-muted/40"
                       />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-white/50 text-xs font-bold uppercase tracking-widest pl-1">Saldo ou Fatura</Label>
+                    <Label className="text-muted-foreground text-xs font-bold uppercase tracking-widest pl-1">Saldo ou Fatura</Label>
                     <div className="relative group">
                       <span className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-indigo-500">R$</span>
                       <Input 
@@ -185,7 +189,7 @@ export default function Accounts() {
                         onChange={(e) => setBalance(e.target.value)} 
                         step="0.01" 
                         placeholder="0.00"
-                        className="h-14 pl-12 pr-4 text-xl font-black bg-white/[0.02] border border-white/10 rounded-2xl text-white transition-all focus:border-indigo-500/50 focus:ring-indigo-500/20"
+                        className="h-14 pl-12 pr-4 text-xl font-black bg-muted/30 border border-border rounded-2xl text-foreground transition-all focus:border-indigo-500/50 focus:ring-indigo-500/20"
                       />
                     </div>
                   </div>
@@ -193,14 +197,14 @@ export default function Accounts() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label className="text-white/50 text-xs font-bold uppercase tracking-widest pl-1">Modalidade</Label>
+                    <Label className="text-muted-foreground text-xs font-bold uppercase tracking-widest pl-1">Modalidade</Label>
                     <Select value={type} onValueChange={(v) => setType(v as AccountType)}>
-                      <SelectTrigger className="h-12 bg-white/[0.02] border border-white/10 rounded-xl text-white font-semibold focus:ring-1 focus:border-white/30 truncate">
+                      <SelectTrigger className="h-12 bg-muted/30 border border-border rounded-xl text-foreground font-semibold focus:ring-1 focus:border-primary/30 truncate">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="bg-[#0A0B10] border-white/10 text-white rounded-xl">
+                      <SelectContent className="bg-popover border-border text-popover-foreground rounded-xl">
                         {Object.entries(TYPE_LABELS).map(([k, v]) => (
-                          <SelectItem key={k} value={k} className="focus:bg-white/10 rounded-lg cursor-pointer">
+                          <SelectItem key={k} value={k} className="focus:bg-muted rounded-lg cursor-pointer">
                             {v}
                           </SelectItem>
                         ))}
@@ -209,14 +213,14 @@ export default function Accounts() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-white/50 text-xs font-bold uppercase tracking-widest pl-1">Cor Base</Label>
-                    <div className="flex flex-wrap gap-2 p-2 bg-white/[0.02] border border-white/10 rounded-xl justify-center">
+                    <Label className="text-muted-foreground text-xs font-bold uppercase tracking-widest pl-1">Cor Base</Label>
+                    <div className="flex flex-wrap gap-2 p-2 bg-muted/30 border border-border rounded-xl justify-center">
                       {PREMIUM_CARD_GRADIENTS.map((g) => (
                         <button
                           type="button"
                           key={g}
                           onClick={() => setColor(g)}
-                          className={cn("w-6 h-6 rounded-md border-2 transition-all bg-gradient-to-br shadow-inner", g, color === g ? "border-white scale-110 shadow-[0_0_10px_rgba(255,255,255,0.3)]" : "border-transparent opacity-50 hover:opacity-100")}
+                          className={cn("w-6 h-6 rounded-md border-2 transition-all bg-gradient-to-br shadow-inner", g, color === g ? (isDark ? "border-white" : "border-black") + " scale-110 shadow-lg" : "border-transparent opacity-50 hover:opacity-100")}
                         />
                       ))}
                     </div>
@@ -225,7 +229,7 @@ export default function Accounts() {
 
                 <Button 
                   type="submit" 
-                  className="w-full h-14 rounded-2xl text-white font-black text-base shadow-xl transition-all transform active:scale-[0.98] bg-indigo-600 hover:bg-indigo-500 shadow-[0_0_20px_rgba(79,70,229,0.3)] mt-2"
+                  className="w-full h-14 rounded-2xl text-white font-black text-base shadow-xl transition-all transform active:scale-[0.98] bg-indigo-600 hover:bg-indigo-500 shadow-[0_0_20px_rgba(79,70,229,0.3)] mt-2 border-0"
                 >
                   Efetivar Vínculo
                 </Button>

@@ -389,10 +389,10 @@ export default function StrategicFinance() {
                         value={rule.category}
                         onValueChange={(v) => updateRule(rule.id, "category", v)}
                       >
-                        <SelectTrigger className="h-14 bg-white/[0.02] border border-white/10 rounded-2xl text-foreground font-semibold focus:ring-1 focus:border-indigo-500/50">
+                        <SelectTrigger className="h-14 bg-muted/20 border border-border/50 rounded-2xl text-foreground font-semibold focus:ring-1 focus:border-indigo-500/50">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="bg-[#0A0B10] border-white/10 text-white rounded-xl shadow-xl">
+                        <SelectContent className="bg-popover border-border text-popover-foreground rounded-xl shadow-xl">
                           {EXPENSE_CATEGORIES.map((c) => (
                             <SelectItem key={c} value={c} className="font-medium focus:bg-white/10 rounded-lg cursor-pointer text-sm">
                               {c}
@@ -403,7 +403,7 @@ export default function StrategicFinance() {
                     </div>
                     <div className="space-y-2">
                       <Label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">Peso (%)</Label>
-                      <div className="flex flex-col justify-center gap-3 relative bg-white/[0.02] border border-white/10 rounded-2xl p-4 transition-all focus-within:border-indigo-500/50 h-[84px]">
+                      <div className="flex flex-col justify-center gap-3 relative bg-muted/20 border border-border/50 rounded-2xl p-4 transition-all focus-within:border-indigo-500/50 h-[84px]">
                         <div className="flex justify-between items-center font-bold font-outfit">
                            <span className="text-white/30 text-[10px] uppercase tracking-widest">Ajuste o Peso</span>
                            <span className="text-indigo-400 text-xl tracking-tight">{rule.percentage}%</span>
@@ -414,7 +414,7 @@ export default function StrategicFinance() {
                           min={0}
                           max={100}
                           step={1}
-                          className="w-full h-1.5 bg-white/10 rounded-full appearance-none cursor-pointer outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-indigo-500 [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:scale-125 transition-all focus:ring-2 focus:ring-indigo-500/50"
+                          className="w-full h-1.5 bg-muted rounded-full appearance-none cursor-pointer outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-indigo-500 [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:scale-125 transition-all focus:ring-2 focus:ring-indigo-500/50"
                           value={rule.percentage}
                           onChange={(e) => updateRule(rule.id, "percentage", Number(e.target.value))}
                         />
@@ -545,7 +545,7 @@ export default function StrategicFinance() {
                           <Input
                             type="number"
                             min={0}
-                            className="h-12 pl-12 pr-4 bg-white/[0.02] border border-white/10 rounded-2xl text-foreground font-semibold placeholder:text-muted-foreground/30 focus:border-rose-500/50 focus:ring-1 focus:ring-rose-500/30 transition-all focus:bg-white/[0.04]"
+                            className="h-12 pl-12 pr-4 bg-muted/20 border border-border/50 rounded-2xl text-foreground font-semibold placeholder:text-muted-foreground/30 focus:border-rose-500/50 focus:ring-1 focus:ring-rose-500/30 transition-all focus:bg-muted/30"
                             value={c.limit || ""}
                             placeholder="2000"
                             onChange={(e) => patchCeiling(card.id, "limit", Number(e.target.value))}
@@ -560,7 +560,7 @@ export default function StrategicFinance() {
                             type="number"
                             min={1}
                             max={100}
-                            className="h-12 pl-10 pr-4 bg-white/[0.02] border border-white/10 rounded-2xl text-foreground font-semibold placeholder:text-muted-foreground/30 focus:border-yellow-500/50 focus:ring-1 focus:ring-yellow-500/30 transition-all focus:bg-white/[0.04]"
+                            className="h-12 pl-10 pr-4 bg-muted/20 border border-border/50 rounded-2xl text-foreground font-semibold placeholder:text-muted-foreground/30 focus:border-yellow-500/50 focus:ring-1 focus:ring-yellow-500/30 transition-all focus:bg-muted/30"
                             value={c.alertAt}
                             onChange={(e) => patchCeiling(card.id, "alertAt", Number(e.target.value))}
                           />
@@ -568,7 +568,7 @@ export default function StrategicFinance() {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between p-4 rounded-2xl bg-white/[0.02] border border-white/10">
+                    <div className="flex items-center justify-between p-4 rounded-2xl bg-muted/20 border border-border/50">
                       <Label className="text-[11px] font-bold text-foreground uppercase tracking-wider flex items-center gap-2">
                         {c.notifyEnabled ? <Bell className="h-5 w-5 text-indigo-500" /> : <BellOff className="h-5 w-5 text-muted-foreground opacity-50" />}
                         Notificações de Alarme
@@ -595,7 +595,7 @@ export default function StrategicFinance() {
                       <Button
                         disabled={!isDirty}
                         onClick={() => saveCeiling(card.id)}
-                        className="h-12 flex-1 rounded-2xl bg-white hover:bg-white/90 text-black font-black text-[13px] uppercase tracking-widest transition-all active:scale-[0.98] shadow-[0_0_20px_rgba(255,255,255,0.15)] gap-2 border-0"
+                        className="h-12 flex-1 rounded-2xl bg-primary text-primary-foreground font-black text-[13px] uppercase tracking-widest transition-all active:scale-[0.98] shadow-lg gap-2 border-0"
                       >
                         <CheckCircle2 className="h-4 w-4" /> Atualizar Trava
                       </Button>

@@ -11,12 +11,16 @@ import {
 import { Transaction } from "@/lib/finance-data";
 import { format, subMonths, startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { useTheme } from "@/components/theme-provider";
 
 interface MonthlyChartProps {
   transactions: Transaction[];
 }
 
 export function MonthlyChart({ transactions }: MonthlyChartProps) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+
   const months = Array.from({ length: 6 }, (_, i) => {
     const date = subMonths(new Date(), 5 - i);
     return {
@@ -37,6 +41,10 @@ export function MonthlyChart({ transactions }: MonthlyChartProps) {
       Despesas: monthTx.filter((t) => t.type === "expense").reduce((s, t) => s + t.amount, 0),
     };
   });
+
+  const axisColor = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)";
+  const tickColor = isDark ? "rgba(255,255,255,0.35)" : "rgba(0,0,0,0.45)";
+  const gridColor = isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.04)";
 
   return (
     <ResponsiveContainer width="100%" height={280}>
@@ -60,20 +68,20 @@ export function MonthlyChart({ transactions }: MonthlyChartProps) {
         </defs>
         <CartesianGrid 
           strokeDasharray="3 3" 
-          stroke="rgba(255,255,255,0.04)" 
+          stroke={gridColor} 
           vertical={false}
         />
         <XAxis 
           dataKey="month" 
-          tick={{ fontSize: 11, fill: "rgba(255,255,255,0.35)", fontWeight: 600 }} 
-          stroke="rgba(255,255,255,0.06)"
+          tick={{ fontSize: 11, fill: tickColor, fontWeight: 600 }} 
+          stroke={axisColor}
           axisLine={false}
           tickLine={false}
           dy={8}
         />
         <YAxis 
-          tick={{ fontSize: 10, fill: "rgba(255,255,255,0.25)", fontWeight: 600 }} 
-          stroke="rgba(255,255,255,0.06)" 
+          tick={{ fontSize: 10, fill: tickColor, fontWeight: 600 }} 
+          stroke={axisColor} 
           tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
           axisLine={false}
           tickLine={false}
@@ -85,24 +93,24 @@ export function MonthlyChart({ transactions }: MonthlyChartProps) {
           }
           contentStyle={{
             borderRadius: "16px",
-            border: "1px solid rgba(255,255,255,0.1)",
-            boxShadow: "0 8px 32px rgba(0,0,0,0.6)",
-            backgroundColor: "rgba(8,8,16,0.95)",
-            color: "rgba(255,255,255,0.9)",
+            border: isDark ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.05)",
+            boxShadow: isDark ? "0 8px 32px rgba(0,0,0,0.6)" : "0 8px 32px rgba(0,0,0,0.1)",
+            backgroundColor: isDark ? "rgba(8,8,16,0.95)" : "rgba(255,255,255,0.95)",
+            color: isDark ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.9)",
             backdropFilter: "blur(12px)",
             fontSize: "12px",
             fontWeight: "600",
             padding: "10px 16px",
           }}
-          itemStyle={{ color: "rgba(255,255,255,0.8)" }}
-          labelStyle={{ color: "rgba(255,255,255,0.4)", fontWeight: "700", textTransform: "uppercase", fontSize: "10px", letterSpacing: "0.05em" }}
-          cursor={{ fill: "rgba(255,255,255,0.03)" }}
+          itemStyle={{ color: isDark ? "rgba(255,255,255,0.8)" : "rgba(0,0,0,0.7)" }}
+          labelStyle={{ color: isDark ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.4)", fontWeight: "700", textTransform: "uppercase", fontSize: "10px", letterSpacing: "0.05em" }}
+          cursor={{ fill: isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)" }}
         />
         <Legend 
           wrapperStyle={{ 
             fontSize: "11px", 
             fontWeight: "700", 
-            color: "rgba(255,255,255,0.5)",
+            color: tickColor,
             paddingTop: "12px"
           }}
           iconType="circle"

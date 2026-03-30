@@ -71,6 +71,7 @@ const Index = () => {
     toggleNotification,
     budgetRules,
     cardCeilings,
+    isLoading
   } = useFinance();
   const { isPrivate } = usePrivacy();
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -125,7 +126,7 @@ const Index = () => {
   }, [filtered]);
 
   return (
-    <div className="w-full min-h-screen pb-20 sm:pb-10 font-sans tracking-tight bg-[#030306] relative overflow-hidden text-white/90">
+    <div className="w-full min-h-screen pb-20 sm:pb-10 font-sans tracking-tight bg-background relative overflow-hidden text-foreground">
       
       {/* ═══ Layered Ambient Background ═══ */}
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.15] mix-blend-overlay pointer-events-none z-0" />
@@ -137,8 +138,17 @@ const Index = () => {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="max-w-[1400px] mx-auto px-4 sm:px-8 py-6 sm:py-10 space-y-6 relative z-10"
+        className={cn(
+          "max-w-[1400px] mx-auto px-4 sm:px-8 py-6 sm:py-10 space-y-6 relative z-10 transition-opacity duration-500",
+          isLoading ? "opacity-50 pointer-events-none" : "opacity-100"
+        )}
       >
+        {isLoading && (
+          <div className="fixed top-20 right-8 z-50 flex items-center gap-2 bg-primary/20 text-primary px-4 py-2 rounded-full border border-primary/20 backdrop-blur-md animate-pulse">
+            <Zap className="h-4 w-4 animate-spin" />
+            <span className="text-[10px] font-black uppercase tracking-widest">Sincronizando...</span>
+          </div>
+        )}
         {/* ─── Hero Header ─── */}
         <motion.section variants={itemVariants} className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-4">
           <div className="space-y-1">
@@ -146,7 +156,7 @@ const Index = () => {
               initial={{ x: -20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className="text-3xl sm:text-5xl font-black tracking-tighter flex items-center gap-3 bg-clip-text text-transparent bg-gradient-to-r from-white via-white/80 to-white/40"
+              className="text-3xl sm:text-5xl font-black tracking-tighter flex items-center gap-3 bg-clip-text text-transparent bg-gradient-to-r from-foreground via-foreground/80 to-foreground/40"
             >
               Control Room
             </motion.h1>
@@ -154,16 +164,16 @@ const Index = () => {
               initial={{ x: -20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.3 }}
-              className="text-white/60 font-medium flex items-center gap-2"
+              className="text-muted-foreground font-medium flex items-center gap-2"
             >
-              <Sparkles className="h-4 w-4 text-primary" /> Olá, <span className="text-white font-bold">{user?.name?.split(' ')[0] || 'Sócio'}</span>. Aqui está o seu relatório diário.
+              <Sparkles className="h-4 w-4 text-primary" /> Olá, <span className="font-bold text-foreground">{user?.name?.split(' ')[0] || 'Sócio'}</span>. Aqui está o seu relatório diário.
             </motion.p>
           </div>
           <motion.div 
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="flex items-center gap-3 bg-white/5 p-1.5 rounded-full border border-white/10 backdrop-blur-3xl shadow-2xl"
+            className="flex items-center gap-3 bg-card/50 p-1.5 rounded-full border border-border backdrop-blur-3xl shadow-2xl"
           >
             <DataExchange onImport={addTransactions} transactions={transactions} />
             <AddTransactionDialog onAdd={addTransactions} open={dialogOpen} onOpenChange={setDialogOpen} />
@@ -177,11 +187,11 @@ const Index = () => {
            <motion.div 
              variants={itemVariants}
              whileHover={{ y: -5, scale: 1.02 }}
-             className="relative group overflow-hidden rounded-[24px] bg-[#0A0B10]/80 backdrop-blur-xl border border-emerald-500/10 p-6 shadow-2xl shadow-emerald-500/5 cursor-pointer"
+             className="relative group overflow-hidden rounded-[24px] bg-card/80 backdrop-blur-xl border border-emerald-500/10 p-6 shadow-2xl shadow-emerald-500/5 cursor-pointer"
            >
              <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/20 rounded-full blur-[50px] -mr-10 -mt-10 transition-all duration-500 group-hover:bg-emerald-500/30" />
              <div className="flex justify-between items-start mb-4 relative z-10">
-               <div className="flex items-center gap-2 text-white/50 font-medium text-sm">
+               <div className="flex items-center gap-2 text-muted-foreground font-medium text-sm">
                  <div className="p-1.5 rounded-lg bg-emerald-500/10">
                    <TrendingUp className="h-4 w-4 text-emerald-400" />
                  </div>
@@ -191,7 +201,7 @@ const Index = () => {
                  Receita
                </div>
              </div>
-             <p className="text-3xl font-black tracking-tighter text-white relative z-10 drop-shadow-md">
+             <p className="text-3xl font-black tracking-tighter text-foreground relative z-10 drop-shadow-md">
                {fmt(totalIncome)}
              </p>
            </motion.div>
@@ -200,11 +210,11 @@ const Index = () => {
            <motion.div 
              variants={itemVariants}
              whileHover={{ y: -5, scale: 1.02 }}
-             className="relative group overflow-hidden rounded-[24px] bg-[#0A0B10]/80 backdrop-blur-xl border border-rose-500/10 p-6 shadow-2xl shadow-rose-500/5 cursor-pointer"
+             className="relative group overflow-hidden rounded-[24px] bg-card/80 backdrop-blur-xl border border-rose-500/10 p-6 shadow-2xl shadow-rose-500/5 cursor-pointer"
            >
              <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/20 rounded-full blur-[50px] -mr-10 -mt-10 transition-all duration-500 group-hover:bg-rose-500/30" />
              <div className="flex justify-between items-start mb-4 relative z-10">
-               <div className="flex items-center gap-2 text-white/50 font-medium text-sm">
+               <div className="flex items-center gap-2 text-muted-foreground font-medium text-sm">
                  <div className="p-1.5 rounded-lg bg-rose-500/10">
                    <TrendingDown className="h-4 w-4 text-rose-400" />
                  </div>
@@ -214,7 +224,7 @@ const Index = () => {
                  Despesa
                </div>
              </div>
-             <p className="text-3xl font-black tracking-tighter text-white relative z-10 drop-shadow-md">
+             <p className="text-3xl font-black tracking-tighter text-foreground relative z-10 drop-shadow-md">
                {fmt(totalExpense)}
              </p>
            </motion.div>
@@ -226,7 +236,7 @@ const Index = () => {
              className="relative group overflow-hidden rounded-[24px] border border-white/20 p-6 shadow-[0_0_40px_-15px_rgba(99,102,241,0.5)] cursor-pointer"
              style={{background: 'linear-gradient(135deg, rgba(79,70,229,0.3) 0%, rgba(15,23,42,0.8) 100%)'}}
            >
-             <div className="absolute inset-0 bg-[#0A0B10]/40 backdrop-blur-sm z-0"></div>
+             <div className="absolute inset-0 bg-indigo-950/20 backdrop-blur-sm z-0"></div>
              <div className="absolute top-0 right-0 w-40 h-40 bg-indigo-500/40 rounded-full blur-[60px] -mr-10 -mt-10 transition-all duration-700 group-hover:scale-150 group-hover:bg-indigo-400/50" />
              <div className="flex justify-between items-start mb-4 relative z-10">
                <div className="flex items-center gap-2 text-indigo-100 font-medium text-sm">
@@ -254,10 +264,10 @@ const Index = () => {
            {/* Time/Month Selector */}
            <motion.div 
               variants={itemVariants}
-              className="relative overflow-hidden rounded-[24px] bg-[#0A0B10]/80 backdrop-blur-xl border border-white/5 p-5 shadow-2xl flex flex-col justify-between"
+              className="relative overflow-hidden rounded-[24px] bg-card/80 backdrop-blur-xl border border-border p-5 shadow-2xl flex flex-col justify-between"
            >
               <div className="flex items-center justify-between w-full mb-3">
-                <Button variant="ghost" size="icon" className="h-10 w-10 text-white/40 hover:text-white hover:bg-white/10 rounded-2xl transition-all" onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}>
+                <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground hover:text-foreground hover:bg-muted rounded-2xl transition-all" onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}>
                   <ChevronLeft className="h-6 w-6" />
                 </Button>
                 <div className="flex flex-col items-center">
@@ -268,13 +278,13 @@ const Index = () => {
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.8 }}
-                      className="text-lg font-black text-white capitalize bg-white/5 px-4 py-1.5 rounded-xl border border-white/10"
+                      className="text-lg font-black text-foreground capitalize bg-muted px-4 py-1.5 rounded-xl border border-border"
                     >
                       {format(currentMonth, "MMM / yyyy", { locale: ptBR })}
                     </motion.h2>
                   </AnimatePresence>
                 </div>
-                <Button variant="ghost" size="icon" className="h-10 w-10 text-white/40 hover:text-white hover:bg-white/10 rounded-2xl transition-all" onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}>
+                <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground hover:text-foreground hover:bg-muted rounded-2xl transition-all" onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}>
                   <ChevronRight className="h-6 w-6" />
                 </Button>
               </div>
@@ -304,11 +314,11 @@ const Index = () => {
             >
               {/* Animated Border Gradient */}
               <div className="absolute inset-0 rounded-[32px] p-[1px] bg-gradient-to-br from-violet-500/30 via-transparent to-cyan-500/30 opacity-60 group-hover:opacity-100 transition-opacity duration-1000 z-0">
-                <div className="absolute inset-[1px] rounded-[31px] bg-[#080810]" />
+                <div className="absolute inset-[1px] rounded-[31px] bg-card" />
               </div>
               
               {/* Card Body */}
-              <div className="relative bg-[#080810]/95 backdrop-blur-2xl rounded-[32px] p-6 sm:p-8 z-10">
+              <div className="relative bg-card/95 backdrop-blur-2xl rounded-[32px] p-6 sm:p-8 z-10">
                 {/* Mesh Gradient BG */}
                 <div className="absolute inset-0 rounded-[32px] overflow-hidden pointer-events-none">
                   <div className="absolute top-[-30%] left-[-20%] w-[60%] h-[60%] bg-violet-600/[0.06] rounded-full blur-[100px] group-hover:bg-violet-500/[0.1] transition-all duration-1000" />
@@ -316,7 +326,7 @@ const Index = () => {
                   <div className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[80%] h-[40%] bg-indigo-600/[0.04] rounded-full blur-[80px]" />
                 </div>
                 {/* Scanline effect */}
-                <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(255,255,255,0.008)_2px,rgba(255,255,255,0.008)_4px)] pointer-events-none rounded-[32px] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(0,0,0,0.008)_2px,rgba(0,0,0,0.008)_4px)] dark:bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(255,255,255,0.008)_2px,rgba(255,255,255,0.008)_4px)] pointer-events-none rounded-[32px] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 
                 {/* Header */}
                 <div className="flex items-center justify-between mb-8 relative z-10">
@@ -331,13 +341,13 @@ const Index = () => {
                       <div className="absolute inset-0 rounded-2xl bg-violet-400/10 animate-pulse" />
                     </motion.div>
                     <div>
-                      <h3 className="text-2xl font-black text-white tracking-tighter flex items-center gap-2.5">
+                      <h3 className="text-2xl font-black text-foreground tracking-tighter flex items-center gap-2.5">
                         Análise de Fluxo
                         <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-violet-500/15 rounded-lg text-[10px] text-violet-400 font-black tracking-widest uppercase border border-violet-500/20">
                           <Zap className="h-3 w-3" /> Real-Time
                         </span>
                       </h3>
-                      <p className="text-xs text-white/40 uppercase tracking-widest font-bold mt-1 flex items-center gap-2">
+                      <p className="text-xs text-muted-foreground uppercase tracking-widest font-bold mt-1 flex items-center gap-2">
                         <span className="inline-block w-1.5 h-1.5 rounded-full bg-violet-400/70 animate-pulse" />
                         Evolução Mensal Interativa
                       </p>
@@ -346,19 +356,19 @@ const Index = () => {
                   {/* Mini Stats */}
                   <div className="hidden sm:flex items-center gap-3">
                     <div className="flex flex-col items-end">
-                      <span className="text-[10px] text-white/30 uppercase tracking-widest font-bold">Entradas</span>
+                      <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">Entradas</span>
                       <span className="text-sm font-black text-emerald-400 tabular-nums">{fmt(totalIncome)}</span>
                     </div>
-                    <div className="w-px h-8 bg-white/10" />
+                    <div className="w-px h-8 bg-border" />
                     <div className="flex flex-col items-end">
-                      <span className="text-[10px] text-white/30 uppercase tracking-widest font-bold">Saídas</span>
+                      <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">Saídas</span>
                       <span className="text-sm font-black text-rose-400 tabular-nums">{fmt(totalExpense)}</span>
                     </div>
                   </div>
                 </div>
                 
                 {/* Chart Container */}
-                <div className="h-[320px] relative z-10 bg-white/[0.01] rounded-2xl border border-white/[0.04] p-3">
+                <div className="h-[320px] relative z-10 bg-muted/20 rounded-2xl border border-border/50 p-3">
                   <MonthlyChart transactions={transactions} />
                 </div>
               </div>
@@ -376,10 +386,10 @@ const Index = () => {
               >
                 {/* Animated Border */}
                 <div className="absolute inset-0 rounded-[32px] p-[1px] bg-gradient-to-br from-cyan-500/25 via-transparent to-blue-500/25 opacity-50 group-hover:opacity-100 transition-opacity duration-700 z-0">
-                  <div className="absolute inset-[1px] rounded-[31px] bg-[#080810]" />
+                  <div className="absolute inset-[1px] rounded-[31px] bg-card" />
                 </div>
 
-                <div className="relative bg-[#080810]/95 backdrop-blur-2xl rounded-[32px] p-6 sm:p-7 z-10">
+                <div className="relative bg-card/95 backdrop-blur-2xl rounded-[32px] p-6 sm:p-7 z-10">
                   {/* Ambient Glow */}
                   <div className="absolute top-[-25%] right-[-15%] w-[55%] h-[55%] bg-cyan-500/[0.06] rounded-full blur-[90px] pointer-events-none group-hover:bg-cyan-400/[0.12] transition-all duration-1000" />
                   <div className="absolute bottom-[-25%] left-[-15%] w-[45%] h-[45%] bg-blue-500/[0.04] rounded-full blur-[70px] pointer-events-none" />
@@ -395,10 +405,10 @@ const Index = () => {
                         <div className="absolute inset-0 rounded-2xl bg-cyan-400/5 animate-pulse" />
                       </motion.div>
                       <div>
-                        <h3 className="text-xl font-black text-white tracking-tighter flex items-center gap-2">
+                        <h3 className="text-xl font-black text-foreground tracking-tighter flex items-center gap-2">
                           Timeline
                         </h3>
-                        <p className="text-[10px] text-white/40 uppercase tracking-widest font-bold mt-0.5 flex items-center gap-1.5">
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold mt-0.5 flex items-center gap-1.5">
                           <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400/60 animate-pulse" />
                           Calendário Térmico
                         </p>
@@ -417,7 +427,7 @@ const Index = () => {
                   </div>
                   
                   {/* Calendar */}
-                  <div className="relative z-10 bg-white/[0.01] rounded-2xl border border-white/[0.04] p-3">
+                  <div className="relative z-10 bg-muted/10 rounded-2xl border border-border/50 p-3">
                     <FinanceCalendar transactions={filtered} selectedDate={selectedDate} onSelectDate={setSelectedDate} currentMonth={currentMonth} />
                   </div>
                 </div>
@@ -433,10 +443,10 @@ const Index = () => {
               >
                 {/* Animated Border */}
                 <div className="absolute inset-0 rounded-[32px] p-[1px] bg-gradient-to-br from-amber-500/25 via-transparent to-orange-500/25 opacity-50 group-hover:opacity-100 transition-opacity duration-700 z-0">
-                  <div className="absolute inset-[1px] rounded-[31px] bg-[#080810]" />
+                  <div className="absolute inset-[1px] rounded-[31px] bg-card" />
                 </div>
 
-                <div className="relative bg-[#080810]/95 backdrop-blur-2xl rounded-[32px] p-6 sm:p-7 z-10">
+                <div className="relative bg-card/95 backdrop-blur-2xl rounded-[32px] p-6 sm:p-7 z-10">
                   {/* Ambient Glow */}
                   <div className="absolute top-[-20%] left-[-15%] w-[55%] h-[55%] bg-amber-500/[0.06] rounded-full blur-[90px] pointer-events-none group-hover:bg-amber-400/[0.12] transition-all duration-1000" />
                   <div className="absolute bottom-[-20%] right-[-15%] w-[45%] h-[45%] bg-orange-500/[0.04] rounded-full blur-[70px] pointer-events-none" />
@@ -452,8 +462,8 @@ const Index = () => {
                         <div className="absolute inset-0 rounded-2xl bg-amber-400/5 animate-pulse" />
                       </motion.div>
                       <div>
-                        <h3 className="text-xl font-black text-white tracking-tighter">Categorias</h3>
-                        <p className="text-[10px] text-white/40 uppercase tracking-widest font-bold mt-0.5 flex items-center gap-1.5">
+                        <h3 className="text-xl font-black text-foreground tracking-tighter">Categorias</h3>
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold mt-0.5 flex items-center gap-1.5">
                           <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-400/60 animate-pulse" />
                           Distribuição Inteligente
                         </p>
@@ -465,7 +475,7 @@ const Index = () => {
                   </div>
 
                   {/* Chart */}
-                  <div className="relative z-10 bg-white/[0.01] rounded-2xl border border-white/[0.04] p-3">
+                  <div className="relative z-10 bg-muted/10 rounded-2xl border border-border/50 p-3">
                     <CategoryChart transactions={filtered} />
                   </div>
                 </div>
@@ -485,24 +495,24 @@ const Index = () => {
             >
               {/* Animated Border */}
               <div className="absolute inset-0 rounded-[32px] p-[1px] bg-gradient-to-b from-emerald-500/30 via-transparent to-teal-500/20 opacity-60 group-hover:opacity-100 transition-opacity duration-700 z-0">
-                <div className="absolute inset-[1px] rounded-[31px] bg-[#080810]" />
+                <div className="absolute inset-[1px] rounded-[31px] bg-card" />
               </div>
 
-              <div className="relative bg-[#080810]/95 backdrop-blur-2xl rounded-[32px] flex flex-col h-[520px] z-10">
+              <div className="relative bg-card/95 backdrop-blur-2xl rounded-[32px] flex flex-col h-[520px] z-10">
                 {/* Ambient Glow */}
                 <div className="absolute top-[-20%] left-[-15%] w-[50%] h-[50%] bg-emerald-500/[0.06] rounded-full blur-[80px] pointer-events-none group-hover:bg-emerald-400/[0.1] transition-all duration-1000" />
                 <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-teal-500/[0.04] rounded-full blur-[60px] pointer-events-none" />
                 
                 {/* Header */}
                 <div className="p-6 sm:p-7 pb-0">
-                  <div className="flex items-center justify-between mb-5 relative z-10 pb-4 border-b border-white/[0.06]">
+                  <div className="flex items-center justify-between mb-5 relative z-10 pb-4 border-b border-border/50">
                     <div className="flex items-center gap-3.5">
                       <div className="h-12 w-12 bg-gradient-to-br from-emerald-500/20 to-teal-600/20 rounded-2xl flex items-center justify-center border border-emerald-500/15 shadow-[0_0_25px_rgba(16,185,129,0.12)] group-hover:shadow-[0_0_35px_rgba(16,185,129,0.22)] transition-all duration-700 relative">
                         <LayoutList className="h-5.5 w-5.5 text-emerald-400" />
                         <div className="absolute inset-0 rounded-2xl bg-emerald-400/5 animate-pulse" />
                       </div>
                       <div>
-                        <h3 className="text-xl font-black text-white tracking-tighter">Histórico Vivo</h3>
+                        <h3 className="text-xl font-black text-foreground tracking-tighter">Histórico Vivo</h3>
                         <div className="flex items-center gap-2 mt-1">
                           <span className="relative flex h-2.5 w-2.5">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -524,14 +534,14 @@ const Index = () => {
                 {/* Transaction Feed */}
                 <div className="flex-1 overflow-auto px-6 sm:px-7 pb-6 sm:pb-7 custom-scrollbar relative z-10">
                   {/* Top fade */}
-                  <div className="sticky top-0 left-0 right-0 h-4 bg-gradient-to-b from-[#080810] to-transparent pointer-events-none z-20" />
+                  <div className="sticky top-0 left-0 right-0 h-4 bg-gradient-to-b from-card to-transparent pointer-events-none z-20" />
                   <TransactionList
                     transactions={filtered}
                     onDelete={deleteTransaction}
                     onToggleNotification={toggleNotification}
                   />
                   {/* Bottom fade */}
-                  <div className="sticky bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-[#080810] to-transparent pointer-events-none z-20" />
+                  <div className="sticky bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-card to-transparent pointer-events-none z-20" />
                 </div>
               </div>
             </motion.div>
@@ -547,10 +557,10 @@ const Index = () => {
               >
                 {/* Animated Border Gradient */}
                 <div className="absolute inset-0 rounded-[32px] p-[1px] bg-gradient-to-br from-rose-500/25 via-transparent to-pink-500/25 opacity-50 group-hover:opacity-100 transition-opacity duration-700 z-0">
-                  <div className="absolute inset-[1px] rounded-[31px] bg-[#080810]" />
+                  <div className="absolute inset-[1px] rounded-[31px] bg-card" />
                 </div>
 
-                <div className="relative bg-[#080810]/95 backdrop-blur-2xl rounded-[32px] p-6 sm:p-7 space-y-6 z-10">
+                <div className="relative bg-card/95 backdrop-blur-2xl rounded-[32px] p-6 sm:p-7 space-y-6 z-10">
                   {/* Ambient Glow */}
                   <div className="absolute inset-0 rounded-[32px] overflow-hidden pointer-events-none">
                     <div className="absolute top-[-20%] right-[-15%] w-[50%] h-[50%] bg-rose-500/[0.06] rounded-full blur-[80px] group-hover:bg-rose-400/[0.12] transition-all duration-1000" />
@@ -562,17 +572,17 @@ const Index = () => {
                   <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_3px,rgba(244,63,94,0.015)_3px,rgba(244,63,94,0.015)_6px)] pointer-events-none rounded-[32px] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   
                   {/* Header */}
-                  <div className="flex items-center justify-between relative z-10 pb-4 border-b border-white/[0.06]">
+                  <div className="flex items-center justify-between relative z-10 pb-4 border-b border-border/50">
                     <div className="flex items-center gap-3.5">
                       <div className="h-12 w-12 bg-gradient-to-br from-rose-500/20 to-pink-600/20 rounded-2xl flex items-center justify-center border border-rose-500/15 shadow-[0_0_25px_rgba(244,63,94,0.12)] group-hover:shadow-[0_0_35px_rgba(244,63,94,0.22)] transition-all duration-700 relative">
                         <Shield className="h-5.5 w-5.5 text-rose-400" />
                         <div className="absolute inset-0 rounded-2xl bg-rose-400/5 animate-pulse" />
                       </div>
                       <div>
-                        <h3 className="text-xl font-black text-white tracking-tighter flex items-center gap-2">
+                        <h3 className="text-xl font-black text-foreground tracking-tighter flex items-center gap-2">
                           Radar de Limites
                         </h3>
-                        <p className="text-[10px] text-white/40 uppercase tracking-widest font-bold mt-1 flex items-center gap-1.5">
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold mt-1 flex items-center gap-1.5">
                           <span className="inline-block w-1.5 h-1.5 rounded-full bg-rose-400/60 animate-pulse" />
                           Teto de Gastos Ativo
                         </p>
@@ -596,10 +606,10 @@ const Index = () => {
                           initial={{ opacity: 0, x: 20 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: 0.1 * idx }}
-                          className="space-y-3 p-3 rounded-xl bg-white/[0.015] border border-white/[0.04] hover:bg-white/[0.03] transition-colors duration-300"
+                          className="space-y-3 p-3 rounded-xl bg-muted/20 border border-border/50 hover:bg-muted/40 transition-colors duration-300"
                         >
                           <div className="flex items-center justify-between text-sm">
-                            <span className="flex items-center gap-2.5 text-white/80 font-bold tracking-tight">
+                            <span className="flex items-center gap-2.5 text-foreground/80 font-bold tracking-tight">
                               <span className="w-2.5 h-2.5 rounded-full shadow-lg" style={{ backgroundColor: rule.color, boxShadow: `0 0 8px ${rule.color}40` }} />
                               {rule.label}
                             </span>
@@ -617,7 +627,7 @@ const Index = () => {
                             </motion.span>
                           </div>
                           {/* Premium Progress Bar */}
-                          <div className="w-full h-2.5 rounded-full bg-white/[0.04] overflow-hidden shadow-inner relative">
+                          <div className="w-full h-2.5 rounded-full bg-muted overflow-hidden shadow-inner relative">
                             <motion.div
                               initial={{ width: 0 }}
                               animate={{ width: `${ratio}%` }}
@@ -654,10 +664,10 @@ const Index = () => {
                           initial={{ opacity: 0, x: 20 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: 0.1 * (budgetRules.length + idx) }}
-                          className="space-y-3 p-3 rounded-xl bg-white/[0.015] border border-white/[0.04] hover:bg-white/[0.03] transition-colors duration-300"
+                          className="space-y-3 p-3 rounded-xl bg-muted/20 border border-border/50 hover:bg-muted/40 transition-colors duration-300"
                         >
                           <div className="flex items-center justify-between text-sm">
-                            <span className="flex items-center gap-2.5 text-white/80 font-bold tracking-tight">
+                            <span className="flex items-center gap-2.5 text-foreground/80 font-bold tracking-tight">
                               <span className="w-2.5 h-2.5 rounded-full shadow-lg" style={{ backgroundColor: acc.color, boxShadow: `0 0 8px ${acc.color}40` }} />
                               {acc.name}
                             </span>
@@ -665,12 +675,12 @@ const Index = () => {
                               "font-black text-[10px] tracking-widest px-2.5 py-1 rounded-lg",
                               isDanger 
                                 ? "bg-rose-500/20 text-rose-400 border border-rose-500/30" 
-                                : "bg-white/5 text-white/50 border border-white/10"
+                                : "bg-muted text-muted-foreground border border-border/50"
                             )}>
                               {ratio.toFixed(0)}%
                             </span>
                           </div>
-                          <div className="w-full h-2.5 rounded-full bg-white/[0.04] overflow-hidden shadow-inner relative">
+                          <div className="w-full h-2.5 rounded-full bg-muted overflow-hidden shadow-inner relative">
                             <motion.div
                               initial={{ width: 0 }}
                               animate={{ width: `${ratio}%` }}

@@ -1,6 +1,9 @@
 import axios from "axios";
 
-// Instância base do Axios configurada para apontar para o seu backend Go + Gin
+/**
+ * My Money Friend - API Client Configuration
+ * Base URL: Points to the Go/Gin backend.
+ */
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:8080/api",
   headers: {
@@ -8,49 +11,78 @@ export const api = axios.create({
   },
 });
 
-// O backend utiliza as rotas e tipos que você definiu. 
-// Vamos montar os services para que os seus componentes ou seu hook `useFinance` do Frontend os utilizem!
+// Helper for data extraction to keep code DRY
+const extractData = (res: any) => res.data.data;
 
-// ==========================================
-// USUÁRIOS
-// ==========================================
+/**
+ * 👤 USER SERVICE
+ */
 export const usersService = {
+  getAll: () => api.get("/users").then(extractData),
+  create: (payload: any) => api.post("/users", payload).then(extractData),
+  update: (id: string, payload: any) => api.put(`/users/${id}`, payload).then(extractData),
+  delete: (id: string) => api.delete(`/users/${id}`),
+};
+
+/**
+ * 💳 ACCOUNTS SERVICE
+ */
+export const accountsService = {
+  getAll: () => api.get("/cartoes").then(extractData),
+  create: (payload: any) => api.post("/cartoes", payload).then(extractData),
+  update: (id: string, payload: any) => api.put(`/cartoes/${id}`, payload).then(extractData),
+  delete: (id: string) => api.delete(`/cartoes/${id}`),
+};
+
+/**
+ * 💸 TRANSACTIONS SERVICE
+ */
+export const transactionsService = {
+  // Merges both income (receitas) and expenses (despesas) into a single stream
   getAll: async () => {
-    const { data } = await api.get("/users");
-    return data.data; // O retorno do Gin está formatado como { message: "...", data: [...] }
+    const [despesas, receitas] = await Promise.all([
+      api.get("/despesas"),
+      api.get("/receitas")
+    ]);
+    const d = despesas.data.data || [];
+    const r = receitas.data.data || [];
+    return [...d, ...r];
   },
-  create: async (userData: any) => {
-    const { data } = await api.post("/users", userData);
-    return data;
+  create: (payload: any) => {
+    const endpoint = payload.type === "income" ? "/receitas" : "/despesas";
+    return api.post(endpoint, payload).then(extractData);
+  },
+  delete: (id: string, type: string) => {
+    const endpoint = type === "income" ? "/receitas" : "/despesas";
+    return api.delete(`${endpoint}/${id}`);
   },
 };
 
-// ==========================================
-// DESPESAS
-// ==========================================
-export const despesasService = {
-  getAll: async () => {
-    const { data } = await api.get("/despesas");
-    return data.data;
-  },
-  create: async (despesaData: any) => {
-    const { data } = await api.post("/despesas", despesaData);
-    return data;
-  },
+/**
+ * 🎯 GOALS SERVICE
+ */
+export const goalsService = {
+  getAll: () => api.get("/metas").then(extractData),
+  create: (payload: any) => api.post("/metas", payload).then(extractData),
+  update: (id: string, payload: any) => api.put(`/metas/${id}`, payload).then(extractData),
+  delete: (id: string) => api.delete(`/metas/${id}`),
 };
 
-// ==========================================
-// RECEITAS
-// ==========================================
-export const receitasService = {
-  getAll: async () => {
-    const { data } = await api.get("/receitas");
-    return data.data;
-  },
-  create: async (receitaData: any) => {
-    const { data } = await api.post("/receitas", receitaData);
-    return data;
-  },
+/**
+ * 🏷️ CATEGORIES SERVICE
+ */
+export const categoriesService = {
+  getAll: () => api.get("/categories").then(extractData),
+  create: (payload: any) => api.post("/categories", payload).then(extractData),
+  update: (id: string, payload: any) => api.put(`/categories/${id}`, payload).then(extractData),
+  delete: (id: string) => api.delete(`/categories/${id}`),
 };
 
-// Siga esse padrão e crie objects (services) para Cartão, Meta, Investment e Categories!
+/**
+ * 📈 INVESTMENTS SERVICE
+ */
+export const investmentsService = {
+  getAll: () => api.get("/investments").then(extractData),
+  create: (payload: any) => api.post("/investments", payload).then(extractData),
+  delete: (id: string) => api.delete(`/investments/${id}`),
+};

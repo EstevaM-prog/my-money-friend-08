@@ -13,6 +13,7 @@ import {
 import { useFinance } from "@/hooks/use-finance";
 import { Goal } from "@/lib/finance-data";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/components/theme-provider";
 
 const COLORS = [
   "#6366f1", // Indigo
@@ -26,6 +27,9 @@ const COLORS = [
 const fmt = (v: number) => `R$ ${v.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
 
 export default function Goals() {
+  const { theme } = useTheme();
+  const isDark = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  
   const { goals, addGoal, deleteGoal, updateGoalCurrent } = useFinance();
   const [open, setOpen] = useState(false);
   
@@ -89,41 +93,41 @@ export default function Goals() {
         }}>
           <DialogTrigger asChild>
             <Button 
-              className="h-10 px-5 gap-2 bg-white/10 hover:bg-white/20 text-white font-bold tracking-wide rounded-xl border border-white/20 backdrop-blur-md shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all hover:scale-105 active:scale-95"
+              className="h-10 px-5 gap-2 bg-primary/10 hover:bg-primary/20 text-primary font-bold tracking-wide rounded-xl border border-primary/20 backdrop-blur-md shadow-lg transition-all hover:scale-105 active:scale-95"
             >
               <Plus className="h-4 w-4" /> Iniciar Projeto
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px] bg-[#080810]/95 backdrop-blur-3xl border border-white/10 rounded-3xl p-0 overflow-hidden shadow-2xl">
-            <div className="absolute inset-0 opacity-20 blur-[100px] pointer-events-none transition-colors duration-500 bg-indigo-500" />
+          <DialogContent className="sm:max-w-[425px] bg-background border border-border rounded-3xl p-0 overflow-hidden shadow-2xl">
+            <div className="absolute inset-0 opacity-10 blur-[100px] pointer-events-none transition-colors duration-500 bg-indigo-500" />
             <div className="p-6 relative z-10">
               <DialogHeader className="mb-6">
-                <DialogTitle className="text-2xl font-black text-white text-center flex items-center justify-center gap-2">
-                  <Target className="h-6 w-6 text-white/50" />
+                <DialogTitle className="text-2xl font-black text-foreground text-center flex items-center justify-center gap-2">
+                  <Target className="h-6 w-6 text-muted-foreground/50" />
                   Novo Objetivo
                 </DialogTitle>
-                <p className="text-xs text-white/50 font-medium text-center mt-1">Até onde você quer chegar? Defina o norte.</p>
+                <p className="text-xs text-muted-foreground font-medium text-center mt-1">Até onde você quer chegar? Defina o norte.</p>
               </DialogHeader>
               <form onSubmit={handleAdd} className="space-y-5">
                 
                 <div className="space-y-2">
-                  <Label className="text-white/50 text-xs font-bold uppercase tracking-widest pl-1">Códinome do Projeto</Label>
+                  <Label className="text-muted-foreground text-xs font-bold uppercase tracking-widest pl-1">Códinome do Projeto</Label>
                   <div className="relative group">
-                    <Target className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
+                    <Target className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/30" />
                     <Input 
                       value={name} 
                       onChange={(e) => setName(e.target.value)} 
                       placeholder="Ex: Viagem para o Japão..." 
                       maxLength={100}
                       required 
-                      className="h-12 pl-11 bg-white/[0.02] border border-white/10 rounded-2xl text-white text-sm font-semibold focus:border-white/30 focus:bg-white/[0.05] transition-all"
+                      className="h-12 pl-11 bg-muted/30 border border-border rounded-2xl text-foreground text-sm font-semibold focus:border-primary/50 focus:bg-muted/50 transition-all"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label className="text-white/50 text-xs font-bold uppercase tracking-widest pl-1">Alvo Ouro</Label>
+                    <Label className="text-muted-foreground text-xs font-bold uppercase tracking-widest pl-1">Alvo Ouro</Label>
                     <div className="relative group">
                       <span className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-indigo-500">R$</span>
                       <Input 
@@ -134,12 +138,12 @@ export default function Goals() {
                         step="0.01" 
                         placeholder="0.00"
                         required 
-                        className="h-14 pl-12 text-xl font-black bg-white/[0.02] border border-white/10 rounded-2xl text-white transition-all focus:border-indigo-500/50 focus:ring-indigo-500/20"
+                        className="h-14 pl-12 text-xl font-black bg-muted/30 border border-border rounded-2xl text-foreground transition-all focus:border-indigo-500/50 focus:ring-indigo-500/20"
                       />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-white/50 text-xs font-bold uppercase tracking-widest pl-1">Já Guardado</Label>
+                    <Label className="text-muted-foreground text-xs font-bold uppercase tracking-widest pl-1">Já Guardado</Label>
                     <div className="relative group">
                       <span className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-emerald-500">R$</span>
                       <Input 
@@ -149,36 +153,39 @@ export default function Goals() {
                         min="0" 
                         step="0.01" 
                         placeholder="0.00"
-                        className="h-14 pl-12 text-xl font-black bg-white/[0.02] border border-white/10 rounded-2xl text-white transition-all focus:border-emerald-500/50 focus:ring-emerald-500/20"
+                        className="h-14 pl-12 text-xl font-black bg-muted/30 border border-border rounded-2xl text-foreground transition-all focus:border-emerald-500/50 focus:ring-emerald-500/20"
                       />
                     </div>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-white/50 text-xs font-bold uppercase tracking-widest pl-1">Data de Conquista</Label>
+                  <Label className="text-muted-foreground text-xs font-bold uppercase tracking-widest pl-1">Data de Conquista</Label>
                   <div className="relative flex items-center group">
-                    <Flag className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
+                    <Flag className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/30" />
                     <Input 
                       type="date" 
                       value={deadline} 
                       onChange={(e) => setDeadline(e.target.value)} 
                       required 
-                      className="h-12 pl-11 pr-4 bg-white/[0.02] border border-white/10 rounded-2xl text-white font-semibold uppercase tracking-widest text-xs focus:border-white/30 [&::-webkit-calendar-picker-indicator]:invert-[1] [&::-webkit-calendar-picker-indicator]:opacity-50"
+                      className={cn(
+                        "h-12 pl-11 pr-4 bg-muted/30 border border-border rounded-2xl text-foreground font-semibold uppercase tracking-widest text-xs focus:border-primary/30",
+                        isDark ? "[&::-webkit-calendar-picker-indicator]:invert-[1]" : ""
+                      )}
                     />
                   </div>
                 </div>
 
                 {/* Progress Visualizer */}
                 {Number(target) > 0 && (
-                  <div className="bg-white/[0.02] border border-white/[0.05] rounded-3xl p-4 space-y-2">
+                  <div className="bg-muted/30 border border-border rounded-3xl p-4 space-y-2">
                     <div className="flex justify-between items-end">
-                       <Label className="text-[10px] text-white/50 font-bold uppercase tracking-widest">Progresso Inicial Simulado</Label>
-                       <span className="text-xs font-bold text-white">
+                       <Label className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">Progresso Inicial Simulado</Label>
+                       <span className="text-xs font-bold text-foreground">
                          {Math.min(100, (Number(current) / Number(target)) * 100 || 0).toFixed(1)}%
                        </span>
                     </div>
-                    <div className="w-full bg-white/5 h-1.5 rounded-full overflow-hidden">
+                    <div className="w-full bg-muted h-1.5 rounded-full overflow-hidden">
                        <div 
                          className="h-full bg-indigo-500 rounded-full transition-all duration-500" 
                          style={{ width: `${Math.min(100, (Number(current) / Number(target)) * 100 || 0)}%` }} 
@@ -209,10 +216,10 @@ export default function Goals() {
            <p className="text-3xl font-black font-outfit tracking-tighter relative z-10">{goals.length}</p>
         </div>
         
-        <div className="bg-gradient-to-br from-indigo-900/40 to-indigo-900/10 backdrop-blur-md p-6 rounded-[2rem] border border-indigo-500/20 shadow-sm relative overflow-hidden group">
-           <p className="text-xs font-bold text-indigo-400/80 uppercase tracking-widest mb-1">Capital Acumulado Global</p>
-           <p className="text-3xl font-black text-indigo-100 font-outfit tracking-tighter">{fmt(totalCurrent)}</p>
-           <div className="text-[11px] font-bold text-indigo-400mt-2 bg-indigo-500/20 w-fit px-2 py-0.5 rounded-md mt-2 flex items-center gap-1">
+        <div className="bg-indigo-600/10 backdrop-blur-md p-6 rounded-[2rem] border border-indigo-500/20 shadow-sm relative overflow-hidden group">
+           <p className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest mb-1">Capital Acumulado Global</p>
+           <p className="text-3xl font-black text-indigo-700 dark:text-indigo-100 font-outfit tracking-tighter">{fmt(totalCurrent)}</p>
+           <div className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 mt-2 bg-indigo-500/20 w-fit px-2 py-0.5 rounded-md flex items-center gap-1">
              <Rocket className="h-3 w-3" /> Fogo no Caixa
            </div>
         </div>
@@ -259,8 +266,8 @@ export default function Goals() {
                 {/* Visual Glow */}
                 <div 
                    className={cn(
-                     "absolute -left-10 -bottom-10 w-32 h-32 rounded-full blur-[40px] opacity-10 pointer-events-none transition-opacity group-hover:opacity-30",
-                     isFinished ? "bg-emerald-500" : "bg-primary"
+                      "absolute -left-10 -bottom-10 w-32 h-32 rounded-full blur-[40px] opacity-10 pointer-events-none transition-opacity group-hover:opacity-30",
+                      isFinished ? "bg-emerald-500" : "bg-primary"
                    )}
                    style={{ backgroundColor: !isFinished ? goal.color : undefined }}
                 />
@@ -270,7 +277,7 @@ export default function Goals() {
                     <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">
                       Prazo: {new Date(goal.deadline).toLocaleDateString("pt-BR")}
                     </p>
-                    <h3 className="font-outfit font-black text-xl tracking-tight truncate leading-tight">
+                    <h3 className="font-outfit font-black text-xl tracking-tight truncate leading-tight uppercase font-outfit">
                       {goal.name}
                     </h3>
                   </div>

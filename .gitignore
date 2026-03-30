@@ -1,35 +1,52 @@
-# Logs
-logs
-*.log
+# Node.js
+node_modules/
+dist/
+dist-ssr/
+*.local
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# Environment Variables
 .env
+.env.*
+!.env.example
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# OS Files
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+Thumbs.db
 
-# Go
-*.exe
-*.exe~
-*.dll
-*.so
-*.dylib
-*.test
-*.out
-/backend/backend
+# Editors
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+.idea/
+*.swp
+*.swo
+
+# Go (Backend)
+backend/backend
+backend/main
+backend/*.exe
+backend/*.exe~
+backend/*.dll
+backend/*.so
+backend/*.dylib
+backend/*.test
+backend/*.out
+/vendor/
+backend/tmp/
+
+# Ent (ORM)
+# Geralmente mantemos os arquivos gerados no git para facilitar o build,
+# mas se quiser ignorar, descomente abaixo:
+# backend/ent/client.go
+# backend/ent/context.go
+# etc.
+
+# Logs
+logs/
+*.log

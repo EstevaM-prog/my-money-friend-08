@@ -37,6 +37,7 @@ import {
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { useFinance } from "@/hooks/use-finance";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/components/theme-provider";
 
 interface AddTransactionDialogProps {
   onAdd: (t: Omit<Transaction, "id">[]) => void;
@@ -45,6 +46,9 @@ interface AddTransactionDialogProps {
 }
 
 export function AddTransactionDialog({ onAdd, open: controlledOpen, onOpenChange }: AddTransactionDialogProps) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  
   const [internalOpen, setInternalOpen] = useState(false);
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
@@ -129,38 +133,38 @@ export function AddTransactionDialog({ onAdd, open: controlledOpen, onOpenChange
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="h-10 px-5 gap-2 bg-white/10 hover:bg-white/20 text-white font-bold tracking-wide rounded-xl border border-white/20 backdrop-blur-md shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all hover:scale-105 active:scale-95">
+        <Button className="h-10 px-5 gap-2 bg-primary/10 hover:bg-primary/20 text-primary font-bold tracking-wide rounded-xl border border-primary/20 backdrop-blur-md shadow-lg transition-all hover:scale-105 active:scale-95">
           <Plus className="h-4 w-4" />
           Novo Registro
         </Button>
       </DialogTrigger>
       
-      <DialogContent className="sm:max-w-[425px] bg-[#080810]/95 backdrop-blur-3xl border border-white/10 rounded-3xl p-0 overflow-hidden shadow-2xl">
+      <DialogContent className="sm:max-w-[425px] bg-background border border-border rounded-3xl p-0 overflow-hidden shadow-2xl">
         {/* Glow */}
         <div className={cn(
-          "absolute inset-0 opacity-20 blur-[100px] pointer-events-none transition-colors duration-500",
+          "absolute inset-0 opacity-10 blur-[100px] pointer-events-none transition-colors duration-500",
           isIncome ? "bg-emerald-500" : "bg-rose-500"
         )} />
 
         <div className="p-6 relative z-10">
           <DialogHeader className="mb-6">
-            <DialogTitle className="text-2xl font-black text-white text-center flex items-center justify-center gap-2">
-              <Plus className="h-6 w-6 text-white/50" />
+            <DialogTitle className="text-2xl font-black text-foreground text-center flex items-center justify-center gap-2">
+              <Plus className="h-6 w-6 text-muted-foreground/50" />
               Adicionar Transação
             </DialogTitle>
           </DialogHeader>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Type Selector */}
-            <div className="flex bg-white/[0.03] p-1 rounded-2xl border border-white/[0.05]">
+            <div className="flex bg-muted/50 p-1 rounded-2xl border border-border/50">
               <button
                 type="button"
                 onClick={() => { setType("expense"); setCategory(""); }}
                 className={cn(
                   "flex-1 flex justify-center items-center gap-2 py-2.5 rounded-xl font-bold text-sm transition-all",
                   !isIncome 
-                    ? "bg-rose-500/20 text-rose-400 shadow-[0_0_15px_rgba(244,63,94,0.15)] border border-rose-500/30" 
-                    : "text-white/40 hover:text-white/70"
+                    ? "bg-rose-500/20 text-rose-600 dark:text-rose-400 shadow-sm border border-rose-500/30" 
+                    : "text-muted-foreground hover:text-foreground/70"
                 )}
               >
                 <ArrowDownCircle className="h-4 w-4" /> Despesa
@@ -171,8 +175,8 @@ export function AddTransactionDialog({ onAdd, open: controlledOpen, onOpenChange
                 className={cn(
                   "flex-1 flex justify-center items-center gap-2 py-2.5 rounded-xl font-bold text-sm transition-all",
                   isIncome 
-                    ? "bg-emerald-500/20 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)] border border-emerald-500/30" 
-                    : "text-white/40 hover:text-white/70"
+                    ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 shadow-sm border border-emerald-500/30" 
+                    : "text-muted-foreground hover:text-foreground/70"
                 )}
               >
                 <ArrowUpCircle className="h-4 w-4" /> Receita
@@ -181,7 +185,7 @@ export function AddTransactionDialog({ onAdd, open: controlledOpen, onOpenChange
 
             {/* Amount */}
             <div className="space-y-2">
-              <Label className="text-white/50 text-xs font-bold uppercase tracking-widest pl-1">Valor</Label>
+              <Label className="text-muted-foreground text-xs font-bold uppercase tracking-widest pl-1">Valor</Label>
               <div className="relative">
                 <span className={cn(
                   "absolute left-4 top-1/2 -translate-y-1/2 font-black text-lg",
@@ -196,7 +200,7 @@ export function AddTransactionDialog({ onAdd, open: controlledOpen, onOpenChange
                   step="0.01" 
                   required 
                   className={cn(
-                    "h-14 pl-12 text-xl font-black bg-white/[0.02] border border-white/10 rounded-2xl text-white transition-all",
+                    "h-14 pl-12 text-xl font-black bg-muted/30 border border-border rounded-2xl text-foreground transition-all",
                     isIncome ? "focus:border-emerald-500/50 focus:ring-emerald-500/20" : "focus:border-rose-500/50 focus:ring-rose-500/20"
                   )}
                 />
@@ -206,14 +210,14 @@ export function AddTransactionDialog({ onAdd, open: controlledOpen, onOpenChange
             {/* Description */}
             <div className="space-y-2">
               <div className="relative group">
-                <AlignLeft className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
+                <AlignLeft className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
                 <Input 
                   value={description} 
                   onChange={(e) => setDescription(e.target.value)} 
                   placeholder="Descrição da transação..." 
                   maxLength={100} 
                   required 
-                  className="h-12 pl-11 bg-white/[0.02] border border-white/10 rounded-2xl text-white text-sm font-semibold focus:border-white/30 focus:bg-white/[0.05] transition-all"
+                  className="h-12 pl-11 bg-muted/30 border border-border rounded-2xl text-foreground text-sm font-semibold focus:border-primary/50 focus:bg-muted/50 transition-all"
                 />
               </div>
             </div>
@@ -221,21 +225,21 @@ export function AddTransactionDialog({ onAdd, open: controlledOpen, onOpenChange
             <div className="grid grid-cols-2 gap-4">
               {/* Category */}
               <div className="space-y-2">
-                <Label className="text-white/50 text-xs font-bold uppercase tracking-widest pl-1 flex items-center gap-1.5">
+                <Label className="text-muted-foreground text-xs font-bold uppercase tracking-widest pl-1 flex items-center gap-1.5">
                   Categoria
                 </Label>
                 <Select value={category} onValueChange={(v) => setCategory(v as Category)}>
-                  <SelectTrigger className="h-12 bg-white/[0.02] border border-white/10 rounded-xl text-white font-semibold focus:ring-1 focus:border-white/30 truncate">
+                  <SelectTrigger className="h-12 bg-muted/30 border border-border rounded-xl text-foreground font-semibold focus:ring-1 focus:border-primary/30 truncate">
                     <SelectValue placeholder="Selecione..." />
                   </SelectTrigger>
-                  <SelectContent className="bg-[#0A0B10] border-white/10 text-white rounded-xl">
+                  <SelectContent className="bg-popover border-border text-popover-foreground rounded-xl">
                     {currentCategories.map((c) => {
                       const custom = customCategories.find(cc => cc.name === c);
                       const iconName = custom ? custom.icon : DEFAULT_CATEGORY_ICON_MAP[c];
                       const Icon = getIconComponent(iconName);
-                      const catColor = CATEGORY_COLORS[c] || "#fff";
+                      const catColor = CATEGORY_COLORS[c] || "#888";
                       return (
-                        <SelectItem key={c} value={c} className="focus:bg-white/10 rounded-lg cursor-pointer">
+                        <SelectItem key={c} value={c} className="focus:bg-muted rounded-lg cursor-pointer">
                           <div className="flex items-center gap-2">
                             <Icon className="h-4 w-4" style={{ color: catColor }} />
                             <span>{c}</span>
@@ -249,19 +253,19 @@ export function AddTransactionDialog({ onAdd, open: controlledOpen, onOpenChange
 
               {/* Payment Method */}
               <div className="space-y-2">
-                <Label className="text-white/50 text-xs font-bold uppercase tracking-widest pl-1">
+                <Label className="text-muted-foreground text-xs font-bold uppercase tracking-widest pl-1">
                   {isIncome ? "Conta/Origem" : "Pagamento"}
                 </Label>
                 <Select value={paymentMethod} onValueChange={(v) => setPaymentMethod(v as PaymentMethod)} required>
-                  <SelectTrigger className="h-12 bg-white/[0.02] border border-white/10 rounded-xl text-white font-semibold focus:ring-1 focus:border-white/30 truncate">
+                  <SelectTrigger className="h-12 bg-muted/30 border border-border rounded-xl text-foreground font-semibold focus:ring-1 focus:border-primary/30 truncate">
                     <div className="flex items-center gap-2">
-                      <CreditCard className="h-4 w-4 text-white/50" />
+                      <CreditCard className="h-4 w-4 text-muted-foreground/50" />
                       <SelectValue placeholder="Selecione..." />
                     </div>
                   </SelectTrigger>
-                  <SelectContent className="bg-[#0A0B10] border-white/10 text-white rounded-xl">
+                  <SelectContent className="bg-popover border-border text-popover-foreground rounded-xl">
                     {paymentMethods.map((p) => (
-                      <SelectItem key={p} value={p} className="focus:bg-white/10 rounded-lg cursor-pointer">{p}</SelectItem>
+                      <SelectItem key={p} value={p} className="focus:bg-muted rounded-lg cursor-pointer">{p}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -271,28 +275,31 @@ export function AddTransactionDialog({ onAdd, open: controlledOpen, onOpenChange
             {/* Date */}
             <div className="space-y-2">
               <div className="relative group">
-                <CalendarDays className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
+                <CalendarDays className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
                 <Input 
                   type="date" 
                   value={date} 
                   onChange={(e) => setDate(e.target.value)} 
                   required 
-                  className="h-12 pl-11 pr-4 bg-white/[0.02] border border-white/10 rounded-2xl text-white font-semibold uppercase tracking-widest text-xs focus:border-white/30 [&::-webkit-calendar-picker-indicator]:invert-[1] [&::-webkit-calendar-picker-indicator]:opacity-50"
+                  className={cn(
+                    "h-12 pl-11 pr-4 bg-muted/30 border border-border rounded-2xl text-foreground font-semibold uppercase tracking-widest text-xs focus:border-primary/30",
+                    isDark ? "[&::-webkit-calendar-picker-indicator]:invert-[1]" : ""
+                  )}
                 />
               </div>
             </div>
 
             {/* Options Panel */}
-            <div className="bg-white/[0.02] border border-white/[0.05] rounded-3xl p-4 space-y-4">
+            <div className="bg-muted/20 border border-border rounded-3xl p-4 space-y-4">
               {!isIncome && (
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="p-1.5 rounded-md bg-white/5">
-                      <Wallet className="h-4 w-4 text-white/60" />
+                    <div className="p-1.5 rounded-md bg-muted">
+                      <Wallet className="h-4 w-4 text-muted-foreground/60" />
                     </div>
                     <div>
-                      <Label className="text-sm font-bold text-white uppercase tracking-wider">Aviso de Vencimento</Label>
-                      <p className="text-[10px] text-white/40 font-medium">Receber alerta no email cadastrado</p>
+                      <Label className="text-sm font-bold text-foreground uppercase tracking-wider">Aviso de Vencimento</Label>
+                      <p className="text-[10px] text-muted-foreground font-medium">Receber alerta no email cadastrado</p>
                     </div>
                   </div>
                   <NotificationToggle 
@@ -306,27 +313,30 @@ export function AddTransactionDialog({ onAdd, open: controlledOpen, onOpenChange
               {/* Recurring */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="p-1.5 rounded-md bg-white/5">
-                    <Repeat className="h-4 w-4 text-white/60" />
+                  <div className="p-1.5 rounded-md bg-muted">
+                    <Repeat className="h-4 w-4 text-muted-foreground/60" />
                   </div>
                   <div>
-                    <Label className="text-sm font-bold text-white uppercase tracking-wider">Recorrente</Label>
-                    <p className="text-[10px] text-white/40 font-medium">Repetir lançamentos</p>
+                    <Label className="text-sm font-bold text-foreground uppercase tracking-wider">Recorrente</Label>
+                    <p className="text-[10px] text-muted-foreground font-medium">Repetir lançamentos</p>
                   </div>
                 </div>
-                <Switch checked={isRecurring} onCheckedChange={setIsRecurring} className="data-[state=checked]:bg-blue-500" />
+                <Switch checked={isRecurring} onCheckedChange={setIsRecurring} className="data-[state=checked]:bg-primary" />
               </div>
 
               {isRecurring && (
-                <div className="pt-2 border-t border-white/[0.05] mt-2 animate-in fade-in slide-in-from-top-1 duration-200">
-                  <Label className="text-[10px] text-white/40 uppercase tracking-widest mb-2 block">Repetir mensalmente até:</Label>
+                <div className="pt-2 border-t border-border mt-2 animate-in fade-in slide-in-from-top-1 duration-200">
+                  <Label className="text-[10px] text-muted-foreground uppercase tracking-widest mb-2 block">Repetir mensalmente até:</Label>
                   <Input 
                     type="date" 
                     value={recurringUntil} 
                     onChange={(e) => setRecurringUntil(e.target.value)} 
                     min={date}
                     required={isRecurring}
-                    className="h-10 bg-white/5 border-white/10 rounded-xl text-white text-xs uppercase tracking-widest [&::-webkit-calendar-picker-indicator]:invert-[1] [&::-webkit-calendar-picker-indicator]:opacity-50 focus:border-blue-500/50"
+                    className={cn(
+                      "h-10 bg-muted/50 border-border rounded-xl text-foreground text-xs uppercase tracking-widest focus:border-primary/50",
+                      isDark ? "[&::-webkit-calendar-picker-indicator]:invert-[1]" : ""
+                    )}
                   />
                 </div>
               )}
