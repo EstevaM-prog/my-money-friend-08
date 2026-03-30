@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { getIconComponent, DEFAULT_CATEGORY_ICON_MAP } from "@/lib/icons";
+import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
@@ -75,7 +76,10 @@ export function AddTransactionDialog({ onAdd, open: controlledOpen, onOpenChange
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!description.trim() || !amount || !category || !paymentMethod || !date) return;
+    if (!description.trim() || !amount || !category || !paymentMethod || !date) {
+      toast.error("Preencha todos os campos obrigatórios");
+      return;
+    }
     
     const baseTransaction: Omit<Transaction, "id" | "date"> = {
       description: description.trim(),

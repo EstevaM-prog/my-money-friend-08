@@ -4,9 +4,19 @@ import (
 	"log"
 	"net/http"
 
+	_ "backend/docs"
+	"backend/routes"
+
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+// @title           My Money Friend API
+// @version         1.0
+// @description     API de gerenciamento financeiro com Go + Gin
+// @host            localhost:8080
+// @BasePath        /api
 func main() {
 	// Inicializa o roteador do Gin com logs e tratamento de pânico
 	r := gin.Default()
@@ -36,11 +46,17 @@ func main() {
 				"message": "API em Go (Gin) está funcionando! 🚀",
 			})
 		})
+
+		// Configura rotas da aplicação
+		routes.RegisterRoutes(api)
 	}
 
+	// Adiciona a rota do Swagger (Interface Gráfica)
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	// Inicia o servidor na porta 8080
-	log.Println("🚀 Servidor Go rodando em http://localhost:8080")
-	if err := r.Run(":8080"); err != nil {
+	log.Println("🚀 Servidor Go rodando em http://localhost:8000")
+	if err := r.Run(":8000"); err != nil {
 		log.Fatal("Erro ao iniciar o servidor: ", err)
 	}
 }
