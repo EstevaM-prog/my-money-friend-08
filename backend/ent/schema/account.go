@@ -21,6 +21,7 @@ func (Account) Fields() []ent.Field {
 		field.Float("balance").Default(0),
 		field.String("institution"),
 		field.String("color"),
+		field.Float("limit").Default(0),
 		field.Time("created_at").Default(time.Now),
 	}
 }

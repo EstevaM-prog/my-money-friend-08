@@ -60,6 +60,20 @@ func (_c *AccountCreate) SetColor(v string) *AccountCreate {
 	return _c
 }
 
+// SetLimit sets the "limit" field.
+func (_c *AccountCreate) SetLimit(v float64) *AccountCreate {
+	_c.mutation.SetLimit(v)
+	return _c
+}
+
+// SetNillableLimit sets the "limit" field if the given value is not nil.
+func (_c *AccountCreate) SetNillableLimit(v *float64) *AccountCreate {
+	if v != nil {
+		_c.SetLimit(*v)
+	}
+	return _c
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (_c *AccountCreate) SetCreatedAt(v time.Time) *AccountCreate {
 	_c.mutation.SetCreatedAt(v)
@@ -147,6 +161,10 @@ func (_c *AccountCreate) defaults() {
 		v := account.DefaultBalance
 		_c.mutation.SetBalance(v)
 	}
+	if _, ok := _c.mutation.Limit(); !ok {
+		v := account.DefaultLimit
+		_c.mutation.SetLimit(v)
+	}
 	if _, ok := _c.mutation.CreatedAt(); !ok {
 		v := account.DefaultCreatedAt()
 		_c.mutation.SetCreatedAt(v)
@@ -169,6 +187,9 @@ func (_c *AccountCreate) check() error {
 	}
 	if _, ok := _c.mutation.Color(); !ok {
 		return &ValidationError{Name: "color", err: errors.New(`ent: missing required field "Account.color"`)}
+	}
+	if _, ok := _c.mutation.Limit(); !ok {
+		return &ValidationError{Name: "limit", err: errors.New(`ent: missing required field "Account.limit"`)}
 	}
 	if _, ok := _c.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Account.created_at"`)}
@@ -218,6 +239,10 @@ func (_c *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Color(); ok {
 		_spec.SetField(account.FieldColor, field.TypeString, value)
 		_node.Color = value
+	}
+	if value, ok := _c.mutation.Limit(); ok {
+		_spec.SetField(account.FieldLimit, field.TypeFloat64, value)
+		_node.Limit = value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(account.FieldCreatedAt, field.TypeTime, value)

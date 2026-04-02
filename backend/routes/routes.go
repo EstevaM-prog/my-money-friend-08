@@ -76,4 +76,14 @@ func RegisterRoutes(api *gin.RouterGroup) {
 		receitas.PUT("/:id", handler.UpdateReceita)
 		receitas.DELETE("/:id", handler.DeleteReceita)
 	}
+
+	// Regras de Orçamento
+	regras := api.Group("/budget-rules")
+	{
+		regras.POST("/", handler.CreateBudgetRule)
+		regras.GET("/", handler.GetBudgetRules)
+		regras.GET("/:id", handler.GetBudgetRuleByID)
+		regras.PUT("/:id", handler.UpdateBudgetRule)
+		regras.DELETE("/:id", handler.DeleteBudgetRule)
+	}
 }

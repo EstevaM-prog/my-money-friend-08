@@ -49,6 +49,8 @@ type AccountMutation struct {
 	addbalance          *float64
 	institution         *string
 	color               *string
+	_limit              *float64
+	add_limit           *float64
 	created_at          *time.Time
 	clearedFields       map[string]struct{}
 	owner               *int
@@ -359,6 +361,62 @@ func (m *AccountMutation) ResetColor() {
 	m.color = nil
 }
 
+// SetLimit sets the "limit" field.
+func (m *AccountMutation) SetLimit(f float64) {
+	m._limit = &f
+	m.add_limit = nil
+}
+
+// Limit returns the value of the "limit" field in the mutation.
+func (m *AccountMutation) Limit() (r float64, exists bool) {
+	v := m._limit
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLimit returns the old "limit" field's value of the Account entity.
+// If the Account object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AccountMutation) OldLimit(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLimit is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLimit requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLimit: %w", err)
+	}
+	return oldValue.Limit, nil
+}
+
+// AddLimit adds f to the "limit" field.
+func (m *AccountMutation) AddLimit(f float64) {
+	if m.add_limit != nil {
+		*m.add_limit += f
+	} else {
+		m.add_limit = &f
+	}
+}
+
+// AddedLimit returns the value that was added to the "limit" field in this mutation.
+func (m *AccountMutation) AddedLimit() (r float64, exists bool) {
+	v := m.add_limit
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetLimit resets all changes to the "limit" field.
+func (m *AccountMutation) ResetLimit() {
+	m._limit = nil
+	m.add_limit = nil
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (m *AccountMutation) SetCreatedAt(t time.Time) {
 	m.created_at = &t
@@ -522,7 +580,7 @@ func (m *AccountMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AccountMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 7)
 	if m.name != nil {
 		fields = append(fields, account.FieldName)
 	}
@@ -537,6 +595,9 @@ func (m *AccountMutation) Fields() []string {
 	}
 	if m.color != nil {
 		fields = append(fields, account.FieldColor)
+	}
+	if m._limit != nil {
+		fields = append(fields, account.FieldLimit)
 	}
 	if m.created_at != nil {
 		fields = append(fields, account.FieldCreatedAt)
@@ -559,6 +620,8 @@ func (m *AccountMutation) Field(name string) (ent.Value, bool) {
 		return m.Institution()
 	case account.FieldColor:
 		return m.Color()
+	case account.FieldLimit:
+		return m.Limit()
 	case account.FieldCreatedAt:
 		return m.CreatedAt()
 	}
@@ -580,6 +643,8 @@ func (m *AccountMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldInstitution(ctx)
 	case account.FieldColor:
 		return m.OldColor(ctx)
+	case account.FieldLimit:
+		return m.OldLimit(ctx)
 	case account.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	}
@@ -626,6 +691,13 @@ func (m *AccountMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetColor(v)
 		return nil
+	case account.FieldLimit:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLimit(v)
+		return nil
 	case account.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -644,6 +716,9 @@ func (m *AccountMutation) AddedFields() []string {
 	if m.addbalance != nil {
 		fields = append(fields, account.FieldBalance)
 	}
+	if m.add_limit != nil {
+		fields = append(fields, account.FieldLimit)
+	}
 	return fields
 }
 
@@ -654,6 +729,8 @@ func (m *AccountMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
 	case account.FieldBalance:
 		return m.AddedBalance()
+	case account.FieldLimit:
+		return m.AddedLimit()
 	}
 	return nil, false
 }
@@ -669,6 +746,13 @@ func (m *AccountMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddBalance(v)
+		return nil
+	case account.FieldLimit:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddLimit(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Account numeric field %s", name)
@@ -711,6 +795,9 @@ func (m *AccountMutation) ResetField(name string) error {
 		return nil
 	case account.FieldColor:
 		m.ResetColor()
+		return nil
+	case account.FieldLimit:
+		m.ResetLimit()
 		return nil
 	case account.FieldCreatedAt:
 		m.ResetCreatedAt()
@@ -3758,6 +3845,7 @@ type UserMutation struct {
 	name                *string
 	email               *string
 	password            *string
+	phone               *string
 	avatar_url          *string
 	created_at          *time.Time
 	updated_at          *time.Time
@@ -3986,6 +4074,55 @@ func (m *UserMutation) OldPassword(ctx context.Context) (v string, err error) {
 // ResetPassword resets all changes to the "password" field.
 func (m *UserMutation) ResetPassword() {
 	m.password = nil
+}
+
+// SetPhone sets the "phone" field.
+func (m *UserMutation) SetPhone(s string) {
+	m.phone = &s
+}
+
+// Phone returns the value of the "phone" field in the mutation.
+func (m *UserMutation) Phone() (r string, exists bool) {
+	v := m.phone
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPhone returns the old "phone" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldPhone(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPhone is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPhone requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPhone: %w", err)
+	}
+	return oldValue.Phone, nil
+}
+
+// ClearPhone clears the value of the "phone" field.
+func (m *UserMutation) ClearPhone() {
+	m.phone = nil
+	m.clearedFields[user.FieldPhone] = struct{}{}
+}
+
+// PhoneCleared returns if the "phone" field was cleared in this mutation.
+func (m *UserMutation) PhoneCleared() bool {
+	_, ok := m.clearedFields[user.FieldPhone]
+	return ok
+}
+
+// ResetPhone resets all changes to the "phone" field.
+func (m *UserMutation) ResetPhone() {
+	m.phone = nil
+	delete(m.clearedFields, user.FieldPhone)
 }
 
 // SetAvatarURL sets the "avatar_url" field.
@@ -4413,7 +4550,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 7)
 	if m.name != nil {
 		fields = append(fields, user.FieldName)
 	}
@@ -4422,6 +4559,9 @@ func (m *UserMutation) Fields() []string {
 	}
 	if m.password != nil {
 		fields = append(fields, user.FieldPassword)
+	}
+	if m.phone != nil {
+		fields = append(fields, user.FieldPhone)
 	}
 	if m.avatar_url != nil {
 		fields = append(fields, user.FieldAvatarURL)
@@ -4446,6 +4586,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Email()
 	case user.FieldPassword:
 		return m.Password()
+	case user.FieldPhone:
+		return m.Phone()
 	case user.FieldAvatarURL:
 		return m.AvatarURL()
 	case user.FieldCreatedAt:
@@ -4467,6 +4609,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldEmail(ctx)
 	case user.FieldPassword:
 		return m.OldPassword(ctx)
+	case user.FieldPhone:
+		return m.OldPhone(ctx)
 	case user.FieldAvatarURL:
 		return m.OldAvatarURL(ctx)
 	case user.FieldCreatedAt:
@@ -4502,6 +4646,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetPassword(v)
+		return nil
+	case user.FieldPhone:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPhone(v)
 		return nil
 	case user.FieldAvatarURL:
 		v, ok := value.(string)
@@ -4554,6 +4705,9 @@ func (m *UserMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *UserMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(user.FieldPhone) {
+		fields = append(fields, user.FieldPhone)
+	}
 	if m.FieldCleared(user.FieldAvatarURL) {
 		fields = append(fields, user.FieldAvatarURL)
 	}
@@ -4571,6 +4725,9 @@ func (m *UserMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *UserMutation) ClearField(name string) error {
 	switch name {
+	case user.FieldPhone:
+		m.ClearPhone()
+		return nil
 	case user.FieldAvatarURL:
 		m.ClearAvatarURL()
 		return nil
@@ -4590,6 +4747,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldPassword:
 		m.ResetPassword()
+		return nil
+	case user.FieldPhone:
+		m.ResetPhone()
 		return nil
 	case user.FieldAvatarURL:
 		m.ResetAvatarURL()

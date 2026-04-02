@@ -80,6 +80,11 @@ func Color(v string) predicate.Account {
 	return predicate.Account(sql.FieldEQ(FieldColor, v))
 }
 
+// Limit applies equality check predicate on the "limit" field. It's identical to LimitEQ.
+func Limit(v float64) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldLimit, v))
+}
+
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.Account {
 	return predicate.Account(sql.FieldEQ(FieldCreatedAt, v))
@@ -383,6 +388,46 @@ func ColorEqualFold(v string) predicate.Account {
 // ColorContainsFold applies the ContainsFold predicate on the "color" field.
 func ColorContainsFold(v string) predicate.Account {
 	return predicate.Account(sql.FieldContainsFold(FieldColor, v))
+}
+
+// LimitEQ applies the EQ predicate on the "limit" field.
+func LimitEQ(v float64) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldLimit, v))
+}
+
+// LimitNEQ applies the NEQ predicate on the "limit" field.
+func LimitNEQ(v float64) predicate.Account {
+	return predicate.Account(sql.FieldNEQ(FieldLimit, v))
+}
+
+// LimitIn applies the In predicate on the "limit" field.
+func LimitIn(vs ...float64) predicate.Account {
+	return predicate.Account(sql.FieldIn(FieldLimit, vs...))
+}
+
+// LimitNotIn applies the NotIn predicate on the "limit" field.
+func LimitNotIn(vs ...float64) predicate.Account {
+	return predicate.Account(sql.FieldNotIn(FieldLimit, vs...))
+}
+
+// LimitGT applies the GT predicate on the "limit" field.
+func LimitGT(v float64) predicate.Account {
+	return predicate.Account(sql.FieldGT(FieldLimit, v))
+}
+
+// LimitGTE applies the GTE predicate on the "limit" field.
+func LimitGTE(v float64) predicate.Account {
+	return predicate.Account(sql.FieldGTE(FieldLimit, v))
+}
+
+// LimitLT applies the LT predicate on the "limit" field.
+func LimitLT(v float64) predicate.Account {
+	return predicate.Account(sql.FieldLT(FieldLimit, v))
+}
+
+// LimitLTE applies the LTE predicate on the "limit" field.
+func LimitLTE(v float64) predicate.Account {
+	return predicate.Account(sql.FieldLTE(FieldLimit, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.

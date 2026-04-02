@@ -107,6 +107,27 @@ func (_u *AccountUpdate) SetNillableColor(v *string) *AccountUpdate {
 	return _u
 }
 
+// SetLimit sets the "limit" field.
+func (_u *AccountUpdate) SetLimit(v float64) *AccountUpdate {
+	_u.mutation.ResetLimit()
+	_u.mutation.SetLimit(v)
+	return _u
+}
+
+// SetNillableLimit sets the "limit" field if the given value is not nil.
+func (_u *AccountUpdate) SetNillableLimit(v *float64) *AccountUpdate {
+	if v != nil {
+		_u.SetLimit(*v)
+	}
+	return _u
+}
+
+// AddLimit adds value to the "limit" field.
+func (_u *AccountUpdate) AddLimit(v float64) *AccountUpdate {
+	_u.mutation.AddLimit(v)
+	return _u
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (_u *AccountUpdate) SetCreatedAt(v time.Time) *AccountUpdate {
 	_u.mutation.SetCreatedAt(v)
@@ -240,6 +261,12 @@ func (_u *AccountUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.Color(); ok {
 		_spec.SetField(account.FieldColor, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Limit(); ok {
+		_spec.SetField(account.FieldLimit, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedLimit(); ok {
+		_spec.AddField(account.FieldLimit, field.TypeFloat64, value)
 	}
 	if value, ok := _u.mutation.CreatedAt(); ok {
 		_spec.SetField(account.FieldCreatedAt, field.TypeTime, value)
@@ -415,6 +442,27 @@ func (_u *AccountUpdateOne) SetNillableColor(v *string) *AccountUpdateOne {
 	return _u
 }
 
+// SetLimit sets the "limit" field.
+func (_u *AccountUpdateOne) SetLimit(v float64) *AccountUpdateOne {
+	_u.mutation.ResetLimit()
+	_u.mutation.SetLimit(v)
+	return _u
+}
+
+// SetNillableLimit sets the "limit" field if the given value is not nil.
+func (_u *AccountUpdateOne) SetNillableLimit(v *float64) *AccountUpdateOne {
+	if v != nil {
+		_u.SetLimit(*v)
+	}
+	return _u
+}
+
+// AddLimit adds value to the "limit" field.
+func (_u *AccountUpdateOne) AddLimit(v float64) *AccountUpdateOne {
+	_u.mutation.AddLimit(v)
+	return _u
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (_u *AccountUpdateOne) SetCreatedAt(v time.Time) *AccountUpdateOne {
 	_u.mutation.SetCreatedAt(v)
@@ -578,6 +626,12 @@ func (_u *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err er
 	}
 	if value, ok := _u.mutation.Color(); ok {
 		_spec.SetField(account.FieldColor, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Limit(); ok {
+		_spec.SetField(account.FieldLimit, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedLimit(); ok {
+		_spec.AddField(account.FieldLimit, field.TypeFloat64, value)
 	}
 	if value, ok := _u.mutation.CreatedAt(); ok {
 		_spec.SetField(account.FieldCreatedAt, field.TypeTime, value)

@@ -3,6 +3,7 @@ package handler
 import (
 	"backend/ent"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -30,6 +31,7 @@ func CreateCartao(c *gin.Context) {
 		Balance     float64 `json:"balance"`
 		Institution string  `json:"institution"`
 		Color       string  `json:"color"`
+		Limit       float64 `json:"limit"`
 	}
 	
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -43,6 +45,7 @@ func CreateCartao(c *gin.Context) {
 		SetBalance(input.Balance).
 		SetInstitution(input.Institution).
 		SetColor(input.Color).
+		SetLimit(input.Limit).
 		Save(c.Request.Context())
 
 	if err != nil {
@@ -53,14 +56,55 @@ func CreateCartao(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "Cartão/Conta criado", "data": t})
 }
 
+func UpdateCartao(c *gin.Context) {
+	client := c.MustGet("db").(*ent.Client)
+	idStr := c.Param("id")
+	id, _ := strconv.Atoi(idStr)
+	
+	var input struct {
+		Name        string  `json:"name"`
+		Type        string  `json:"type"`
+		Balance     float64 `json:"balance"`
+		Institution string  `json:"institution"`
+		Color       string  `json:"color"`
+		Limit       float64 `json:"limit"`
+	}
+	
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Dados inválidos"})
+		return
+	}
+
+	t, err := client.Account.UpdateOneID(id).
+		SetName(input.Name).
+		SetType(input.Type).
+		SetBalance(input.Balance).
+		SetInstitution(input.Institution).
+		SetColor(input.Color).
+		SetLimit(input.Limit).
+		Save(c.Request.Context())
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Cartão/Conta atualizado", "data": t})
+}
+
 func GetCartaoByID(c *gin.Context) {
 	c.JSON(http.StatusNotImplemented, gin.H{"error": "Not implemented yet"})
 }
 
-func UpdateCartao(c *gin.Context) {
-	c.JSON(http.StatusNotImplemented, gin.H{"error": "Not implemented yet"})
-}
-
 func DeleteCartao(c *gin.Context) {
-	c.JSON(http.StatusNotImplemented, gin.H{"error": "Not implemented yet"})
+	client := c.MustGet("db").(*ent.Client)
+	idStr := c.Param("id")
+	id, _ := strconv.Atoi(idStr)
+	
+	err := client.Account.DeleteOneID(id).Exec(c.Request.Context())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Cartão excluído com sucesso"})
 }

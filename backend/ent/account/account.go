@@ -24,6 +24,8 @@ const (
 	FieldInstitution = "institution"
 	// FieldColor holds the string denoting the color field in the database.
 	FieldColor = "color"
+	// FieldLimit holds the string denoting the limit field in the database.
+	FieldLimit = "limit"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// EdgeOwner holds the string denoting the owner edge name in mutations.
@@ -56,6 +58,7 @@ var Columns = []string{
 	FieldBalance,
 	FieldInstitution,
 	FieldColor,
+	FieldLimit,
 	FieldCreatedAt,
 }
 
@@ -83,6 +86,8 @@ func ValidColumn(column string) bool {
 var (
 	// DefaultBalance holds the default value on creation for the "balance" field.
 	DefaultBalance float64
+	// DefaultLimit holds the default value on creation for the "limit" field.
+	DefaultLimit float64
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 )
@@ -118,6 +123,11 @@ func ByInstitution(opts ...sql.OrderTermOption) OrderOption {
 // ByColor orders the results by the color field.
 func ByColor(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldColor, opts...).ToFunc()
+}
+
+// ByLimit orders the results by the limit field.
+func ByLimit(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLimit, opts...).ToFunc()
 }
 
 // ByCreatedAt orders the results by the created_at field.

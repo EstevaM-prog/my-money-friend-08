@@ -28,6 +28,8 @@ type Account struct {
 	Institution string `json:"institution,omitempty"`
 	// Color holds the value of the "color" field.
 	Color string `json:"color,omitempty"`
+	// Limit holds the value of the "limit" field.
+	Limit float64 `json:"limit,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -73,7 +75,7 @@ func (*Account) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case account.FieldBalance:
+		case account.FieldBalance, account.FieldLimit:
 			values[i] = new(sql.NullFloat64)
 		case account.FieldID:
 			values[i] = new(sql.NullInt64)
@@ -133,6 +135,12 @@ func (_m *Account) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field color", values[i])
 			} else if value.Valid {
 				_m.Color = value.String
+			}
+		case account.FieldLimit:
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
+				return fmt.Errorf("unexpected type %T for field limit", values[i])
+			} else if value.Valid {
+				_m.Limit = value.Float64
 			}
 		case account.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -207,6 +215,9 @@ func (_m *Account) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("color=")
 	builder.WriteString(_m.Color)
+	builder.WriteString(", ")
+	builder.WriteString("limit=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Limit))
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))
