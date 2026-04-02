@@ -49,19 +49,22 @@ func main() {
 
 	// Inicializa o roteador do Gin
 	r := gin.Default()
+	
+	// Desabilita redirecionamentos automáticos de barra para evitar erros de CORS 307
+	r.RedirectTrailingSlash = false
+	r.RedirectFixedPath = false
 
-	// Middleware de CORS
+	// Middleware de CORS robusto
 	r.Use(func(c *gin.Context) {
-		// Em produção, você deve especificar sua URL do Netlify aqui
-		// Por enquanto, permitimos o localhost e o wildcard para facilitar o deploy no Render
 		origin := c.Request.Header.Get("Origin")
 		if origin == "" {
 			origin = "*"
 		}
+		
 		c.Writer.Header().Set("Access-Control-Allow-Origin", origin)
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE, PATCH")
 
 		if c.Request.Method == "OPTIONS" {
 			c.AbortWithStatus(204)
