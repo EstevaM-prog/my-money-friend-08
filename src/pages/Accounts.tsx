@@ -1,9 +1,9 @@
 import { useState, useMemo } from "react";
-import { 
-  CreditCard, 
-  Building2, 
-  Plus, 
-  Trash2, 
+import {
+  CreditCard,
+  Building2,
+  Plus,
+  Trash2,
   Wallet,
   TrendingUp,
   TrendingDown,
@@ -66,42 +66,40 @@ const fmt = (v: number) => `R$ ${v.toLocaleString("pt-BR", { minimumFractionDigi
 export default function Accounts() {
   const { theme } = useTheme();
   const isDark = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
-  
-  const { accounts, setAccounts } = useFinance();
+
+  const { accounts, addAccount, deleteAccount } = useFinance();
   const { isPrivate } = usePrivacy();
   const [open, setOpen] = useState(false);
-  
+
   const [name, setName] = useState("");
   const [type, setType] = useState<AccountType>("checking");
   const [balance, setBalance] = useState("");
   const [institution, setInstitution] = useState("");
+  const [limit, setLimit] = useState("");
   const [color, setColor] = useState(PREMIUM_CARD_GRADIENTS[0]);
 
   const resetForm = () => {
-    setName(""); setBalance(""); setInstitution(""); setType("checking"); setColor(PREMIUM_CARD_GRADIENTS[0]);
+    setName(""); setBalance(""); setInstitution(""); setType("checking"); setLimit(""); setColor(PREMIUM_CARD_GRADIENTS[0]);
   };
 
   function handleAdd(e: React.FormEvent) {
     e.preventDefault();
     if (!name || !institution) return;
-    setAccounts((prev) => [
-      ...prev,
-      {
-        id: String(Date.now()),
-        name,
-        type,
-        balance: parseFloat(balance || "0"),
-        institution,
-        color,
-      },
-    ]);
+    addAccount({
+      name,
+      type,
+      balance: parseFloat(balance || "0"),
+      institution,
+      limit: parseFloat(limit || "0"),
+      color,
+    });
     resetForm();
     setOpen(false);
   }
 
   const handleDelete = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    setAccounts((prev) => prev.filter((a) => a.id !== id));
+    deleteAccount(id);
   };
 
   const totalPositive = useMemo(() => accounts.filter((a) => a.balance > 0).reduce((s, a) => s + a.balance, 0), [accounts]);
@@ -110,7 +108,7 @@ export default function Accounts() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      
+
       {/* ─── Header ─── */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 pb-6 border-b border-border/50">
         <div className="space-y-2">
@@ -124,15 +122,15 @@ export default function Accounts() {
           </p>
         </div>
 
-        <Dialog 
-          open={open} 
+        <Dialog
+          open={open}
           onOpenChange={(v) => {
-            if(!v) resetForm();
+            if (!v) resetForm();
             setOpen(v);
           }}
         >
           <DialogTrigger asChild>
-            <Button 
+            <Button
               className="h-10 px-5 gap-2 bg-primary/10 hover:bg-primary/20 text-primary font-bold tracking-wide rounded-xl border border-primary/20 backdrop-blur-md shadow-lg transition-all hover:scale-105 active:scale-95"
             >
               <Plus className="h-4 w-4" /> Adicionar Conta
@@ -149,17 +147,17 @@ export default function Accounts() {
                 <p className="text-xs text-muted-foreground font-medium text-center mt-1">Cadastre um novo banco, carteira ou cartão para monitoramento.</p>
               </DialogHeader>
               <form onSubmit={handleAdd} className="space-y-5">
-                
+
                 <div className="space-y-2">
                   <Label className="text-muted-foreground text-xs font-bold uppercase tracking-widest pl-1">Apelido da Conta</Label>
                   <div className="relative group">
                     <Wallet className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/30" />
-                    <Input 
-                      value={name} 
-                      onChange={(e) => setName(e.target.value)} 
-                      placeholder="Ex: Nubank Principal..." 
+                    <Input
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Ex: Nubank Principal..."
                       maxLength={100}
-                      required 
+                      required
                       className="h-12 pl-11 bg-muted/30 border border-border rounded-2xl text-foreground text-sm font-semibold focus:border-primary/50 focus:bg-muted/50 transition-all"
                     />
                   </div>
@@ -170,11 +168,11 @@ export default function Accounts() {
                     <Label className="text-muted-foreground text-xs font-bold uppercase tracking-widest pl-1">Instituição</Label>
                     <div className="relative group">
                       <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/30" />
-                      <Input 
-                        value={institution} 
-                        onChange={(e) => setInstitution(e.target.value)} 
-                        placeholder="Ex: Nu Pagamentos" 
-                        required 
+                      <Input
+                        value={institution}
+                        onChange={(e) => setInstitution(e.target.value)}
+                        placeholder="Ex: Nu Pagamentos"
+                        required
                         className="h-14 pl-11 pr-4 bg-muted/30 border border-border rounded-2xl text-foreground font-semibold placeholder:text-muted-foreground/30 focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all focus:bg-muted/40"
                       />
                     </div>
@@ -183,16 +181,32 @@ export default function Accounts() {
                     <Label className="text-muted-foreground text-xs font-bold uppercase tracking-widest pl-1">Saldo ou Fatura</Label>
                     <div className="relative group">
                       <span className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-indigo-500">R$</span>
-                      <Input 
-                        type="number" 
-                        value={balance} 
-                        onChange={(e) => setBalance(e.target.value)} 
-                        step="0.01" 
+                      <Input
+                        type="number"
+                        value={balance}
+                        onChange={(e) => setBalance(e.target.value)}
+                        step="0.01"
                         placeholder="0.00"
                         className="h-14 pl-12 pr-4 text-xl font-black bg-muted/30 border border-border rounded-2xl text-foreground transition-all focus:border-indigo-500/50 focus:ring-indigo-500/20"
                       />
                     </div>
                   </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-muted-foreground text-xs font-bold uppercase tracking-widest pl-1">Teto de Gastos / Limite</Label>
+                  <div className="relative group">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-rose-500">R$</span>
+                    <Input 
+                      type="number" 
+                      value={limit} 
+                      onChange={(e) => setLimit(e.target.value)} 
+                      step="0.01" 
+                      placeholder="Sem limite definido"
+                      className="h-14 pl-12 pr-4 text-xl font-black bg-muted/30 border border-border rounded-2xl text-foreground transition-all focus:border-indigo-500/50 focus:ring-indigo-500/20"
+                    />
+                  </div>
+                  <p className="text-[10px] text-muted-foreground pl-1">Defina um valor máximo mensal para monitoramento e alertas.</p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -227,8 +241,8 @@ export default function Accounts() {
                   </div>
                 </div>
 
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   className="w-full h-14 rounded-2xl text-white font-black text-base shadow-xl transition-all transform active:scale-[0.98] bg-indigo-600 hover:bg-indigo-500 shadow-[0_0_20px_rgba(79,70,229,0.3)] mt-2 border-0"
                 >
                   Efetivar Vínculo
@@ -248,14 +262,14 @@ export default function Accounts() {
         ].map((stat, i) => (
           <div key={i} className={cn("group p-6 rounded-[2rem] bg-card/40 backdrop-blur-md border border-border/40 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1 relative overflow-hidden", stat.border)}>
             <div className={`absolute top-0 right-0 p-8 opacity-0 group-hover:opacity-10 transition-opacity duration-300 ${stat.color}`}>
-               <stat.icon className="h-24 w-24 -mt-10 -mr-10" />
+              <stat.icon className="h-24 w-24 -mt-10 -mr-10" />
             </div>
             <div className="flex flex-col gap-2 relative z-10">
               <div className="flex items-center gap-2">
-                 <div className={cn("h-8 w-8 rounded-lg flex items-center justify-center shrink-0 border border-border/50 shadow-inner", stat.glow)}>
-                    <stat.icon className={cn("h-4 w-4", stat.color)} />
-                 </div>
-                 <p className="text-[12px] font-bold text-muted-foreground uppercase tracking-widest">{stat.label}</p>
+                <div className={cn("h-8 w-8 rounded-lg flex items-center justify-center shrink-0 border border-border/50 shadow-inner", stat.glow)}>
+                  <stat.icon className={cn("h-4 w-4", stat.color)} />
+                </div>
+                <p className="text-[12px] font-bold text-muted-foreground uppercase tracking-widest">{stat.label}</p>
               </div>
               <p className={cn("text-3xl font-black font-outfit tracking-tighter mt-2", stat.color)}>
                 {isPrivate ? "••••••" : fmt(stat.value)}
@@ -283,8 +297,8 @@ export default function Accounts() {
             const isNegative = account.balance < 0;
 
             return (
-              <div 
-                key={account.id} 
+              <div
+                key={account.id}
                 className={cn(
                   "p-6 h-[200px] rounded-[2rem] text-white flex flex-col justify-between relative overflow-hidden group shadow-lg transition-transform hover:-translate-y-1 hover:shadow-2xl bg-gradient-to-br",
                   account.color
@@ -293,12 +307,12 @@ export default function Accounts() {
                 {/* Visual Flair: Credit Card Chip & Glows */}
                 <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(45deg,transparent_20%,rgba(255,255,255,0.05)_50%,transparent_80%)] opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none" />
                 <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-white/10 blur-[50px] rounded-full pointer-events-none" />
-                
+
                 <div className="flex justify-between items-start relative z-10 w-full">
                   <div className="space-y-1 w-full pr-4">
                     <div className="flex items-center gap-2">
                       <div className="p-1.5 rounded-md bg-white/10 backdrop-blur-sm border border-white/20">
-                         <IconComponent className="h-4 w-4 text-white/90" />
+                        <IconComponent className="h-4 w-4 text-white/90" />
                       </div>
                       <p className="text-[10px] font-bold uppercase tracking-widest text-white/60 truncate">
                         {TYPE_LABELS[account.type]}
@@ -320,22 +334,22 @@ export default function Accounts() {
                 </div>
 
                 <div className="relative z-10 w-full flex flex-col justify-end space-y-1">
-                   <p className="text-[11px] font-bold uppercase tracking-widest text-white/50">{account.institution}</p>
-                   <div className="flex items-end justify-between">
-                     <p className={cn(
-                        "text-3xl font-black font-outfit tracking-tight truncate",
-                        isNegative ? "text-white/90" : "text-white"
-                     )}>
-                       {isPrivate ? "••••••••" : fmt(Math.abs(account.balance))}
-                     </p>
-                     
-                     {/* For Credit cards that have negative balances, we show an alert inside the card */}
-                     {isNegative && (
-                        <span className="text-[10px] font-bold px-2 py-1 rounded bg-black/20 backdrop-blur-sm text-white/80 border border-white/10 mb-1 ml-2 shrink-0">
-                           A PAGAR
-                        </span>
-                     )}
-                   </div>
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-white/50">{account.institution}</p>
+                  <div className="flex items-end justify-between">
+                    <p className={cn(
+                      "text-3xl font-black font-outfit tracking-tight truncate",
+                      isNegative ? "text-white/90" : "text-white"
+                    )}>
+                      {isPrivate ? "••••••••" : fmt(Math.abs(account.balance))}
+                    </p>
+
+                    {/* For Credit cards that have negative balances, we show an alert inside the card */}
+                    {isNegative && (
+                      <span className="text-[10px] font-bold px-2 py-1 rounded bg-black/20 backdrop-blur-sm text-white/80 border border-white/10 mb-1 ml-2 shrink-0">
+                        A PAGAR
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
             );

@@ -86,3 +86,13 @@ export const investmentsService = {
   create: (payload: any) => api.post("/investments", payload).then(extractData),
   delete: (id: string) => api.delete(`/investments/${id}`),
 };
+
+/**
+ * 📝 BUDGET RULES SERVICE
+ */
+export const budgetRulesService = {
+  getAll: () => api.get("/budget-rules").then(extractData),
+  create: (payload: any) => api.post("/budget-rules", payload).then(extractData),
+  update: (id: string, payload: any) => api.put(`/budget-rules/${id}`, payload).then(extractData),
+  delete: (id: string) => api.delete(`/budget-rules/${id}`),
+};

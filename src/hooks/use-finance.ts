@@ -3,7 +3,8 @@ import {
   transactionsService, 
   accountsService, 
   goalsService, 
-  categoriesService 
+  categoriesService,
+  budgetRulesService
 } from "@/lib/api";
 import { 
   Transaction, 
@@ -13,7 +14,7 @@ import {
   BudgetRule, 
   CardCeiling 
 } from "@/lib/finance-data";
-import { useLocalStorage } from "./use-local-storage";
+import { useMemo } from "react";
 
 /**
  * Hook centralizado para gerenciar transações, contas e metas chamando a API.
@@ -42,15 +43,29 @@ export function useFinance() {
     queryFn: categoriesService.getAll,
   });
 
-  const isLoading = isLoadingTransactions || isLoadingAccounts || isLoadingGoals || isLoadingCategories;
+  const { data: budgetRules = [], isLoading: isLoadingBudgetRules } = useQuery<BudgetRule[]>({
+    queryKey: ["budget-rules"],
+    queryFn: budgetRulesService.getAll,
+  });
 
-  // Mantemos BudgetRules e CardCeilings no localStorage por enquanto ou pode mover para o banco se houver endpoint
-  const [budgetRules, setBudgetRules] = useLocalStorage<BudgetRule[]>("mymoneyfriend_budget_rules", [
-    { id: "1", label: "Necessidades", category: "Moradia", percentage: 50, color: "#6366f1" },
-    { id: "2", label: "Desejos", category: "Lazer", percentage: 30, color: "#ec4899" },
-    { id: "3", label: "Poupança", category: "Outros", percentage: 20, color: "#10b981" },
-  ]);
-  const [cardCeilings, setCardCeilings] = useLocalStorage<CardCeiling[]>("mymoneyfriend_card_ceilings", []);
+  // CardCeilings are derived from accounts with a 'limit' set
+  const cardCeilings = useMemo<CardCeiling[]>(() => {
+    return accounts
+      .filter((a) => (a.limit || 0) > 0)
+      .map((a) => ({
+        accountId: a.id,
+        limit: a.limit || 0,
+        alertAt: 80, // Default alert threshold
+        notifyEnabled: true,
+      }));
+  }, [accounts]);
+
+  const isLoading = 
+    isLoadingTransactions || 
+    isLoadingAccounts || 
+    isLoadingGoals || 
+    isLoadingCategories || 
+    isLoadingBudgetRules;
 
   // --- MUTATIONS ---
   const addTransactionsMutation = useMutation({
@@ -58,7 +73,7 @@ export function useFinance() {
       Promise.all(newItems.map(t => transactionsService.create(t))),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
-      queryClient.invalidateQueries({ queryKey: ["accounts"] }); // Update balances
+      queryClient.invalidateQueries({ queryKey: ["accounts"] });
     },
   });
 
@@ -115,6 +130,21 @@ export function useFinance() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["accounts"] }),
   });
 
+  const addBudgetRuleMutation = useMutation({
+    mutationFn: (rule: Omit<BudgetRule, "id">) => budgetRulesService.create(rule),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["budget-rules"] }),
+  });
+
+  const deleteBudgetRuleMutation = useMutation({
+    mutationFn: (id: string) => budgetRulesService.delete(id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["budget-rules"] }),
+  });
+
+  const updateAccountMutation = useMutation({
+    mutationFn: (acc: Account) => accountsService.update(acc.id, acc),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["accounts"] }),
+  });
+
   return {
     // Data
     transactions,
@@ -125,7 +155,7 @@ export function useFinance() {
     cardCeilings,
     isLoading,
 
-    // Actions (using mutate wrappers for compatibility)
+    // Actions
     addTransactions: (newItems: Omit<Transaction, "id">[]) => addTransactionsMutation.mutate(newItems),
     deleteTransaction: (id: string) => {
       const t = transactions.find(t => t.id === id);
@@ -137,24 +167,20 @@ export function useFinance() {
     addCustomCategory: (cat: Omit<CustomCategoryDef, "id">) => addCustomCategoryMutation.mutate(cat),
     editCustomCategory: (id: string, updates: Partial<CustomCategoryDef>) => editCustomCategoryMutation.mutate({ id, updates }),
     deleteCustomCategory: (id: string) => deleteCustomCategoryMutation.mutate(id),
-    toggleNotification: (id: string) => console.log("Toggling notification for", id), // API hook placeholder
-    
-    // Fallbacks/Compatibility
-    setAccounts: () => {}, // No longer set directly
-    setTransactions: () => {},
-    setGoals: () => {},
-    saveBudgetRules: (rules: BudgetRule[]) => setBudgetRules(rules),
+    addAccount: (acc: Omit<Account, "id">) => addAccountMutation.mutate(acc),
+    deleteAccount: (id: string) => deleteAccountMutation.mutate(id),
+    addBudgetRule: (rule: Omit<BudgetRule, "id">) => addBudgetRuleMutation.mutate(rule),
+    deleteBudgetRule: (id: string) => deleteBudgetRuleMutation.mutate(id),
     saveCardCeiling: (ceiling: CardCeiling) => {
-      setCardCeilings(prev => {
-        const idx = prev.findIndex(c => c.accountId === ceiling.accountId);
-        if (idx !== -1) {
-          const updated = [...prev];
-          updated[idx] = ceiling;
-          return updated;
-        }
-        return [...prev, ceiling];
-      });
+      const acc = accounts.find(a => a.id === ceiling.accountId);
+      if (acc) updateAccountMutation.mutate({ ...acc, limit: ceiling.limit });
     },
-    deleteCardCeiling: (accountId: string) => setCardCeilings(prev => prev.filter(c => c.accountId !== accountId)),
+    deleteCardCeiling: (accountId: string) => {
+      const acc = accounts.find(a => a.id === accountId);
+      if (acc) updateAccountMutation.mutate({ ...acc, limit: 0 });
+    },
+    
+    // Compatibility
+    toggleNotification: (id: string) => console.log("Toggling notification for", id),
   };
 }

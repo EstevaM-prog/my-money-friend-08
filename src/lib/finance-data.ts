@@ -24,6 +24,7 @@ export interface Account {
   balance: number;
   institution: string;
   color: string;
+  limit?: number;
 }
 
 export type PaymentMethod = string;

@@ -64,8 +64,7 @@ export function AddTransactionDialog({ onAdd, open: controlledOpen, onOpenChange
   const [recurringUntil, setRecurringUntil] = useState("");
   const [emailNotificationActive, setEmailNotificationActive] = useState(false);
 
-  const [accounts] = useLocalStorage<Account[]>("mymoneyfriend_accounts", []);
-  const { customCategories } = useFinance();
+  const { accounts, customCategories } = useFinance();
   
   const paymentMethods = [
     ...DEFAULT_PAYMENT_METHODS,
