@@ -5,7 +5,7 @@ import axios from "axios";
  * Base URL: Points to the Go/Gin backend.
  */
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "https://cashflow-dg8a.onrender.com/api : https://cashflow-dg8a.onrender.com",
+  baseURL: import.meta.env.VITE_API_URL || "https://cashflow-dg8a.onrender.com/api",
   headers: {
     "Content-Type": "application/json",
   },
