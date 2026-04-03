@@ -3847,6 +3847,7 @@ type UserMutation struct {
 	password            *string
 	phone               *string
 	avatar_url          *string
+	role                *user.Role
 	created_at          *time.Time
 	updated_at          *time.Time
 	clearedFields       map[string]struct{}
@@ -4172,6 +4173,42 @@ func (m *UserMutation) AvatarURLCleared() bool {
 func (m *UserMutation) ResetAvatarURL() {
 	m.avatar_url = nil
 	delete(m.clearedFields, user.FieldAvatarURL)
+}
+
+// SetRole sets the "role" field.
+func (m *UserMutation) SetRole(u user.Role) {
+	m.role = &u
+}
+
+// Role returns the value of the "role" field in the mutation.
+func (m *UserMutation) Role() (r user.Role, exists bool) {
+	v := m.role
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRole returns the old "role" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldRole(ctx context.Context) (v user.Role, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRole is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRole requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRole: %w", err)
+	}
+	return oldValue.Role, nil
+}
+
+// ResetRole resets all changes to the "role" field.
+func (m *UserMutation) ResetRole() {
+	m.role = nil
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -4550,7 +4587,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 8)
 	if m.name != nil {
 		fields = append(fields, user.FieldName)
 	}
@@ -4565,6 +4602,9 @@ func (m *UserMutation) Fields() []string {
 	}
 	if m.avatar_url != nil {
 		fields = append(fields, user.FieldAvatarURL)
+	}
+	if m.role != nil {
+		fields = append(fields, user.FieldRole)
 	}
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
@@ -4590,6 +4630,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Phone()
 	case user.FieldAvatarURL:
 		return m.AvatarURL()
+	case user.FieldRole:
+		return m.Role()
 	case user.FieldCreatedAt:
 		return m.CreatedAt()
 	case user.FieldUpdatedAt:
@@ -4613,6 +4655,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldPhone(ctx)
 	case user.FieldAvatarURL:
 		return m.OldAvatarURL(ctx)
+	case user.FieldRole:
+		return m.OldRole(ctx)
 	case user.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case user.FieldUpdatedAt:
@@ -4660,6 +4704,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAvatarURL(v)
+		return nil
+	case user.FieldRole:
+		v, ok := value.(user.Role)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRole(v)
 		return nil
 	case user.FieldCreatedAt:
 		v, ok := value.(time.Time)
@@ -4753,6 +4804,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldAvatarURL:
 		m.ResetAvatarURL()
+		return nil
+	case user.FieldRole:
+		m.ResetRole()
 		return nil
 	case user.FieldCreatedAt:
 		m.ResetCreatedAt()

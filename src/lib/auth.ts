@@ -48,21 +48,20 @@ export async function register(name: string, email: string, password: string): P
 
 // ─── Login via API + renova sessão por mais 7 dias ────────────────────────────
 export async function login(email: string, password: string): Promise<User> {
-  // Busca usuário pelo email na API
-  const res = await api.get(`/users?email=${encodeURIComponent(email.trim())}`);
-  const users: (User & { password?: string })[] = res.data.data || [];
+  const res = await api.post("/auth/login", {
+    email: email.trim(),
+    password,
+  });
 
-  const match = users.find(
-    (u) => u.email.toLowerCase() === email.trim().toLowerCase()
-  );
+  const user: User = res.data.data;
 
-  if (!match) {
-    throw new Error("Usuário não encontrado.");
+  if (!user) {
+    throw new Error("Credenciais inválidas.");
   }
 
   // Renova a sessão por mais 7 dias a cada login bem-sucedido
-  saveSession(match);
-  return match;
+  saveSession(user);
+  return user;
 }
 
 // ─── Logout: remove apenas a sessão ──────────────────────────────────────────

@@ -115,6 +115,20 @@ func (_u *UserUpdate) ClearAvatarURL() *UserUpdate {
 	return _u
 }
 
+// SetRole sets the "role" field.
+func (_u *UserUpdate) SetRole(v user.Role) *UserUpdate {
+	_u.mutation.SetRole(v)
+	return _u
+}
+
+// SetNillableRole sets the "role" field if the given value is not nil.
+func (_u *UserUpdate) SetNillableRole(v *user.Role) *UserUpdate {
+	if v != nil {
+		_u.SetRole(*v)
+	}
+	return _u
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (_u *UserUpdate) SetCreatedAt(v time.Time) *UserUpdate {
 	_u.mutation.SetCreatedAt(v)
@@ -356,7 +370,20 @@ func (_u *UserUpdate) defaults() {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (_u *UserUpdate) check() error {
+	if v, ok := _u.mutation.Role(); ok {
+		if err := user.RoleValidator(v); err != nil {
+			return &ValidationError{Name: "role", err: fmt.Errorf(`ent: validator failed for field "User.role": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(user.Table, user.Columns, sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -385,6 +412,9 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.AvatarURLCleared() {
 		_spec.ClearField(user.FieldAvatarURL, field.TypeString)
+	}
+	if value, ok := _u.mutation.Role(); ok {
+		_spec.SetField(user.FieldRole, field.TypeEnum, value)
 	}
 	if value, ok := _u.mutation.CreatedAt(); ok {
 		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
@@ -719,6 +749,20 @@ func (_u *UserUpdateOne) ClearAvatarURL() *UserUpdateOne {
 	return _u
 }
 
+// SetRole sets the "role" field.
+func (_u *UserUpdateOne) SetRole(v user.Role) *UserUpdateOne {
+	_u.mutation.SetRole(v)
+	return _u
+}
+
+// SetNillableRole sets the "role" field if the given value is not nil.
+func (_u *UserUpdateOne) SetNillableRole(v *user.Role) *UserUpdateOne {
+	if v != nil {
+		_u.SetRole(*v)
+	}
+	return _u
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (_u *UserUpdateOne) SetCreatedAt(v time.Time) *UserUpdateOne {
 	_u.mutation.SetCreatedAt(v)
@@ -973,7 +1017,20 @@ func (_u *UserUpdateOne) defaults() {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (_u *UserUpdateOne) check() error {
+	if v, ok := _u.mutation.Role(); ok {
+		if err := user.RoleValidator(v); err != nil {
+			return &ValidationError{Name: "role", err: fmt.Errorf(`ent: validator failed for field "User.role": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(user.Table, user.Columns, sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt))
 	id, ok := _u.mutation.ID()
 	if !ok {
@@ -1019,6 +1076,9 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 	}
 	if _u.mutation.AvatarURLCleared() {
 		_spec.ClearField(user.FieldAvatarURL, field.TypeString)
+	}
+	if value, ok := _u.mutation.Role(); ok {
+		_spec.SetField(user.FieldRole, field.TypeEnum, value)
 	}
 	if value, ok := _u.mutation.CreatedAt(); ok {
 		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)

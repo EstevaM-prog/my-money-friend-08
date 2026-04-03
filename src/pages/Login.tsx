@@ -23,7 +23,7 @@ export default function Login() {
     }
     setLoading(true);
     try {
-      login(form.identifier, form.password);
+      await login(form.identifier, form.password);
       navigate("/");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Erro ao entrar.");

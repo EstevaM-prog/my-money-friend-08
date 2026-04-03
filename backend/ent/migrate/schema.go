@@ -150,6 +150,7 @@ var (
 		{Name: "password", Type: field.TypeString},
 		{Name: "phone", Type: field.TypeString, Nullable: true},
 		{Name: "avatar_url", Type: field.TypeString, Nullable: true},
+		{Name: "role", Type: field.TypeEnum, Enums: []string{"admin", "userVitalicio", "userMensal", "UserExperimental"}, Default: "UserExperimental"},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 	}

@@ -3,6 +3,7 @@
 package user
 
 import (
+	"fmt"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -24,6 +25,8 @@ const (
 	FieldPhone = "phone"
 	// FieldAvatarURL holds the string denoting the avatar_url field in the database.
 	FieldAvatarURL = "avatar_url"
+	// FieldRole holds the string denoting the role field in the database.
+	FieldRole = "role"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
@@ -85,6 +88,7 @@ var Columns = []string{
 	FieldPassword,
 	FieldPhone,
 	FieldAvatarURL,
+	FieldRole,
 	FieldCreatedAt,
 	FieldUpdatedAt,
 }
@@ -107,6 +111,34 @@ var (
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
 )
+
+// Role defines the type for the "role" enum field.
+type Role string
+
+// RoleUserExperimental is the default value of the Role enum.
+const DefaultRole = RoleUserExperimental
+
+// Role values.
+const (
+	RoleAdmin            Role = "admin"
+	RoleUserVitalicio    Role = "userVitalicio"
+	RoleUserMensal       Role = "userMensal"
+	RoleUserExperimental Role = "UserExperimental"
+)
+
+func (r Role) String() string {
+	return string(r)
+}
+
+// RoleValidator is a validator for the "role" field enum values. It is called by the builders before save.
+func RoleValidator(r Role) error {
+	switch r {
+	case RoleAdmin, RoleUserVitalicio, RoleUserMensal, RoleUserExperimental:
+		return nil
+	default:
+		return fmt.Errorf("user: invalid enum value for role field: %q", r)
+	}
+}
 
 // OrderOption defines the ordering options for the User queries.
 type OrderOption func(*sql.Selector)
@@ -139,6 +171,11 @@ func ByPhone(opts ...sql.OrderTermOption) OrderOption {
 // ByAvatarURL orders the results by the avatar_url field.
 func ByAvatarURL(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAvatarURL, opts...).ToFunc()
+}
+
+// ByRole orders the results by the role field.
+func ByRole(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRole, opts...).ToFunc()
 }
 
 // ByCreatedAt orders the results by the created_at field.

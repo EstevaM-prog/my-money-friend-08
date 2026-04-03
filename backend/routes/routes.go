@@ -7,6 +7,12 @@ import (
 )
 
 func RegisterRoutes(api *gin.RouterGroup) {
+	// Autenticação
+	auth := api.Group("/auth")
+	{
+		auth.POST("/login", handler.Login)
+	}
+
 	// Usuários
 	usuarios := api.Group("/users")
 	{

@@ -21,6 +21,7 @@ func (User) Fields() []ent.Field {
 		field.String("password").Sensitive(),
 		field.String("phone").Optional(),
 		field.String("avatar_url").Optional(),
+		field.Enum("role").Values("admin", "userVitalicio", "userMensal", "UserExperimental").Default("UserExperimental"),
 		field.Time("created_at").Default(time.Now),
 		field.Time("updated_at").Default(time.Now).UpdateDefault(time.Now),
 	}
