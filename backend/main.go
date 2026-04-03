@@ -100,14 +100,17 @@ func main() {
 	// Swagger
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	// Inicia o servidor na porta 8080
+	// Inicia o servidor usando a porta do Render ou 8080 localmente
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
 	
-	log.Printf("🚀 Servidor Go rodando em http://localhost:%s", port)
-	if err := r.Run(":" + port); err != nil {
+	// É CRUCIAL usar "0.0.0.0" para o Render detectar a porta aberta
+	addr := "0.0.0.0:" + port
+	log.Printf("🚀 Servidor Go rodando em %s", addr)
+	
+	if err := r.Run(addr); err != nil {
 		log.Fatal("Erro ao iniciar o servidor: ", err)
 	}
 }
