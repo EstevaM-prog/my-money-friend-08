@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"backend/ent"
 	models "backend/struct"
 	"net/http"
 
@@ -16,14 +17,34 @@ import (
 // @Param        user  body      models.User  true  "Dados do usuário"
 // @Success      201   {object}  map[string]interface{}
 // @Failure      400   {object}  map[string]interface{}
-// @Router       /users/ [post]
+// @Router       /users [post]
 func CreateUser(c *gin.Context) {
-	var input models.User
+	client := c.MustGet("db").(*ent.Client)
+	var input struct {
+		Name     string `json:"name"`
+		Email    string `json:"email"`
+		Password string `json:"password"`
+		Phone    string `json:"phone"`
+	}
+
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Dados inválidos"})
 		return
 	}
-	c.JSON(http.StatusCreated, gin.H{"message": "Usuário criado", "data": input})
+
+	u, err := client.User.Create().
+		SetName(input.Name).
+		SetEmail(input.Email).
+		SetPassword(input.Password).
+		SetPhone(input.Phone).
+		Save(c.Request.Context())
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{"message": "Usuário criado", "data": u})
 }
 
 // GetUsers godoc
@@ -32,9 +53,15 @@ func CreateUser(c *gin.Context) {
 // @Tags         users
 // @Produce      json
 // @Success      200   {object}  map[string]interface{}
-// @Router       /users/ [get]
+// @Router       /users [get]
 func GetUsers(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"message": "Lista de usuários", "data": []models.User{}})
+	client := c.MustGet("db").(*ent.Client)
+	items, err := client.User.Query().All(c.Request.Context())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Lista de usuários", "data": items})
 }
 
 // GetUserByID godoc

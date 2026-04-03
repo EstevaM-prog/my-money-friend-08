@@ -50,6 +50,9 @@ func main() {
 	// Inicializa o roteador do Gin
 	r := gin.Default()
 	
+	// Configuração de segurança para proxies (silencia o aviso)
+	r.SetTrustedProxies(nil)
+	
 	// Desabilita redirecionamentos automáticos de barra para evitar erros de CORS 307
 	r.RedirectTrailingSlash = false
 	r.RedirectFixedPath = false
