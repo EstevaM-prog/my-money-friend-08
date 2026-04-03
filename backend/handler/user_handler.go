@@ -2,22 +2,14 @@ package handler
 
 import (
 	"backend/ent"
-	models "backend/struct"
+	"backend/ent/user"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
-// CreateUser godoc
-// @Summary      Cria um usuário
-// @Description  Cadastra um novo usuário no sistema
-// @Tags         users
-// @Accept       json
-// @Produce      json
-// @Param        user  body      models.User  true  "Dados do usuário"
-// @Success      201   {object}  map[string]interface{}
-// @Failure      400   {object}  map[string]interface{}
-// @Router       /users [post]
+// CreateUser cria um novo usuário no banco de dados
 func CreateUser(c *gin.Context) {
 	client := c.MustGet("db").(*ent.Client)
 	var input struct {
@@ -32,81 +24,135 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
+	if input.Name == "" || input.Email == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Nome e email são obrigatórios"})
+		return
+	}
+
 	u, err := client.User.Create().
 		SetName(input.Name).
 		SetEmail(input.Email).
 		SetPassword(input.Password).
-		SetPhone(input.Phone).
+		SetNillablePhone(nilIfEmpty(input.Phone)).
 		Save(c.Request.Context())
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao criar usuário: " + err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "Usuário criado", "data": u})
+	c.JSON(http.StatusCreated, gin.H{"data": u})
 }
 
-// GetUsers godoc
-// @Summary      Lista usuários
-// @Description  Retorna uma lista de todos os usuários
-// @Tags         users
-// @Produce      json
-// @Success      200   {object}  map[string]interface{}
-// @Router       /users [get]
+// GetUsers retorna todos os usuários ou filtra por email (?email=...)
 func GetUsers(c *gin.Context) {
 	client := c.MustGet("db").(*ent.Client)
+
+	email := c.Query("email")
+	if email != "" {
+		// Modo login: busca por email
+		u, err := client.User.Query().Where(user.EmailEQ(email)).Only(c.Request.Context())
+		if err != nil {
+			c.JSON(http.StatusOK, gin.H{"data": []interface{}{}})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"data": []*ent.User{u}})
+		return
+	}
+
 	items, err := client.User.Query().All(c.Request.Context())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Lista de usuários", "data": items})
+	c.JSON(http.StatusOK, gin.H{"data": items})
 }
 
-// GetUserByID godoc
-// @Summary      Busca um usuário
-// @Description  Retorna os detalhes de um único usuário pelo ID
-// @Tags         users
-// @Produce      json
-// @Param        id    path      int  true  "ID do usuário"
-// @Success      200   {object}  map[string]interface{}
-// @Router       /users/{id} [get]
+// GetUserByID retorna um usuário pelo ID
 func GetUserByID(c *gin.Context) {
-	id := c.Param("id")
-	c.JSON(http.StatusOK, gin.H{"message": "Detalhes do usuário " + id})
+	client := c.MustGet("db").(*ent.Client)
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID inválido"})
+		return
+	}
+	u, err := client.User.Get(c.Request.Context(), id)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Usuário não encontrado"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": u})
 }
 
-// UpdateUser godoc
-// @Summary      Atualiza usuário
-// @Description  Edita dados de um usuário pelo ID
-// @Tags         users
-// @Accept       json
-// @Produce      json
-// @Param        id    path      int          true  "ID do usuário"
-// @Param        user  body      models.User  true  "Novos dados"
-// @Success      200   {object}  map[string]interface{}
-// @Failure      400   {object}  map[string]interface{}
-// @Router       /users/{id} [put]
+// UpdateUser atualiza os dados de um usuário no banco
 func UpdateUser(c *gin.Context) {
-	id := c.Param("id")
-	var input models.User
+	client := c.MustGet("db").(*ent.Client)
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID inválido"})
+		return
+	}
+
+	var input struct {
+		Name  string `json:"name"`
+		Email string `json:"email"`
+		Phone string `json:"phone"`
+	}
+
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Dados inválidos"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Usuário " + id + " atualizado", "data": input})
+
+	u, err := client.User.UpdateOneID(id).
+		SetName(input.Name).
+		SetEmail(input.Email).
+		SetNillablePhone(nilIfEmpty(input.Phone)).
+		Save(c.Request.Context())
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao atualizar usuário: " + err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": u})
 }
 
-// DeleteUser godoc
-// @Summary      Deleta usuário
-// @Description  Remove usuário pelo ID
-// @Tags         users
-// @Produce      json
-// @Param        id    path      int  true  "ID do usuário"
-// @Success      200   {object}  map[string]interface{}
-// @Router       /users/{id} [delete]
+// DeleteUser remove um usuário do banco
 func DeleteUser(c *gin.Context) {
-	id := c.Param("id")
-	c.JSON(http.StatusOK, gin.H{"message": "Usuário " + id + " excluído"})
+	client := c.MustGet("db").(*ent.Client)
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID inválido"})
+		return
+	}
+	if err := client.User.DeleteOneID(id).Exec(c.Request.Context()); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao deletar usuário: " + err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Usuário removido com sucesso"})
+}
+
+// GetUserByEmail busca um usuário pelo email (usado no login)
+func GetUserByEmail(c *gin.Context) {
+	client := c.MustGet("db").(*ent.Client)
+	email := c.Query("email")
+	if email == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Email é obrigatório"})
+		return
+	}
+	u, err := client.User.Query().Where(user.EmailEQ(email)).Only(c.Request.Context())
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Usuário não encontrado"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": u})
+}
+
+// nilIfEmpty retorna ponteiro para string ou nil se vazia
+func nilIfEmpty(s string) *string {
+	if s == "" {
+		return nil
+	}
+	return &s
 }

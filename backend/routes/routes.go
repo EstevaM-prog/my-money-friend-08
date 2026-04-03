@@ -11,7 +11,7 @@ func RegisterRoutes(api *gin.RouterGroup) {
 	usuarios := api.Group("/users")
 	{
 		usuarios.POST("", handler.CreateUser)
-		usuarios.GET("", handler.GetUsers)
+		usuarios.GET("", handler.GetUsers)          // suporta ?email= para login
 		usuarios.GET("/:id", handler.GetUserByID)
 		usuarios.PUT("/:id", handler.UpdateUser)
 		usuarios.DELETE("/:id", handler.DeleteUser)
