@@ -4,7 +4,10 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AppLayout } from "@/components/layout/AppLayout";
-import { getSession } from "@/lib/auth";
+import { getSession, refreshSessionIfNeeded } from "@/lib/auth";
+
+// Renova a sessão automaticamente se faltar menos de 1 dia
+refreshSessionIfNeeded();
 import Index from "./pages/Index";
 import Goals from "./pages/Goals";
 import Accounts from "./pages/Accounts";

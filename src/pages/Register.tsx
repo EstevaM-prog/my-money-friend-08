@@ -39,7 +39,7 @@ export default function Register() {
     }
     setLoading(true);
     try {
-      register(`${firstName} ${lastName}`, email, password);
+      await register(`${firstName} ${lastName}`, email, password);
       navigate("/");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Erro ao criar conta.");
