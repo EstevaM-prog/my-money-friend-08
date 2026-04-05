@@ -13,6 +13,10 @@ export default defineConfig(({ mode }) => ({
   plugins: [react()],
   resolve: {
     alias: {
+      "@/components": path.resolve(__dirname, "./src/client/components"),
+      "@/lib": path.resolve(__dirname, "./src/client/lib"),
+      "@/hooks": path.resolve(__dirname, "./src/client/hooks"),
+      "@/pages": path.resolve(__dirname, "./src/client/pages"),
       "@": path.resolve(__dirname, "./src"),
     },
   },

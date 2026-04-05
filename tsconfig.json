@@ -5,9 +5,11 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/components/*": ["./src/client/components/*"],
+      "@/lib/*": ["./src/client/lib/*"],
+      "@/hooks/*": ["./src/client/hooks/*"],
+      "@/pages/*": ["./src/client/pages/*"],
+      "@/*": ["./src/*"]
     },
     "skipLibCheck": true,
     "strictNullChecks": false

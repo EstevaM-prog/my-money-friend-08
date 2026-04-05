@@ -1,22 +1,17 @@
-# Node.js
+# Bun
+bun.lockb
 node_modules/
-dist/
-dist-ssr/
+.cache/
+
+# OS Files
+.DS_Store
+Thumbs.db
 *.local
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
 
 # Environment Variables
 .env
 .env.*
 !.env.example
-
-# OS Files
-.DS_Store
-Thumbs.db
 
 # Editors
 .vscode/
@@ -27,25 +22,21 @@ Thumbs.db
 *.swp
 *.swo
 
-# Go (Backend)
-backend/backend
-backend/main
-backend/*.exe
-backend/*.exe~
-backend/*.dll
-backend/*.so
-backend/*.dylib
-backend/*.test
-backend/*.out
-/vendor/
-backend/tmp/
+# Server (Bun/Elysia)
+src/server/node_modules/
+src/server/dist/
+src/server/coverage/
+src/server/build/
+src/server/tmp/
 
-# Ent (ORM)
-# Geralmente mantemos os arquivos gerados no git para facilitar o build,
-# mas se quiser ignorar, descomente abaixo:
-# backend/ent/client.go
-# backend/ent/context.go
-# etc.
+# Frontend (Vite)
+dist/
+dist-ssr/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
 # Logs
 logs/
